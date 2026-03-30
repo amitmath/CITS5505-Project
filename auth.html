@@ -104,7 +104,7 @@
                             </label>
                         </div>
 
-                        <button class="button-create btn btn-main w-100 mb-3">Create APM Workspace</button>
+                        <button id="mainBtn" class="button-create btn btn-main w-100 mb-3">Create APM Workspace</button>
 
                         </form>
                     </div>
@@ -115,18 +115,31 @@
         </div>
 
         <script>
-        document.querySelectorAll('.switch-tabs .btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.querySelectorAll('.switch-tabs .btn')
-            .forEach(b => {
+            const tabs = document.querySelectorAll('.switch-tabs .btn');
+            const mainBtn = document.getElementById('mainBtn');
+
+            tabs.forEach(btn => {
+            btn.addEventListener('click', function () {
+
+                // reset all tabs
+                tabs.forEach(b => {
                 b.classList.remove('active-tab');
                 b.classList.add('inactive-tab');
-            });
+                });
 
-            this.classList.add('active-tab');
-            this.classList.remove('inactive-tab');
-        });
-        });
+                // activate clicked tab
+                this.classList.add('active-tab');
+                this.classList.remove('inactive-tab');
+
+                // update button text
+                if (this.textContent.trim() === "Log In") {
+                mainBtn.textContent = "Log In to APM Workspace";
+                } else {
+                mainBtn.textContent = "Create APM Workspace";
+                }
+
+            });
+            });
         </script>
     </body>
 </html>
