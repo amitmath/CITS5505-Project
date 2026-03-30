@@ -77,6 +77,11 @@ body {
   border-radius: 50%;
 }
 
+.user-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+}
+
 .footer-note {
     margin-top: 60px;
     font-family: 'Inter', sans-serif;
