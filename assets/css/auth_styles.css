@@ -136,22 +136,32 @@ body {
   transition: all 0.2s ease;
 }
 
-/* Active tab */
+.switch-tabs .btn:hover {
+  transform: translateY(-1px);
+}
+
 .active-tab {
   background: #ffffff;
   color: #1f9b79;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-/* Inactive tab */
 .inactive-tab {
   background: transparent;
   color: #6c757d;
 }
 
-/* Hover effect */
-.switch-tabs .btn:hover {
+/* Inactive button hover */
+.inactive-tab:hover {
   background: #e9ecef;
+  color: #1f9b79;
+}
+
+/* Active button hover (subtle effect only) */
+.active-tab:hover {
+  background: #ffffff;
+  color: #1f9b79;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
 /* Button */
