@@ -27,3 +27,19 @@ body {
   padding: 8px;
   border-radius: 8px;
 }
+
+/* Left -Panel Hero */
+.hero-title {
+  font-size: 2.8rem;
+  font-weight: bold;
+  margin-top: 60px;
+}
+
+.highlight {
+  color: #b9f2e6;
+}
+
+.hero-text {
+  margin-top: 20px;
+  opacity: 0.9;
+}
