@@ -165,18 +165,156 @@ body {
   background: #1c7e64;
 }
 
-/* Divider */
-.divider {
-  text-align: center;
-  margin: 20px 0;
-  font-size: 0.8rem;
-  color: gray;
+/* Labels */
+.form-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #374151;
+  margin-bottom: 6px;
 }
 
-/* Social */
-.social-btn {
-  border: 1px solid #ddd;
-  height: 45px;
-  border-radius: 8px;
+/* Input fields */
+.form-control {
+  height: 52px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 0 14px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+.small-input {
+  font-size: 13px;
+}
+
+/* Input focus */
+.form-control:focus {
+  border-color: #1f9b79;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(31, 155, 121, 0.1);
+}
+
+/* Placeholder */
+.form-control::placeholder {
+  color: #9ca3af;
+}
+
+/* Password wrapper */
+.password-wrap {
+  position: relative;
+}
+
+/* Eye icon button */
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Forgot link */
+.forgot-link {
+  font-size: 0.85rem;
+  color: #1f9b79;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Checkbox */
+.form-check-input {
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+}
+
+.form-check-input:checked {
+  background-color: #1f9b79;
+  border-color: #1f9b79;
+}
+
+.form-check-label {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Small links */
+.small-link {
+  color: #1f9b79;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.small-link:hover {
+  text-decoration: underline;
+}
+
+/* Primary button */
+.btn-main {
+  height: 52px;
+  border-radius: 10px;
+  background: #1f9b79;
+  color: #ffffff;
+  font-weight: 700;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-main:hover {
+  background: #187a60;
+  box-shadow: 0 8px 18px rgba(31, 155, 121, 0.2);
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin: 24px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.divider::before {
+  margin-right: 12px;
+}
+
+.divider::after {
+  margin-left: 12px;
+}
+
+.button-create {
+    margin-top: 20px;
+}
+
+.form-check-input {
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-check-input:checked {
+  background-color: #1f9b79;
+  border-color: #1f9b79;
 }
 
