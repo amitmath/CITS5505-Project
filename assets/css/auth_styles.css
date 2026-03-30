@@ -30,9 +30,10 @@ body {
 
 /* Left -Panel Hero */
 .hero-title {
-  font-size: 2.8rem;
-  font-weight: bold;
-  margin-top: 60px;
+  font-weight: 200;
+  font-size: 48px;
+  margin-top: 40px;
+  font-family: 'Manrope', sans-serif;;
 }
 
 .highlight {
@@ -40,6 +41,45 @@ body {
 }
 
 .hero-text {
-  margin-top: 20px;
+  margin-top: 30px;
   opacity: 0.9;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+}
+
+/* testimonial Card */
+.testimonial-card {
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #03a081;
+}
+
+.stars {
+    color: #84F5E8;
+}
+
+.testimonial-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.testimonial-user {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.testimonial-user img {
+  width: 40px;
+  border-radius: 50%;
+}
+
+.footer-note {
+    margin-top: 60px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
 }
