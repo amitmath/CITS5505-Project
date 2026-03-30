@@ -113,7 +113,20 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
+
+        <script>
+        document.querySelectorAll('.switch-tabs .btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.switch-tabs .btn')
+            .forEach(b => {
+                b.classList.remove('active-tab');
+                b.classList.add('inactive-tab');
+            });
+
+            this.classList.add('active-tab');
+            this.classList.remove('inactive-tab');
+        });
+        });
+        </script>
     </body>
 </html>
