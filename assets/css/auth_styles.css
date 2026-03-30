@@ -1,0 +1,29 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.left-panel {
+  background: linear-gradient(180deg, #1f9b79, #228e72);
+  color: white;
+  padding: 50px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Brand */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.brand-icon {
+  background: white;
+  color: #1f9b79;
+  padding: 8px;
+  border-radius: 8px;
+}
