@@ -81,5 +81,102 @@ body {
     margin-top: 60px;
     font-family: 'Inter', sans-serif;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 0.8rem;
+    opacity: 0.7;
 }
+
+/* Right side */
+
+.right-panel {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-title {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #111827;          
+  margin-bottom: 6px;
+}
+
+.auth-subtitle {
+  font-size: 15px;
+  color: #6b7280;           
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+/* Tabs */
+/* Wrapper */
+.switch-tabs {
+  display: flex;
+  background: #f1f3f5;
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+/* Base button */
+.switch-tabs .btn {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 10px 0;
+  transition: all 0.2s ease;
+}
+
+/* Active tab */
+.active-tab {
+  background: #ffffff;
+  color: #1f9b79;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Inactive tab */
+.inactive-tab {
+  background: transparent;
+  color: #6c757d;
+}
+
+/* Hover effect */
+.switch-tabs .btn:hover {
+  background: #e9ecef;
+}
+
+/* Button */
+.btn-main {
+  background: #1f9b79;
+  color: white;
+  border-radius: 8px;
+}
+
+.btn-main:hover {
+  background: #1c7e64;
+}
+
+/* Divider */
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 0.8rem;
+  color: gray;
+}
+
+/* Social */
+.social-btn {
+  border: 1px solid #ddd;
+  height: 45px;
+  border-radius: 8px;
+}
+
