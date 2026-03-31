@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agile PM – Manage tasks, sprints, and team progress</title>
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Page styles -->
+  <link rel="stylesheet" href="assets/css/index.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-md sticky-top py-0">
+    <div class="container" style="height:64px;">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
+        <span class="brand-name">Agile PM</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+        <ul class="navbar-nav align-items-center gap-3 me-4">
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#how-it-works">How it works</a></li>
+        </ul>
+        <a href="auth.html" class="btn-get-started">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center g-5">
+
+        <!-- Left: text -->
+        <div class="col-lg-6">
+          <div class="hero-badge">
+            <i class="fas fa-bolt"></i>
+            Agile Project Management
+          </div>
+          <h1 class="mb-3">Manage tasks, sprints, and team progress in one place</h1>
+          <p class="hero-sub mb-4">
+            Agile PM helps student teams plan and manage projects, track blockers,
+            and stay aligned throughout the sprint.
+          </p>
+          <div class="d-flex flex-wrap gap-3 mb-4">
+            <a href="auth.html" class="btn-primary-green">Get started — it's free</a>
+            <a href="#how-it-works" class="btn-outline-hero">View demo</a>
+          </div>
+          <div class="d-flex flex-wrap gap-4">
+            <span class="hero-check"><i class="fas fa-check-circle"></i> Sprint planning</span>
+            <span class="hero-check"><i class="fas fa-check-circle"></i> Live collaboration</span>
+            <span class="hero-check"><i class="fas fa-check-circle"></i> Team health tracking</span>
+          </div>
+        </div>
+
+        <!-- Right: coded dashboard mockup (no image file) -->
+        <div class="col-lg-6">
+          <div class="hero-mockup">
+            <div class="mockup-topbar">
+              <div class="mockup-logo">
+                <div class="mockup-logo-dot"></div>
+                AgileFlow
+              </div>
+              <div class="mockup-nav-dots">
+                <span>Features</span>
+                <span>How it works</span>
+              </div>
+              <div class="mockup-top-btn">Get Started</div>
+            </div>
+            <div class="mockup-content">
+              <div class="mockup-sidebar">
+                <div class="mockup-sidebar-item active">
+                  <div class="mockup-sidebar-dot"></div> Dashboard
+                </div>
+                <div class="mockup-sidebar-item">
+                  <div class="mockup-sidebar-dot"></div> Projects
+                </div>
+                <div class="mockup-sidebar-item">
+                  <div class="mockup-sidebar-dot"></div> Sprints
+                </div>
+                <div class="mockup-sidebar-item">
+                  <div class="mockup-sidebar-dot"></div> Backlog
+                </div>
+                <div class="mockup-sidebar-item">
+                  <div class="mockup-sidebar-dot"></div> Team
+                </div>
+              </div>
+              <div class="mockup-main">
+                <div class="mockup-sprint-head">
+                  <span class="mockup-sprint-title">Sprint 3 — Week 6</span>
+                  <span class="mockup-sprint-badge">Active</span>
+                </div>
+                <div class="mockup-progress-bar">
+                  <div class="mockup-progress-fill"></div>
+                </div>
+                <div class="mockup-cols">
+                  <div>
+                    <div class="mockup-col-head">To Do</div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">Set up auth routes</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-red">High</span>
+                        <div class="mockup-avatar">A</div>
+                      </div>
+                    </div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">Write unit tests</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-green">Low</span>
+                        <div class="mockup-avatar">D</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mockup-col-head">In Progress</div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">Dashboard UI layout</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-yellow">Med</span>
+                        <div class="mockup-avatar">M</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mockup-col-head">Done</div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">Landing page</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-green">Low</span>
+                        <div class="mockup-avatar">M</div>
+                      </div>
+                    </div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">DB schema design</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-red">High</span>
+                        <div class="mockup-avatar">A</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label">Features</div>
+        <h2 class="section-title mb-2">Everything your team needs</h2>
+        <p class="section-sub">A lightweight tool to improve your team's productivity.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon icon-green"><i class="fas fa-flag"></i></div>
+            <div class="feature-title">Sprint Planning</div>
+            <p class="feature-desc">Create sprints with goals, deadlines, and progress tracking.</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon icon-amber"><i class="fas fa-clipboard-list"></i></div>
+            <div class="feature-title">Task Tracking</div>
+            <p class="feature-desc">Assign tasks, update priorities, and monitor progress clearly.</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon icon-blue"><i class="fas fa-comments"></i></div>
+            <div class="feature-title">Team Collaboration</div>
+            <p class="feature-desc">Comment on tasks, flag blockers, and keep everyone aligned.</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon icon-pink"><i class="fas fa-heart-pulse"></i></div>
+            <div class="feature-title">Sprint Health</div>
+            <p class="feature-desc">Spot blockers early and understand team workload at a glance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section" id="how-it-works">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label">How it works</div>
+        <h2 class="section-title mb-2">Up and running in minutes</h2>
+        <p class="section-sub">Three simple steps to get your team collaborating.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-title">Create a project</div>
+            <p class="step-desc">Register and set up your project workspace. Invite your teammates with a single link.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-title">Plan your sprint</div>
+            <p class="step-desc">Add tasks to your backlog, set priorities, and assign work to team members.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-title">Track and deliver</div>
+            <p class="step-desc">Move tasks across the board, leave comments, and monitor sprint health in real time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section text-center">
+    <div class="container">
+      <h2 class="mb-3">Ready to run better sprints?</h2>
+      <p class="mb-4">Join your team on Agile PM and start delivering value today.</p>
+      <a href="auth.html" class="btn-white">Get started — it's free</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <a href="index.html" class="footer-brand">
+        <div class="footer-brand-icon"><i class="fas fa-layer-group"></i></div>
+        <span class="footer-brand-name">Agile PM</span>
+      </a>
+      <p class="footer-copy">© 2024 Agile PM. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
