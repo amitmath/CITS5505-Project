@@ -1,0 +1,396 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f6f8;
+  color: #1f2937;
+}
+
+.brand-title,
+.page-title,
+.welcome-title,
+.section-title,
+.summary-number,
+.velocity-number {
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Overall layout */
+.dashboard-wrapper {
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #f8fafc;
+  border-right: 1px solid #e5e7eb;
+  min-height: 100vh;
+}
+
+.sidebar-inner {
+  min-height: 100vh;
+  padding: 24px 18px;
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f4c5c;
+}
+
+.brand-subtitle {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.sidebar-nav .nav-link,
+.sidebar-bottom .nav-link {
+  color: #475569;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.sidebar-nav .nav-link:hover,
+.sidebar-bottom .nav-link:hover {
+  background-color: #eaf3f4;
+  color: #0f4c5c;
+}
+
+.sidebar-nav .nav-link.active {
+  background-color: #e0f2f1;
+  color: #0f4c5c;
+  font-weight: 600;
+}
+
+.sidebar-nav .sub-link {
+  padding-left: 32px;
+  font-size: 0.95rem;
+  color: #94a3b8;
+}
+
+/* Main content */
+.main-content {
+  padding: 24px 30px 40px;
+}
+
+/* Topbar */
+.topbar {
+  background-color: #ffffff;
+  padding: 18px 22px;
+  border-radius: 14px;
+  margin-bottom: 28px;
+  border: 1px solid #e5e7eb;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f4c5c;
+}
+
+.search-box {
+  position: relative;
+  width: 280px;
+}
+
+.search-box i {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.search-box .form-control {
+  padding-left: 40px;
+  height: 46px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+}
+
+.topbar-right i {
+  font-size: 1.1rem;
+  color: #475569;
+}
+
+.profile-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.profile-link {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #0f4c5c;
+}
+
+.profile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #0f766e;
+}
+
+/* Welcome section */
+.welcome-section {
+  margin-bottom: 24px;
+}
+
+.welcome-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f4c5c;
+  margin-bottom: 6px;
+}
+
+.welcome-text {
+  color: #6b7280;
+  margin-bottom: 0;
+}
+
+/* Cards */
+.summary-card,
+.project-card,
+.table-card,
+.health-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+}
+
+.summary-card {
+  padding: 28px;
+  height: 100%;
+}
+
+.card-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.summary-number {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #0f4c5c;
+  margin-bottom: 0;
+}
+
+.summary-number span {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.velocity-card {
+  background-color: #7ee0d8;
+  border: none;
+}
+
+.velocity-icon {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: #083344;
+}
+
+.velocity-number {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+/* Section headings */
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.section-link {
+  color: #0f4c5c;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+/* Project cards */
+.project-card {
+  padding: 22px;
+  height: 100%;
+}
+
+.project-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: #d9f3f1;
+  color: #0f4c5c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+}
+
+.project-card h5 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.project-card p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  min-height: 48px;
+}
+
+.new-project-card .project-icon {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-pill.healthy {
+  background-color: #dff7ef;
+  color: #0f766e;
+}
+
+.status-pill.risk {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Tasks table */
+.new-task-btn {
+  background-color: #0f4c5c;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 600;
+  border: none;
+}
+
+.new-task-btn:hover {
+  background-color: #0b3a46;
+  color: #ffffff;
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.task-table thead th {
+  background-color: #f8fafc;
+  color: #6b7280;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 18px 20px;
+}
+
+.task-table tbody td {
+  padding: 18px 20px;
+  vertical-align: middle;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.status-badge.in-progress {
+  background-color: #cffafe;
+  color: #0c4a6e;
+}
+
+.status-badge.blocker {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-badge.todo {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+/* Sprint health */
+.health-card {
+  padding: 24px;
+  height: 100%;
+}
+
+.sprint-progress {
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: #e5e7eb;
+}
+
+.completed-bar {
+  background-color: #0f766e;
+}
+
+.progress-bar-middle {
+  background-color: #2c7a86;
+}
+
+.blocker-bar {
+  background-color: #dc2626;
+}
+
+.health-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  color: #374151;
+}
+
+.health-list strong {
+  color: #111827;
+}
+
+@media (max-width: 991.98px) {
+  .sidebar {
+    min-height: auto;
+  }
+
+  .sidebar-inner {
+    min-height: auto;
+  }
+
+  .main-content {
+    padding: 20px 16px 32px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 16px;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .welcome-title {
+    font-size: 1.6rem;
+  }
+}
