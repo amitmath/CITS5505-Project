@@ -104,7 +104,7 @@
                             </label>
                         </div>
 
-                        <button id="mainBtn" class="button-create btn btn-main w-100 mb-3">Create APM Workspace</button>
+                        <button type="button" id="mainBtn" class="button-create btn btn-main w-100 mb-3" onclick="goToDashboard()">Create APM Workspace</button>
 
                         </form>
                     </div>
@@ -140,6 +140,11 @@
 
             });
             });
+            
+            // go to dashbaord page
+            function goToDashboard() {
+                window.location.href = "dashboard.html";
+            }
         </script>
     </body>
 </html>
