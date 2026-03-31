@@ -1,204 +1,259 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agile PM – Manage tasks, sprints, and team progress</title>
 
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Agile PM - Manage tasks, sprints, and team progress</title>
-<!-- Google Fonts: Manrope -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS v3 CDN -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#005C72', // Velocity Blue
-            secondary: '#2D9A74', // Agile Green from Image
-            accent: '#E6F4F1',
-          },
-          fontFamily: {
-            sans: ['Manrope', 'sans-serif'],
-          },
-          borderRadius: {
-            'eight': '8px',
-          }
-        }
-      }
-    }
-  </script>
-<style data-purpose="custom-background">
-    /* Replicating the soft organic background shapes from the reference image */
-    .hero-bg {
-      background-color: #f8fafb;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero-blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      z-index: 0;
-      opacity: 0.4;
-    }
-    .blob-1 {
-      width: 600px;
-      height: 600px;
-      background: #c7e9e0;
-      top: -100px;
-      right: -100px;
-    }
-    .blob-2 {
-      width: 500px;
-      height: 500px;
-      background: #e1f2f0;
-      bottom: -150px;
-      left: -50px;
-    }
-    .content-wrapper {
-      position: relative;
-      z-index: 10;
-    }
-  </style>
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Page styles -->
+  <link rel="stylesheet" href="assets/css/index.css" />
 </head>
-<body class="font-sans text-slate-900 antialiased">
-<!-- BEGIN: MainHeader -->
-<header class="w-full bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
-<nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between" data-purpose="navigation-bar">
-<!-- Logo Container -->
-<div class="flex items-center gap-2" data-purpose="brand-logo">
-<div class="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
-<svg fill="none" height="24" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24" width="24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-</div>
-<span class="text-2xl font-extrabold tracking-tight text-slate-800">Agile PM</span>
-</div>
-<!-- Navigation Links -->
-<div class="hidden md:flex items-center gap-10" data-purpose="nav-links">
-<a class="flex items-center gap-1 text-slate-600 hover:text-primary font-medium transition-colors" href="#">
-          Features
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</a>
-<a class="text-slate-600 hover:text-primary font-medium transition-colors" href="#">How it works</a>
-<a class="bg-secondary text-white px-6 py-2.5 rounded-eight font-semibold hover:bg-opacity-90 transition-all shadow-sm" href="auth.html">Get Started</a>
-</div>
-</nav>
-</header>
-<!-- END: MainHeader -->
-<main>
-<!-- BEGIN: HeroSection -->
-<section class="hero-bg pt-16 pb-24 md:pt-24 md:pb-32" data-purpose="hero-container">
-<div class="hero-blob blob-1"></div>
-<div class="hero-blob blob-2"></div>
-<div class="max-w-7xl mx-auto px-6 content-wrapper">
-<div class="grid lg:grid-cols-2 gap-16 items-center">
-<!-- Hero Text Content -->
-<div data-purpose="hero-copy">
-<span class="inline-block px-4 py-1.5 bg-secondary/10 text-secondary font-bold text-sm rounded-full mb-6">
-              Agile Project Management
-            </span>
-<h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-8">
-              Manage tasks, sprints, and team progress in one place
-            </h1>
-<p class="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed max-w-lg">
-              Agile PM helps student teams plan and manage projects, track blockers, and stay aligned throughout the sprint.
-            </p>
-<!-- CTA Buttons -->
-<div class="flex flex-wrap gap-4 mb-10" data-purpose="hero-actions">
-<button class="px-8 py-4 bg-secondary text-white font-bold rounded-eight hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                Get started — it's free
-              </button>
-<button class="px-8 py-4 bg-white text-slate-700 font-bold border border-slate-200 rounded-eight hover:bg-slate-50 transition-all">
-                View demo
-              </button>
-</div>
-<!-- Benefit Checklist -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4" data-purpose="hero-benefits">
-<div class="flex items-center gap-2">
-<svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-<span class="text-slate-700 font-medium">Sprint planning</span>
-</div>
-<div class="flex items-center gap-2">
-<svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-<span class="text-slate-700 font-medium">Live collaboration</span>
-</div>
-<div class="flex items-center gap-2">
-<svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-<span class="text-slate-700 font-medium">Team health tracking</span>
-</div>
-</div>
-</div>
-<!-- Hero Image/Dashboard -->
-<div class="relative" data-purpose="hero-visual">
-<div class="rounded-2xl overflow-hidden shadow-2xl border-8 border-white/40">
-<img alt="Agile PM Dashboard Interface" class="w-full h-auto object-cover" src="assets/images/hero-screenshot.png"/>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- END: HeroSection -->
-<!-- BEGIN: FeaturesSection -->
-<section class="py-24 bg-white" data-purpose="features-container">
-<div class="max-w-7xl mx-auto px-6">
-<!-- Section Header -->
-<div class="text-center mb-16" data-purpose="features-header">
-<h2 class="text-4xl font-extrabold text-slate-900 mb-4">Features</h2>
-<p class="text-xl text-slate-500">A lightweight tool to improve your team's productivity.</p>
-</div>
-<!-- Features Grid -->
-<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" data-purpose="features-grid">
-<!-- Feature Card 1 -->
-<article class="p-8 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all group" data-purpose="feature-card">
-<div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-7h.01M9 16h.01" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-</div>
-<h3 class="text-xl font-bold text-slate-900 mb-3">Sprint Planning</h3>
-<p class="text-slate-600 leading-relaxed">
-              Create sprints with goals, deadlines, and progress tracking.
-            </p>
-</article>
-<!-- Feature Card 2 -->
-<article class="p-8 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all group" data-purpose="feature-card">
-<div class="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-</div>
-<h3 class="text-xl font-bold text-slate-900 mb-3">Task Tracking</h3>
-<p class="text-slate-600 leading-relaxed">
-              Assign tasks, update priorities, and monitor progress clearly.
-            </p>
-</article>
-<!-- Feature Card 3 -->
-<article class="p-8 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all group" data-purpose="feature-card">
-<div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-</div>
-<h3 class="text-xl font-bold text-slate-900 mb-3">Team Collaboration</h3>
-<p class="text-slate-600 leading-relaxed">
-              Comment on tasks, flag blockers, and keep everyone aligned.
-            </p>
-</article>
-<!-- Feature Card 4 -->
-<article class="p-8 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all group" data-purpose="feature-card">
-<div class="w-12 h-12 rounded-lg bg-rose-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-<svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-</div>
-<h3 class="text-xl font-bold text-slate-900 mb-3">Sprint Health</h3>
-<p class="text-slate-600 leading-relaxed">
-              Spot blockers early and understand team workload at a glance.
-            </p>
-</article>
-</div>
-</div>
-</section>
-<!-- END: FeaturesSection -->
-</main>
-<!-- BEGIN: MainFooter -->
-<footer class="bg-slate-50 py-12 border-t border-slate-200">
-<div class="max-w-7xl mx-auto px-6 text-center text-slate-500">
-<p>© 2023 Agile PM. All rights reserved.</p>
-</div>
-</footer>
-<!-- END: MainFooter -->
-</body></html>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-md sticky-top py-0">
+    <div class="container" style="height:64px;">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
+        <span class="brand-name">Agile PM</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+        <ul class="navbar-nav align-items-center gap-3 me-4">
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#how-it-works">How it works</a></li>
+        </ul>
+        <a href="auth.html" class="btn-get-started">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center g-5">
+
+        <!-- Left: text -->
+        <div class="col-lg-6">
+          <div class="hero-badge">
+            <i class="fas fa-bolt"></i>
+            Agile Project Management
+          </div>
+          <h1 class="mb-3">Manage tasks, sprints, and team progress in one place</h1>
+          <p class="hero-sub mb-4">
+            Agile PM helps student teams plan and manage projects, track blockers,
+            and stay aligned throughout the sprint.
+          </p>
+          <div class="d-flex flex-wrap gap-3 mb-4">
+            <a href="auth.html" class="btn-primary-green">Get started — it's free</a>
+            <a href="#how-it-works" class="btn-outline-hero">View demo</a>
+          </div>
+          <div class="d-flex flex-wrap gap-4">
+            <span class="hero-check"><i class="fas fa-check-circle"></i> Sprint planning</span>
+            <span class="hero-check"><i class="fas fa-check-circle"></i> Live collaboration</span>
+            <span class="hero-check"><i class="fas fa-check-circle"></i> Team health tracking</span>
+          </div>
+        </div>
+
+        <!-- Right: coded dashboard mockup (no image file) -->
+        <div class="col-lg-6">
+          <div class="hero-mockup">
+            <div class="mockup-topbar">
+              <div class="mockup-logo">
+                <div class="mockup-logo-dot"></div>
+                AgileFlow
+              </div>
+              <div class="mockup-nav-dots">
+                <span>Features</span>
+                <span>How it works</span>
+              </div>
+              <div class="mockup-top-btn">Get Started</div>
+            </div>
+            <div class="mockup-content">
+              <div class="mockup-sidebar">
+                <div class="mockup-sidebar-item active">
+                  <div class="mockup-sidebar-dot"></div> Dashboard
+                </div>
+                <div class="mockup-sidebar-item">
+                  <div class="mockup-sidebar-dot"></div> Projects
+                </div>
+                <div class="mockup-sidebar-item">
+                  <div class="mockup-sidebar-dot"></div> Sprints
+                </div>
+                <div class="mockup-sidebar-item">
+                  <div class="mockup-sidebar-dot"></div> Backlog
+                </div>
+                <div class="mockup-sidebar-item">
+                  <div class="mockup-sidebar-dot"></div> Team
+                </div>
+              </div>
+              <div class="mockup-main">
+                <div class="mockup-sprint-head">
+                  <span class="mockup-sprint-title">Sprint 3 — Week 6</span>
+                  <span class="mockup-sprint-badge">Active</span>
+                </div>
+                <div class="mockup-progress-bar">
+                  <div class="mockup-progress-fill"></div>
+                </div>
+                <div class="mockup-cols">
+                  <div>
+                    <div class="mockup-col-head">To Do</div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">Set up auth routes</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-red">High</span>
+                        <div class="mockup-avatar">A</div>
+                      </div>
+                    </div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">Write unit tests</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-green">Low</span>
+                        <div class="mockup-avatar">D</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mockup-col-head">In Progress</div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">Dashboard UI layout</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-yellow">Med</span>
+                        <div class="mockup-avatar">M</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mockup-col-head">Done</div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">Landing page</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-green">Low</span>
+                        <div class="mockup-avatar">M</div>
+                      </div>
+                    </div>
+                    <div class="mockup-card">
+                      <div class="mockup-card-title">DB schema design</div>
+                      <div class="mockup-card-foot">
+                        <span class="mockup-pill pill-red">High</span>
+                        <div class="mockup-avatar">A</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label">Features</div>
+        <h2 class="section-title mb-2">Everything your team needs</h2>
+        <p class="section-sub">A lightweight tool to improve your team's productivity.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon icon-green"><i class="fas fa-flag"></i></div>
+            <div class="feature-title">Sprint Planning</div>
+            <p class="feature-desc">Create sprints with goals, deadlines, and progress tracking.</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon icon-amber"><i class="fas fa-clipboard-list"></i></div>
+            <div class="feature-title">Task Tracking</div>
+            <p class="feature-desc">Assign tasks, update priorities, and monitor progress clearly.</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon icon-blue"><i class="fas fa-comments"></i></div>
+            <div class="feature-title">Team Collaboration</div>
+            <p class="feature-desc">Comment on tasks, flag blockers, and keep everyone aligned.</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon icon-pink"><i class="fas fa-heart-pulse"></i></div>
+            <div class="feature-title">Sprint Health</div>
+            <p class="feature-desc">Spot blockers early and understand team workload at a glance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section" id="how-it-works">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label">How it works</div>
+        <h2 class="section-title mb-2">Up and running in minutes</h2>
+        <p class="section-sub">Three simple steps to get your team collaborating.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-title">Create a project</div>
+            <p class="step-desc">Register and set up your project workspace. Invite your teammates with a single link.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-title">Plan your sprint</div>
+            <p class="step-desc">Add tasks to your backlog, set priorities, and assign work to team members.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-title">Track and deliver</div>
+            <p class="step-desc">Move tasks across the board, leave comments, and monitor sprint health in real time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section text-center">
+    <div class="container">
+      <h2 class="mb-3">Ready to run better sprints?</h2>
+      <p class="mb-4">Join your team on Agile PM and start delivering value today.</p>
+      <a href="auth.html" class="btn-white">Get started — it's free</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <a href="index.html" class="footer-brand">
+        <div class="footer-brand-icon"><i class="fas fa-layer-group"></i></div>
+        <span class="footer-brand-name">Agile PM</span>
+      </a>
+      <p class="footer-copy">© 2024 Agile PM. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
