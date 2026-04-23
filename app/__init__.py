@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
+from app import models
 
 # Create the SQLAlchemy database object globally
 db = SQLAlchemy()
@@ -27,7 +28,7 @@ def create_app():
 
     # import models so SQLAlchemy and migrations can detect them
     from app import models
-    
+
     # Route for index page
     @app.route("/")
     def index():
