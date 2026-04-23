@@ -1,4 +1,11 @@
 from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from config import Config
+
+# Create the SQLAlchemy database object globally
+db = SQLAlchemy()
+migrate = Migrate()
 
 """
 Application factory function.
@@ -8,6 +15,19 @@ Returns:
 """
 def create_app():
     app = Flask(__name__)
+
+    # load application settings from config.py
+    app.config.from_object(Config)
+
+    # initialize SQLAlchemy with this app instance
+    db.init_app(app)
+
+    # initialize Flask-Migrate with the app and database
+    migrate.init_app(app, db)
+
+    # import models so SQLAlchemy and migrations can detect them
+    from app import models
+
     # Route for index page
     @app.route("/")
     def index():
