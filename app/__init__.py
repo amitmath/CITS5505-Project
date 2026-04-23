@@ -2,7 +2,6 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
-from app import models
 
 # Create the SQLAlchemy database object globally
 db = SQLAlchemy()
