@@ -18,7 +18,7 @@ with app.app_context():
         password_hash="hashed_pw",
         title="Project Lead",
         location="Perth, Australia",
-        timezone="Australia/Perth"
+        timezone="Australia/Perth",
         avatar_url="https://example.com/avatars/liam.png",
     )
 
