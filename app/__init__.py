@@ -3,30 +3,31 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
 
-# Create the SQLAlchemy database object globally
+# Create extension objects globally
 db = SQLAlchemy()
 migrate = Migrate()
 
-"""
-Application factory function.
-Creates and configures the Flask app instance.
-Returns:
-    Flask: The configured Flask app instance.
-"""
+
 def create_app():
+    """
+    Application factory function.
+    Creates and configures the Flask app instance.
+    """
     app = Flask(__name__)
 
-    # load application settings from config.py
+    # Load application settings from config.py
     app.config.from_object(Config)
 
-    # initialize SQLAlchemy with this app instance
+    # Initialize extensions
     db.init_app(app)
-
-    # initialize Flask-Migrate with the app and database
     migrate.init_app(app, db)
 
-    # import models so SQLAlchemy and migrations can detect them
+    # Import models so SQLAlchemy and migrations can detect them
     from app import models
+
+    # Register API blueprint
+    from app.routes import api
+    app.register_blueprint(api)
 
     # Route for index page
     @app.route("/")
