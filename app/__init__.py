@@ -48,5 +48,8 @@ def create_app():
     @app.route("/project")
     def project():
         return render_template("project.html")
+    
+    with app.app_context():
+        db.create_all()
 
     return app
