@@ -1,3 +1,9 @@
+<!--
+  Converted to Flask Jinja template:
+  - Static assets (CSS/JS) loaded using url_for('static', ...)
+  - Navigation links updated to Flask routes using url_for(...)
+  - HTML moved to templates/ directory
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,15 +17,16 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- Page styles -->
-  <link rel="stylesheet" href="assets/css/index.css" />
+  <!-- Page styles (served via Flask static folder using url_for) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
 </head>
 <body>
 
   <!-- NAVBAR -->
   <nav class="navbar navbar-expand-md sticky-top py-0">
     <div class="container" style="height:64px;">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+      <!-- Use Flask routing instead of static index.html -->
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
         <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
         <span class="brand-name">Agile PM</span>
       </a>
@@ -31,7 +38,8 @@
           <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
           <li class="nav-item"><a class="nav-link" href="#how-it-works">How it works</a></li>
         </ul>
-        <a href="auth.html" class="btn-get-started">Get Started</a>
+        <!-- Navigate to auth route using Flask url_for -->
+        <a href="{{ url_for('auth') }}" class="btn-get-started">Get Started</a>
       </div>
     </div>
   </nav>
@@ -53,7 +61,8 @@
             and stay aligned throughout the sprint.
           </p>
           <div class="d-flex flex-wrap gap-3 mb-4">
-            <a href="auth.html" class="btn-primary-green">Get started — it's free</a>
+            <!-- Flask route for authentication page -->
+            <a href="{{ url_for('auth') }}" class="btn-primary-green">Get started — it's free</a>
             <a href="#how-it-works" class="btn-outline-hero">View demo</a>
           </div>
           <div class="d-flex flex-wrap gap-4">
@@ -75,7 +84,7 @@
                 <span>Features</span>
                 <span>How it works</span>
               </div>
-              <div class="mockup-top-btn">Get Started</div>
+              <a href="{{ url_for('auth') }}" class="mockup-top-btn">Get Started</a>
             </div>
             <div class="mockup-content">
               <div class="mockup-sidebar">
@@ -238,18 +247,18 @@
     <div class="container">
       <h2 class="mb-3">Ready to run better sprints?</h2>
       <p class="mb-4">Join your team on Agile PM and start delivering value today.</p>
-      <a href="auth.html" class="btn-white">Get started — it's free</a>
+      <a href="{{ url_for('auth') }}" class="btn-white">Get started — it's free</a>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer class="site-footer">
     <div class="container d-flex align-items-center justify-content-between flex-wrap gap-2">
-      <a href="index.html" class="footer-brand">
+      <a href="{{ url_for('index') }}" class="footer-brand">
         <div class="footer-brand-icon"><i class="fas fa-layer-group"></i></div>
         <span class="footer-brand-name">Agile PM</span>
       </a>
-      <p class="footer-copy">© 2024 Agile PM. All rights reserved.</p>
+      <p class="footer-copy">© 2026 Agile PM. All rights reserved.</p>
     </div>
   </footer>
 
