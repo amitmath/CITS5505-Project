@@ -71,6 +71,7 @@ body {
 /* Main content */
 .main-content {
   padding: 24px 30px 40px;
+  min-width: 0;
 }
 
 /* Topbar */
