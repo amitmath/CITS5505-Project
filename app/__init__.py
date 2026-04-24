@@ -42,7 +42,11 @@ def create_app():
     # Route for dashboard page
     @app.route("/dashboard")
     def dashboard():
-        return render_template("dashboard.html")
+        from app.models import Project, Task, User
+        user = User.query.first()
+        projects = Project.query.filter_by(status="active").all()
+        tasks = Task.query.filter_by(assignee_id=user.id).all() if user else []
+        return render_template("dashboard.html", user=user, projects=projects, tasks=tasks)
 
     # Route for project page
     @app.route("/project")
