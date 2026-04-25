@@ -166,6 +166,12 @@ body {
   height: 100%;
 }
 
+.mini-note,
+.section-subtext {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
 .card-label {
   font-size: 0.8rem;
   font-weight: 700;
@@ -366,6 +372,33 @@ body {
 
 .health-list strong {
   color: #111827;
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.timeline-item strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #111827;
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #0f766e;
+  margin-top: 6px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 991.98px) {

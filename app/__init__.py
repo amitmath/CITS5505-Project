@@ -44,6 +44,11 @@ def create_app():
     def dashboard():
         return render_template("dashboard.html")
 
+    # Route for sprints page
+    @app.route("/sprints")
+    def sprints():
+        return render_template("sprints.html")
+
     # Route for project page
     @app.route("/project")
     def project():

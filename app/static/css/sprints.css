@@ -1,0 +1,372 @@
+.sprints-page .sprint-search-box {
+  width: 300px;
+}
+
+.sprints-page .sprint-page-heading {
+  margin-bottom: 18px;
+}
+
+.sprints-page .sprint-overview-section {
+  margin-bottom: 48px;
+}
+
+.sprints-page .sprint-history-section {
+  display: block;
+  width: 100%;
+  clear: both;
+  margin-top: 28px;
+}
+
+.sprints-page .sprint-title {
+  font-size: 1.85rem;
+}
+
+.sprints-page .breadcrumb-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.sprints-page .breadcrumb-row i {
+  font-size: 0.7rem;
+}
+
+.sprints-page .breadcrumb-current {
+  color: #0f4c5c;
+  font-weight: 600;
+}
+
+.sprints-page .heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sprints-page .heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sprints-page .outline-action-btn,
+.sprints-page .primary-action-btn {
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.sprints-page .outline-action-btn {
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #0f4c5c;
+}
+
+.sprints-page .primary-action-btn {
+  background-color: #0f4c5c;
+  border: 1px solid #0f4c5c;
+  color: #ffffff;
+}
+
+.sprints-page .outline-action-btn:hover {
+  background-color: #f8fafc;
+  color: #0f4c5c;
+}
+
+.sprints-page .primary-action-btn:hover {
+  background-color: #0b3a46;
+  color: #ffffff;
+}
+
+.sprints-page .sprint-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.95fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.sprints-page .sprint-main-left,
+.sprints-page .sprint-main-right {
+  min-width: 0;
+}
+
+.sprints-page .metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: #d9f3f1;
+  color: #0f4c5c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+}
+
+.sprints-page .sprint-goal-card {
+  min-height: 190px;
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98)),
+    radial-gradient(circle at bottom right, rgba(15, 76, 92, 0.08), transparent 35%);
+}
+
+.sprints-page .goal-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #0f4c5c;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
+
+.sprints-page .goal-text {
+  max-width: 620px;
+  color: #1f2937;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.sprints-page .sprint-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.sprints-page .sprint-metric-card {
+  padding: 20px 22px;
+  min-height: 128px;
+}
+
+.sprints-page .sprint-metric-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.sprints-page .sprint-metric-title span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.sprints-page .trend-pill {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background-color: #dff7ef;
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.sprints-page .sprint-side-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.sprints-page .sprint-side-card {
+  padding: 22px 24px;
+}
+
+.sprints-page .progress-card {
+  min-height: 118px;
+}
+
+.sprints-page .time-card {
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sprints-page .side-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sprints-page .progress-percent {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f4c5c;
+}
+
+.sprints-page .sprint-progress-tight {
+  height: 10px;
+  margin-bottom: 12px;
+}
+
+.sprints-page .time-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.sprints-page .time-value {
+  font-family: 'Manrope', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.sprints-page .time-value span {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.sprints-page .time-pill {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sprints-page .mini-chart {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 6px;
+  margin-top: 26px;
+}
+
+.sprints-page .chart-bar {
+  display: inline-block;
+  width: 18px;
+  border-radius: 4px 4px 0 0;
+  background-color: #d9e2e5;
+}
+
+.sprints-page .chart-bar.short {
+  height: 16px;
+}
+
+.sprints-page .chart-bar.medium {
+  height: 22px;
+}
+
+.sprints-page .chart-bar.tall {
+  height: 30px;
+}
+
+.sprints-page .chart-bar.muted {
+  background-color: #e5ecef;
+}
+
+.sprints-page .chart-bar.accent {
+  background-color: #0f4c5c;
+}
+
+.sprints-page .status-badge.completed {
+  background-color: #dff7ef;
+  color: #0f766e;
+}
+
+.sprints-page .sprint-history-card {
+  padding: 20px 24px 12px;
+  position: relative;
+  z-index: 0;
+}
+
+.sprints-page .sprint-history-card .section-heading {
+  margin-bottom: 14px !important;
+}
+
+.sprints-page .sprint-history-table thead th {
+  font-size: 0.72rem;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sprints-page .sprint-history-table tbody td {
+  padding-top: 18px;
+  padding-bottom: 18px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sprints-page .success-rate-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sprints-page .success-rate-cell span {
+  min-width: 48px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.sprints-page .success-bar {
+  width: 100%;
+  max-width: 140px;
+  height: 6px;
+  border-radius: 999px;
+  background-color: #dbe4e7;
+  overflow: hidden;
+}
+
+.sprints-page .success-bar-fill {
+  height: 100%;
+  background-color: #0f4c5c;
+  border-radius: 999px;
+}
+
+@media (max-width: 1199.98px) {
+  .sprints-page .sprint-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sprints-page .sprint-main-right {
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .sprints-page .heading-row {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .sprints-page .sprint-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sprints-page .time-card-top {
+    flex-direction: column;
+  }
+
+  .sprints-page .success-rate-cell {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sprints-page .sprint-search-box {
+    width: 100%;
+  }
+}
