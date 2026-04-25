@@ -74,7 +74,7 @@
 
             <!-- Welcome section -->
             <section class="welcome-section">
-              <h1 class="welcome-title">Welcome back, Amit</h1>
+              <h1 class="welcome-title">Welcome back, {{ user.full_name if user else 'User' }}</h1>
               <p class="welcome-text">
                 Here's the latest overview for your workspace today.
               </p>
@@ -108,42 +108,21 @@
               </div>
 
               <div class="row g-4">
+                {% for project in projects %}
                 <div class="col-md-6 col-xl-3">
                   <div class="project-card">
                     <div class="project-icon"><i class="bi bi-laptop"></i></div>
-                    <h5>Quantum ERP</h5>
-                    <p>Infrastructure optimization for retail partners.</p>
-                    <span class="status-pill healthy">Healthy</span>
+                    <h5>{{ project.name }}</h5>
+                    <p>{{ project.description or 'No description.' }}</p>
+                    <span class="status-pill {{ 'healthy' if project.health_status == 'healthy' else 'risk' }}">
+                      {{ project.health_status | capitalize }}
+                    </span>
                   </div>
                 </div>
-
-                <div class="col-md-6 col-xl-3">
-                  <div class="project-card">
-                    <div class="project-icon">
-                      <i class="bi bi-star-fill"></i>
-                    </div>
-                    <h5>Starlight Mobile</h5>
-                    <p>Redesigning the guest checkout experience.</p>
-                    <span class="status-pill risk">At-Risk</span>
-                  </div>
-                </div>
-
-                <div class="col-md-6 col-xl-3">
-                  <div class="project-card">
-                    <div class="project-icon">
-                      <i class="bi bi-box-seam"></i>
-                    </div>
-                    <h5>Core Database</h5>
-                    <p>Migration to high-availability clusters.</p>
-                    <span class="status-pill healthy">Healthy</span>
-                  </div>
-                </div>
-
+                {% endfor %}
                 <div class="col-md-6 col-xl-3">
                   <div class="project-card new-project-card">
-                    <div class="project-icon">
-                      <i class="bi bi-plus-lg"></i>
-                    </div>
+                    <div class="project-icon"><i class="bi bi-plus-lg"></i></div>
                     <h5>New Project</h5>
                     <p>Create a new workspace for your team.</p>
                   </div>
@@ -173,37 +152,22 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>Update API Documentation</td>
-                          <td>Quantum ERP</td>
-                          <td>Oct 24</td>
-                          <td>
-                            <span class="status-badge in-progress"
-                              >In Progress</span
-                            >
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Finalize UI Kit Components</td>
-                          <td>Starlight Mobile</td>
-                          <td>Oct 26</td>
-                          <td>
-                            <span class="status-badge blocker">Blocker</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Database Indexing Review</td>
-                          <td>Core Database</td>
-                          <td>Oct 28</td>
-                          <td><span class="status-badge todo">To Do</span></td>
-                        </tr>
-                        <tr>
-                          <td>Stakeholder Sprint Review</td>
-                          <td>Quantum ERP</td>
-                          <td>Oct 30</td>
-                          <td><span class="status-badge todo">To Do</span></td>
-                        </tr>
-                      </tbody>
+                        <tbody>
+                          {% for task in tasks %}
+                          <tr>
+                            <td>{{ task.title }}</td>
+                            <td>{{ task.project.name }}</td>
+                            <td>{{ task.due_date.strftime('%b %d') if task.due_date else 'N/A' }}</td>
+                            <td>
+                              <span class="status-badge {{ task.status | replace('_', '-') }}">
+                                {{ task.status | replace('_', ' ') | title }}
+                              </span>
+                            </td>
+                          </tr>
+                          {% else %}
+                          <tr><td colspan="4" class="text-center text-muted">No tasks assigned.</td></tr>
+                          {% endfor %}
+                        </tbody>
                     </table>
                   </div>
                 </div>
