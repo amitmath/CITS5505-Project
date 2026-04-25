@@ -8,17 +8,16 @@
       </div>
 
       <nav class="nav flex-column sidebar-nav">
-        <!-- Use Flask routes instead of # -->
-        <a href="{{ url_for('dashboard') }}" class="nav-link active">
+        <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
           <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard
         </a>
-        <a href="#" class="nav-link">
+        <a href="{{ url_for('sprints') }}" class="nav-link {% if request.endpoint == 'sprints' %}active{% endif %}">
           <i class="bi bi-flag me-2"></i> Sprints
         </a>
-        <a href="#" class="nav-link sub-link">
+        <a href="{{ url_for('sprints') }}#health" class="nav-link sub-link">
           <i class="bi bi-activity me-2"></i> Sprint Health
         </a>
-        <a href="#" class="nav-link">
+        <a href="{{ url_for('project') }}" class="nav-link {% if request.endpoint == 'project' %}active{% endif %}">
           <i class="bi bi-folder me-2"></i> Projects
         </a>
         <a href="#" class="nav-link">

@@ -48,6 +48,11 @@ def create_app():
         tasks = Task.query.filter_by(assignee_id=user.id).all() if user else []
         return render_template("dashboard.html", user=user, projects=projects, tasks=tasks)
 
+    # Route for sprints page
+    @app.route("/sprints")
+    def sprints():
+        return render_template("sprints.html")
+
     # Route for project page
     @app.route("/project")
     def project():
