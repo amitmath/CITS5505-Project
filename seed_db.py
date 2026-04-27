@@ -1,6 +1,7 @@
 from app import create_app, db
 from app.models import User, Project, Task
 from datetime import date
+from werkzeug.security import generate_password_hash
 
 app = create_app()
 # this file is added to populate some test data into the database. 
@@ -20,7 +21,7 @@ with app.app_context():
     user1 = User(
         full_name="Liam Thompson",
         email="liam.thompson@example.com",
-        password_hash="hashed_pw",
+        password_hash=generate_password_hash("password123"),
         title="Project Lead",
         location="Perth, Australia",
         timezone="Australia/Perth",
@@ -30,7 +31,7 @@ with app.app_context():
     user2 = User(
         full_name="Olivia Walker",
         email="olivia.walker@example.com",
-        password_hash="hashed_pw",
+        password_hash=generate_password_hash("password123"),
         title="UI/UX Designer",
         location="Sydney, Australia",
         timezone="Australia/Sydney",
@@ -40,7 +41,7 @@ with app.app_context():
     user3 = User(
         full_name="Noah Williams",
         email="noah.williams@example.com",
-        password_hash="hashed_pw",
+        password_hash=generate_password_hash("password123"),
         title="Backend Developer",
         location="Melbourne, Australia",
         timezone="Australia/Melbourne",

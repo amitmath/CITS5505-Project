@@ -82,14 +82,112 @@
                         <h2 class="auth-title">Get started.</h2>
                         <p class="auth-subtitle">Manage your sprints with an agile edge.</p>
 
+                        {% if errors %}
+                        <div class="alert alert-danger auth-alert" role="alert">
+                            {% for error in errors %}
+                            <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
                         <div class="switch-tabs">
-                        <button class="btn active-tab">Register</button>
-                        <button class="btn inactive-tab">Log In</button>
+                        <button
+                            type="button"
+                            class="btn {% if active_form != 'login' %}active-tab{% else %}inactive-tab{% endif %}"
+                            data-auth-tab="register"
+                        >
+                            Register
+                        </button>
+                        <button
+                            type="button"
+                            class="btn {% if active_form == 'login' %}active-tab{% else %}inactive-tab{% endif %}"
+                            data-auth-tab="login"
+                        >
+                            Log In
+                        </button>
                         </div>
 
-                        <form>
+                        <form
+                            method="post"
+                            class="auth-form {% if active_form == 'login' %}d-none{% endif %}"
+                            data-auth-form="register"
+                        >
+                        <input type="hidden" name="form_type" value="register">
+
+                        <label class="form-label">FULL NAME</label>
+                        <input
+                            type="text"
+                            name="full_name"
+                            class="form-control small-input mb-3"
+                            placeholder="Your name"
+                            value="{{ form_data.get('full_name', '') if active_form == 'register' else '' }}"
+                            required
+                        >
+
                         <label class="form-label">EMAIL</label>
-                        <input type="email" class="form-control small-input mb-3" placeholder="name@company.com">
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control small-input mb-3"
+                            placeholder="name@company.com"
+                            value="{{ form_data.get('email', '') if active_form == 'register' else '' }}"
+                            required
+                        >
+
+                        <label class="form-label">PASSWORD</label>
+                        <div class="password-wrap mb-3">
+                            <input
+                                type="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="Minimum 6 characters"
+                                required
+                            >
+                            <button type="button" class="password-toggle">
+                            <i class="bi bi-eye-slash"></i>
+                            </button>
+                        </div>
+
+                        <div class="password-wrap mb-3">
+                            <input
+                                type="password"
+                                name="confirm_password"
+                                class="form-control"
+                                placeholder="Confirm password"
+                                required
+                            >
+                            <button type="button" class="password-toggle">
+                            <i class="bi bi-eye-slash"></i>
+                            </button>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="terms" required>
+                            <label class="form-check-label">
+                            I agree to Terms & Privacy
+                            </label>
+                        </div>
+
+                        <button type="submit" class="button-create btn btn-main w-100 mb-3">Create APM Workspace</button>
+
+                        </form>
+
+                        <form
+                            method="post"
+                            class="auth-form {% if active_form != 'login' %}d-none{% endif %}"
+                            data-auth-form="login"
+                        >
+                        <input type="hidden" name="form_type" value="login">
+
+                        <label class="form-label">EMAIL</label>
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control small-input mb-3"
+                            placeholder="name@company.com"
+                            value="{{ form_data.get('email', '') if active_form == 'login' else '' }}"
+                            required
+                        >
 
                         <div class="d-flex justify-content-between">
                             <label class="form-label">PASSWORD</label>
@@ -97,20 +195,19 @@
                         </div>
 
                         <div class="password-wrap mb-3">
-                            <input type="password" id="passwordField" class="form-control" placeholder="••••••••">
+                            <input
+                                type="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="••••••••"
+                                required
+                            >
                             <button type="button" class="password-toggle">
                             <i class="bi bi-eye-slash"></i>
                             </button>
                         </div>
 
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox">
-                            <label class="form-check-label">
-                            I agree to Terms & Privacy
-                            </label>
-                        </div>
-
-                        <button type="button" id="mainBtn" class="button-create btn btn-main w-100 mb-3" onclick="goToDashboard()">Create APM Workspace</button>
+                        <button type="submit" class="button-create btn btn-main w-100 mb-3">Log In to APM Workspace</button>
 
                         </form>
                     </div>
@@ -121,36 +218,36 @@
         </div>
 
         <script>
-            const tabs = document.querySelectorAll('.switch-tabs .btn');
-            const mainBtn = document.getElementById('mainBtn');
+            const tabs = document.querySelectorAll('[data-auth-tab]');
+            const forms = document.querySelectorAll('[data-auth-form]');
 
             tabs.forEach(btn => {
             btn.addEventListener('click', function () {
-
-                // reset all tabs
                 tabs.forEach(b => {
                 b.classList.remove('active-tab');
                 b.classList.add('inactive-tab');
                 });
 
-                // activate clicked tab
                 this.classList.add('active-tab');
                 this.classList.remove('inactive-tab');
 
-                // update button text
-                if (this.textContent.trim() === "Log In") {
-                mainBtn.textContent = "Log In to APM Workspace";
-                } else {
-                mainBtn.textContent = "Create APM Workspace";
-                }
+                const selectedForm = this.dataset.authTab;
+                forms.forEach(form => {
+                form.classList.toggle('d-none', form.dataset.authForm !== selectedForm);
+                });
+            });
+            });
 
+            document.querySelectorAll('.password-toggle').forEach(button => {
+            button.addEventListener('click', function () {
+                const input = this.closest('.password-wrap').querySelector('input');
+                const icon = this.querySelector('i');
+                const showPassword = input.type === 'password';
+                input.type = showPassword ? 'text' : 'password';
+                icon.classList.toggle('bi-eye', showPassword);
+                icon.classList.toggle('bi-eye-slash', !showPassword);
             });
             });
-            
-            // go to dashbaord page
-            function goToDashboard() {
-                window.location.href = "{{ url_for('dashboard') }}";
-            }
         </script>
     </body>
 </html>
