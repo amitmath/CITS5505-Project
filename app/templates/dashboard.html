@@ -18,7 +18,10 @@
   <div class="col-lg-8">
     <div class="summary-card large-card">
       <p class="card-label">NUMBER OF ACTIVE PROJECTS</p>
-      <h2 class="summary-number">4 <span>Active Projects</span></h2>
+      <h2 class="summary-number">
+        {{ active_project_count }}
+        <span>Active {{ 'Project' if active_project_count == 1 else 'Projects' }}</span>
+      </h2>
     </div>
   </div>
 

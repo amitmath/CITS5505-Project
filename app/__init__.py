@@ -126,8 +126,16 @@ def create_app():
 
         user = g.user
         projects = Project.query.filter_by(status="active").all()
+        # Used by the dashboard summary card to show the live project count.
+        active_project_count = len(projects)
         tasks = Task.query.filter_by(assignee_id=user.id).all() if user else []
-        return render_template("dashboard.html", user=user, projects=projects, tasks=tasks)
+        return render_template(
+            "dashboard.html",
+            user=user,
+            projects=projects,
+            active_project_count=active_project_count,
+            tasks=tasks,
+        )
 
     # Route for sprints page
     @app.route("/sprints")
