@@ -144,6 +144,26 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         return render_template("project.html")
+    
+    # Route for user profile page
+    @app.route("/profile", methods=["GET", "POST"])
+    def profile():
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+        
+        user = g.user
+        tasks = Task.query.filter_by(assignee_id=user.id).all()
+        success = False
+
+        if request.method == "POST":
+            user.full_name = request.form.get("full_name", user.full_name).strip()
+            user.title = request.form.get("title", user.title)
+            user.location = request.form.get("location", user.location)
+            user.bio = request.form.get("bio", user.bio)
+            db.session.commit()
+            success = True
+
+        return render_template("profile.html", user=user, tasks=tasks, success=success)
 
     with app.app_context():
         db.create_all()
