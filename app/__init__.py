@@ -130,6 +130,9 @@ def create_app():
         # Used by the dashboard summary card to show the live project count.
         active_project_count = len(projects)
         tasks = Task.query.filter_by(assignee_id=user.id).all() if user else []
+        # Show the user's assigned tasks in due-date order on the dashboard.
+        tasks = sorted(tasks, key=lambda task: (task.due_date is None, task.due_date or date.max))
+        assigned_task_count = len(tasks)
 
         # Default values keep the dashboard working even when no sprint exists yet.
         sprint_summary = {
@@ -189,6 +192,7 @@ def create_app():
             projects=projects,
             active_project_count=active_project_count,
             sprint_summary=sprint_summary,
+            assigned_task_count=assigned_task_count,
             tasks=tasks,
         )
 
