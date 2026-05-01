@@ -28,7 +28,7 @@
   <div class="col-lg-4">
     <div class="summary-card velocity-card">
       <i class="bi bi-speedometer2 velocity-icon"></i>
-      <h2 class="velocity-number">84%</h2>
+      <h2 class="velocity-number">{{ sprint_summary.velocity_percent }}%</h2>
       <p class="mb-0">Sprint Velocity</p>
     </div>
   </div>
@@ -108,20 +108,21 @@
     <div class="health-card">
       <h2 class="section-title">Sprint Health At a Glance</h2>
       <div class="d-flex justify-content-between small text-muted mb-3">
-        <span>Active Sprint 12</span>
-        <span>4 days left</span>
+        <span>{{ sprint_summary.name }}</span>
+        <span>{{ sprint_summary.days_left_label }}</span>
       </div>
 
+      <!-- Dashboard sprint health is calculated in the Flask route from live sprint tasks. -->
       <div class="progress sprint-progress mb-4">
-        <div class="progress-bar completed-bar" style="width: 60%"></div>
-        <div class="progress-bar progress-bar-middle" style="width: 25%"></div>
-        <div class="progress-bar blocker-bar" style="width: 15%"></div>
+        <div class="progress-bar completed-bar" style="width: {{ sprint_summary.completed_percent }}%"></div>
+        <div class="progress-bar progress-bar-middle" style="width: {{ sprint_summary.in_progress_percent }}%"></div>
+        <div class="progress-bar blocker-bar" style="width: {{ sprint_summary.blocker_percent }}%"></div>
       </div>
 
       <ul class="health-list list-unstyled mb-4">
-        <li><span>Completed</span><strong>24</strong></li>
-        <li><span>In Progress</span><strong>08</strong></li>
-        <li><span>Blockers</span><strong>03</strong></li>
+        <li><span>Completed</span><strong>{{ sprint_summary.completed }}</strong></li>
+        <li><span>In Progress</span><strong>{{ sprint_summary.in_progress }}</strong></li>
+        <li><span>Blockers</span><strong>{{ sprint_summary.blockers }}</strong></li>
       </ul>
 
       <button class="btn btn-outline-secondary w-100">
