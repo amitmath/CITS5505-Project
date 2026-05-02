@@ -156,7 +156,9 @@ def create_app():
         success = False
 
         if request.method == "POST":
-            user.full_name = request.form.get("full_name", user.full_name).strip()
+            full_name = request.form.get("full_name", "").strip()
+            if full_name:
+                user.full_name = full_name
             user.title = request.form.get("title", user.title)
             user.location = request.form.get("location", user.location)
             user.bio = request.form.get("bio", user.bio)
