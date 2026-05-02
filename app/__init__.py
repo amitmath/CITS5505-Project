@@ -1,5 +1,7 @@
 import re
 
+import os
+from werkzeug.utils import secure_filename
 from flask import Flask, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -162,6 +164,12 @@ def create_app():
             user.title = request.form.get("title", user.title)
             user.location = request.form.get("location", user.location)
             user.bio = request.form.get("bio", user.bio)
+            avatar = request.files.get("avatar")
+            if avatar and avatar.filename:
+                filename = secure_filename(f"user_{user.id}_{avatar.filename}")
+                upload_path = os.path.join("app", "static", "uploads", filename)
+                avatar.save(upload_path)
+                user.avatar_url = url_for("static", filename=f"uploads/{filename}")
             db.session.commit()
             success = True
 
