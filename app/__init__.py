@@ -1,4 +1,5 @@
 import re
+from datetime import date
 
 from flask import Flask, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -27,7 +28,7 @@ def create_app():
 
     # Import models so SQLAlchemy and migrations can detect them
     from app import models
-    from app.models import Project, Task, User
+    from app.models import Project, Sprint, Task, User
 
     # Register API blueprint
     from app.routes import api
@@ -126,8 +127,74 @@ def create_app():
 
         user = g.user
         projects = Project.query.filter_by(status="active").all()
+        # Used by the dashboard summary card to show the live project count.
+        active_project_count = len(projects)
         tasks = Task.query.filter_by(assignee_id=user.id).all() if user else []
-        return render_template("dashboard.html", user=user, projects=projects, tasks=tasks)
+        # Show the user's assigned tasks in due-date order on the dashboard.
+        tasks = sorted(tasks, key=lambda task: (task.due_date is None, task.due_date or date.max))
+        assigned_task_count = len(tasks)
+
+        # Default values keep the dashboard working even when no sprint exists yet.
+        sprint_summary = {
+            "name": "No active sprint",
+            "days_left_label": "No sprint scheduled",
+            "velocity_percent": 0,
+            "completed": 0,
+            "in_progress": 0,
+            "blockers": 0,
+            "completed_percent": 0,
+            "in_progress_percent": 0,
+            "blocker_percent": 0,
+        }
+
+        # Find the current active sprint and calculate the dashboard health numbers.
+        active_sprint = Sprint.query.filter_by(status="active").order_by(Sprint.end_date.asc()).first()
+        if active_sprint:
+            sprint_tasks = Task.query.filter_by(sprint_id=active_sprint.id).all()
+            total_tasks = len(sprint_tasks)
+            completed_count = sum(1 for task in sprint_tasks if task.status == "done")
+            in_progress_count = sum(1 for task in sprint_tasks if task.status == "in_progress")
+            blocker_count = sum(1 for task in sprint_tasks if task.status == "blocker")
+
+            if active_sprint.total_story_points:
+                velocity_percent = round(
+                    (active_sprint.completed_story_points / active_sprint.total_story_points) * 100
+                )
+            else:
+                velocity_percent = round((completed_count / total_tasks) * 100) if total_tasks else 0
+
+            def task_percent(count):
+                return round((count / total_tasks) * 100) if total_tasks else 0
+
+            days_left = (active_sprint.end_date - date.today()).days
+            if days_left < 0:
+                days_left_label = "Sprint ended"
+            elif days_left == 1:
+                days_left_label = "1 day left"
+            else:
+                days_left_label = f"{days_left} days left"
+
+            sprint_summary = {
+                "name": active_sprint.name,
+                "days_left_label": days_left_label,
+                "velocity_percent": velocity_percent,
+                "completed": completed_count,
+                "in_progress": in_progress_count,
+                "blockers": blocker_count,
+                "completed_percent": task_percent(completed_count),
+                "in_progress_percent": task_percent(in_progress_count),
+                "blocker_percent": task_percent(blocker_count),
+            }
+
+        return render_template(
+            "dashboard.html",
+            user=user,
+            projects=projects,
+            active_project_count=active_project_count,
+            sprint_summary=sprint_summary,
+            assigned_task_count=assigned_task_count,
+            tasks=tasks,
+        )
 
     # Route for sprints page
     @app.route("/sprints")
