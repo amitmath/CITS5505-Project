@@ -13,39 +13,7 @@
 {% set topbar_title = 'Projects' %}
 {% set topbar_search_placeholder = 'Search projects...' %}
 {% include "components/topbar.html" %}
-
-{# Temporary fallback data so page still shows projects if backend is empty #}
-
-{% set fallback_projects = [
-  {
-    'name': 'Quantum ERP',
-    'description': 'Modernizing the core resource planning architecture for global operations.',
-    'health_status': 'healthy',
-    'progress': 74,
-    'due_label': 'Due Oct 12',
-    'icon': 'bi-stars',
-    'members': ['D', 'M']
-  },
-  {
-    'name': 'Starlight Mobile',
-    'description': 'Consumer-facing mobile application for real-time portfolio tracking.',
-    'health_status': 'risk',
-    'progress': 32,
-    'due_label': 'Delayed',
-    'icon': 'bi-phone',
-    'members': ['A', 'B']
-  },
-  {
-    'name': 'Core Database',
-    'description': 'Optimizing SQL cluster performance and implementing edge-caching.',
-    'health_status': 'healthy',
-    'progress': 91,
-    'due_label': 'Due Sept 28',
-    'icon': 'bi-database',
-    'members': ['R']
-  }
-] %}
-{% set project_items = projects if projects is defined and projects else fallback_projects %}
+{% set project_items = projects or [] %}
 
 <section class="projects-hero project-fade project-delay-1">
   <div>
@@ -55,66 +23,80 @@
       and sprint health across the workspace.
     </p>
   </div>
-
-  <div class="team-stack" aria-label="Workspace members">
-    <span class="team-avatar avatar-green"><i class="bi bi-person-fill"></i></span>
-    <span class="team-avatar avatar-red"><i class="bi bi-person-fill"></i></span>
-    <span class="team-avatar avatar-blue"><i class="bi bi-person-fill"></i></span>
-    <span class="team-avatar avatar-more">+12</span>
-  </div>
 </section>
 
-{# Displaying top 3 active projects #}
-
 <section class="project-grid mb-4">
-  {% for project in project_items[:3] %}
-  {% set status = project.health_status if project.health_status is defined else project['health_status'] %}
-  {% set progress_value = project.progress if project.progress is defined else project['progress'] %}
-  {% set project_name = project.name if project.name is defined else project['name'] %}
-  {% set project_description = project.description if project.description is defined else project['description'] %}
-  {% set due_label = project.due_label if project.due_label is defined else project['due_label'] %}
-  {% set icon_name = project.icon if project.icon is defined else project['icon'] %}
-  {% set members = project.members if project.members is defined else project['members'] %}
 
-  {# Individual project card #}
+  {% if project_items and project_items|length > 0 %}
 
-  <article class="project-page-card project-fade project-delay-{{ loop.index + 1 }}">
-    <div class="project-card-top">
-      <div class="project-page-icon {{ 'icon-risk' if status != 'healthy' else 'icon-healthy' }}">
-        <i class="bi {{ icon_name | default('bi-kanban') }}"></i>
-      </div>
-      <span class="project-status {{ 'healthy' if status == 'healthy' else 'risk' }}">
-        {{ 'Healthy' if status == 'healthy' else 'At-Risk' }}
-      </span>
+    {% for project in project_items[:3] %}
+
+      {% set status = project.health_status if project.health_status is defined else project['health_status'] %}
+      {% set progress_value = project.progress_percent if project.progress_percent is defined else project['progress_percent'] %}
+      {% set project_name = project.name if project.name is defined else project['name'] %}
+      {% set project_description = project.description if project.description is defined else project['description'] %}
+
+      {# Safe defaults for fields not in DB #}
+      {% set due_label = 'No deadline' %}
+      {% set icon_name = 'bi-kanban' %}
+      {% set members = [] %}
+
+      <article class="project-page-card project-fade project-delay-{{ loop.index + 1 }}">
+        <div class="project-card-top">
+          <div class="project-page-icon {{ 'icon-risk' if status != 'healthy' else 'icon-healthy' }}">
+            <i class="bi {{ icon_name }}"></i>
+          </div>
+          <span class="project-status {{ 'healthy' if status == 'healthy' else 'risk' }}">
+            {{ 'Healthy' if status == 'healthy' else 'At-Risk' }}
+          </span>
+        </div>
+
+        <h2 class="project-page-title">{{ project_name }}</h2>
+        <p class="project-page-description">
+          {{ project_description or 'No description available.' }}
+        </p>
+
+        <div class="project-progress-row">
+          <span>Progress</span>
+          <strong class="{{ 'text-risk' if status != 'healthy' else '' }}">
+            {{ progress_value }}%
+          </strong>
+        </div>
+
+        <div class="project-progress-track" aria-label="{{ project_name }} progress">
+          <div
+            class="project-progress-fill {{ 'progress-risk' if status != 'healthy' else 'progress-healthy' }}"
+            style="width: {{ progress_value }}%;"
+          ></div>
+        </div>
+
+        <div class="project-card-footer">
+          <div class="member-stack">
+            {% for member in members[:2] %}
+              <span class="member-avatar member-{{ loop.index }}">{{ member }}</span>
+            {% endfor %}
+          </div>
+          <span class="project-due {{ 'due-risk' if status != 'healthy' else '' }}">
+            {{ due_label }}
+          </span>
+        </div>
+      </article>
+
+    {% endfor %}
+
+  {% else %}
+
+    <div class="no-projects-placeholder project-fade project-delay-2">
+      <i class="bi bi-folder-x"></i>
+      <h2>No active projects found</h2>
+      <p>
+        It looks like there are no active projects in your workspace.
+        Start by creating a new project to track your team's work and progress.
+      </p>
     </div>
 
-    <h2 class="project-page-title">{{ project_name }}</h2>
-    <p class="project-page-description">{{ project_description or 'No description available.' }}</p>
+  {% endif %}
 
-    <div class="project-progress-row">
-      <span>Progress</span>
-      <strong class="{{ 'text-risk' if status != 'healthy' else '' }}">{{ progress_value }}%</strong>
-    </div>
-
-    {# Progress bar based on project completion % #}
-
-    <div class="project-progress-track" aria-label="{{ project_name }} progress">
-      <div
-        class="project-progress-fill {{ 'progress-risk' if status != 'healthy' else 'progress-healthy' }}"
-        style="width: {{ progress_value }}%;"
-      ></div>
-    </div>
-
-    <div class="project-card-footer">
-      <div class="member-stack">
-        {% for member in members[:2] %}
-        <span class="member-avatar member-{{ loop.index }}">{{ member }}</span>
-        {% endfor %}
-      </div>
-      <span class="project-due {{ 'due-risk' if status != 'healthy' else '' }}">{{ due_label }}</span>
-    </div>
-  </article>
-  {% endfor %}
 </section>
 
 {# Summary section (performance + sprint details) #}
