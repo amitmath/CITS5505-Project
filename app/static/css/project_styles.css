@@ -767,3 +767,19 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.project-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.project-page-card {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.project-card-link:hover .project-page-card {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.12);
+}

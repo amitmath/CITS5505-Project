@@ -4,7 +4,7 @@ from datetime import date, datetime
 import os
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
-from flask import Flask, flash, g, redirect, render_template, request, session, url_for
+from flask import Flask, app, flash, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -263,6 +263,15 @@ def create_app():
 
         flash("Project created successfully.", "success")
         return redirect(url_for("project"))
+    
+    @app.route("/projects/<int:project_id>")
+    def project_detail(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+
+        return render_template("project_detail.html", project=project)
     
 
     # Route for user profile page
