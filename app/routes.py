@@ -1,5 +1,6 @@
-from flask import Blueprint, jsonify
-from app.models import User
+from flask import Blueprint, jsonify, render_template
+from sqlalchemy import func
+from app.models import Project, User
 
 api = Blueprint("api", __name__)
 

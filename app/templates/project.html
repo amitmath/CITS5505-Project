@@ -29,17 +29,17 @@
 
   {% if project_items and project_items|length > 0 %}
 
-    {% for project in project_items[:3] %}
+  {% for project in project_items[:3] %}
 
-      {% set status = project.health_status if project.health_status is defined else project['health_status'] %}
-      {% set progress_value = project.progress_percent if project.progress_percent is defined else project['progress_percent'] %}
-      {% set project_name = project.name if project.name is defined else project['name'] %}
-      {% set project_description = project.description if project.description is defined else project['description'] %}
+    {% set status = project.health_status or 'healthy' %}
+    {% set progress_value = project.progress_percent or 0 %}
+    {% set project_name = project.name %}
+    {% set project_description = project.description %}
 
-      {# Safe defaults for fields not in DB #}
-      {% set due_label = 'No deadline' %}
-      {% set icon_name = 'bi-kanban' %}
-      {% set members = [] %}
+    {# Safe defaults for fields not in DB yet #}
+    {% set due_label = 'No deadline' %}
+    {% set icon_name = 'bi-kanban' %}
+    {% set members = [] %}
 
       <article class="project-page-card project-fade project-delay-{{ loop.index + 1 }}">
         <div class="project-card-top">
