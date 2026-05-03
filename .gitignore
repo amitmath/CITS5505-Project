@@ -15,3 +15,7 @@ server-*.log
 agilepm.db
 *.db
 *.db-journal
+
+# Uploaded profile images
+app/static/uploads/*
+!app/static/uploads/.gitkeep
