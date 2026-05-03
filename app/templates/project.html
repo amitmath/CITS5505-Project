@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Projects | Agile PM{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/project_styles.css') }}" />
+{% endblock %}
+
+{% block content %}
+
+{# Projects page layout - shows active projects and summary info #}
+
+{% set topbar_title = 'Projects' %}
+{% set topbar_search_placeholder = 'Search projects...' %}
+{% include "components/topbar.html" %}
+
+{# Temporary fallback data so page still shows projects if backend is empty #}
+
+{% set fallback_projects = [
+  {
+    'name': 'Quantum ERP',
+    'description': 'Modernizing the core resource planning architecture for global operations.',
+    'health_status': 'healthy',
+    'progress': 74,
+    'due_label': 'Due Oct 12',
+    'icon': 'bi-stars',
+    'members': ['D', 'M']
+  },
+  {
+    'name': 'Starlight Mobile',
+    'description': 'Consumer-facing mobile application for real-time portfolio tracking.',
+    'health_status': 'risk',
+    'progress': 32,
+    'due_label': 'Delayed',
+    'icon': 'bi-phone',
+    'members': ['A', 'B']
+  },
+  {
+    'name': 'Core Database',
+    'description': 'Optimizing SQL cluster performance and implementing edge-caching.',
+    'health_status': 'healthy',
+    'progress': 91,
+    'due_label': 'Due Sept 28',
+    'icon': 'bi-database',
+    'members': ['R']
+  }
+] %}
+{% set project_items = projects if projects is defined and projects else fallback_projects %}
+
+<section class="projects-hero project-fade project-delay-1">
+  <div>
+    <h1 class="projects-hero-title">Active Projects</h1>
+    <p class="projects-hero-text">
+      Overview of ongoing enterprise initiatives, resource allocation,
+      and sprint health across the workspace.
+    </p>
+  </div>
+
+  <div class="team-stack" aria-label="Workspace members">
+    <span class="team-avatar avatar-green"><i class="bi bi-person-fill"></i></span>
+    <span class="team-avatar avatar-red"><i class="bi bi-person-fill"></i></span>
+    <span class="team-avatar avatar-blue"><i class="bi bi-person-fill"></i></span>
+    <span class="team-avatar avatar-more">+12</span>
+  </div>
+</section>
+
+{# Displaying top 3 active projects #}
+
+<section class="project-grid mb-4">
+  {% for project in project_items[:3] %}
+  {% set status = project.health_status if project.health_status is defined else project['health_status'] %}
+  {% set progress_value = project.progress if project.progress is defined else project['progress'] %}
+  {% set project_name = project.name if project.name is defined else project['name'] %}
+  {% set project_description = project.description if project.description is defined else project['description'] %}
+  {% set due_label = project.due_label if project.due_label is defined else project['due_label'] %}
+  {% set icon_name = project.icon if project.icon is defined else project['icon'] %}
+  {% set members = project.members if project.members is defined else project['members'] %}
+
+  {# Individual project card #}
+
+  <article class="project-page-card project-fade project-delay-{{ loop.index + 1 }}">
+    <div class="project-card-top">
+      <div class="project-page-icon {{ 'icon-risk' if status != 'healthy' else 'icon-healthy' }}">
+        <i class="bi {{ icon_name | default('bi-kanban') }}"></i>
+      </div>
+      <span class="project-status {{ 'healthy' if status == 'healthy' else 'risk' }}">
+        {{ 'Healthy' if status == 'healthy' else 'At-Risk' }}
+      </span>
+    </div>
+
+    <h2 class="project-page-title">{{ project_name }}</h2>
+    <p class="project-page-description">{{ project_description or 'No description available.' }}</p>
+
+    <div class="project-progress-row">
+      <span>Progress</span>
+      <strong class="{{ 'text-risk' if status != 'healthy' else '' }}">{{ progress_value }}%</strong>
+    </div>
+
+    {# Progress bar based on project completion % #}
+
+    <div class="project-progress-track" aria-label="{{ project_name }} progress">
+      <div
+        class="project-progress-fill {{ 'progress-risk' if status != 'healthy' else 'progress-healthy' }}"
+        style="width: {{ progress_value }}%;"
+      ></div>
+    </div>
+
+    <div class="project-card-footer">
+      <div class="member-stack">
+        {% for member in members[:2] %}
+        <span class="member-avatar member-{{ loop.index }}">{{ member }}</span>
+        {% endfor %}
+      </div>
+      <span class="project-due {{ 'due-risk' if status != 'healthy' else '' }}">{{ due_label }}</span>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+{# Summary section (performance + sprint details) #}
+
+<section class="project-insight-grid">
+  <article class="performance-card project-fade project-delay-5">
+    <div class="performance-copy">
+      <p class="insight-label">Performance Pulse</p>
+      <h2>
+          Overall Efficiency is up<br />
+          by {{ efficiency_change | default('12.4') }}%
+      </h2>
+      <p>
+           Your teams have completed {{ completed_tasks | default('48') }} tasks in the last 48 hours.
+        {{ top_project_name | default('Quantum ERP') }} is leading the workspace in throughput speed.
+      </p>
+    </div>
+
+    <div class="mini-chart" aria-label="Performance bar chart">
+      <span style="height: 24%; opacity: .18;"></span>
+      <span style="height: 40%; opacity: .28;"></span>
+      <span style="height: 34%; opacity: .20;"></span>
+      <span style="height: 62%; opacity: .55;"></span>
+      <span style="height: 88%; opacity: 1;"></span>
+    </div>
+  </article>
+
+  <article class="velocity-panel project-fade project-delay-6">
+    <div class="velocity-panel-icon">
+      <i class="bi bi-lightning-charge-fill"></i>
+    </div>
+    <h2>Sprint Velocity</h2>
+    <p>
+      The current sprint capacity is {{ sprint_velocity | default('85') }}% utilized.
+      Consider reassigning tasks from {{ at_risk_project_name | default('Starlight Mobile') }}.
+    </p>
+    <a href="{{ url_for('sprints') }}" class="review-capacity-btn">Review Capacity</a>
+  </article>
+</section>
+{% endblock %}
