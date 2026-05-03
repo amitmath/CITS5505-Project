@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }} | Project{% endblock %}
+
+{% block content %}
+{% set topbar_title = 'Projects' %} 
+{% set topbar_search_placeholder = 'Search projects...' %} 
+{% include "components/topbar.html" %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/project_detail.css') }}"
+/>
+<div class="project-detail-container">
+
+  <div class="project-header">
+    <h1>{{ project.name }}</h1>
+
+    <div class="project-actions">
+      <a href="" class="btn-edit">
+        Edit
+      </a>
+
+      <form method="POST" action="">
+        <button type="submit" class="btn-delete">
+          Delete
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <p class="project-description">
+    {{ project.description or "No description available." }}
+  </p>
+
+  <div class="project-meta">
+    <div><strong>Status:</strong> {{ project.status }}</div>
+    <div><strong>Health:</strong> {{ project.health_status }}</div>
+    <div><strong>Progress:</strong> {{ project.progress_percent }}%</div>
+    <div><strong>Created:</strong> {{ project.created_at.strftime('%Y-%m-%d') }}</div>
+  </div>
+
+</div>
+{% endblock %}

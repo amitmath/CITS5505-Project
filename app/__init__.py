@@ -270,10 +270,8 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         project = Project.query.get_or_404(project_id)
-
         return render_template("project_detail.html", project=project)
     
-
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
     def profile():

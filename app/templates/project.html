@@ -4,10 +4,13 @@ block extra_css %}
   rel="stylesheet"
   href="{{ url_for('static', filename='css/project_styles.css') }}"
 />
-{% endblock %} {% block content %} {# Projects page layout - shows active
-projects and summary info #} {% set topbar_title = 'Projects' %} {% set
-topbar_search_placeholder = 'Search projects...' %} {% include
-"components/topbar.html" %} {% set project_items = projects or [] %}
+{% endblock %} 
+{% block content %} 
+{# Projects page layout - shows active projects and summary info #} 
+{% set topbar_title = 'Projects' %} 
+{% set topbar_search_placeholder = 'Search projects...' %} 
+{% include "components/topbar.html" %} 
+{% set project_items = projects or [] %}
 
 <section class="projects-hero project-fade project-delay-1">
   <div>
