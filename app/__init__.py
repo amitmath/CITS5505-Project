@@ -1,10 +1,10 @@
 import re
-from datetime import date
+from datetime import date, datetime
 
 import os
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
-from flask import Flask, g, redirect, render_template, request, session, url_for
+from flask import Flask, flash, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -229,6 +229,36 @@ def create_app():
 
         return render_template("project.html", projects=projects)
     
+    @app.route("/projects/create", methods=["POST"])
+    def create_project():
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        name = request.form.get("name", "").strip()
+        description = request.form.get("description", "").strip()
+        status = request.form.get("status", "active").strip()
+
+        if not name:
+            flash("Project name is required.", "error")
+            return redirect(url_for("project"))
+
+        new_project = Project(
+            name=name,
+            description=description,
+            status=status,
+            health_status="healthy",
+            progress_percent=0,
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow()
+        )
+
+        db.session.add(new_project)
+        db.session.commit()
+
+        flash("Project created successfully.", "success")
+        return redirect(url_for("project"))
+    
+
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
     def profile():

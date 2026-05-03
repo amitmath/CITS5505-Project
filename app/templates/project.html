@@ -150,7 +150,7 @@ topbar_search_placeholder = 'Search projects...' %} {% include
       </button>
     </div>
 
-    <form method="POST" action="">
+    <form method="POST" action="{{ url_for('create_project') }}">
       <div class="project-form-row">
         <div class="project-form-group project-name-field">
           <label for="projectName">Project Name</label>
