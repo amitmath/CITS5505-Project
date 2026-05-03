@@ -269,6 +269,7 @@ def create_app():
             return round((completed_points / total_points) * 100, 1) if total_points else 0
 
         current_sprint = {
+            "id": None,
             "project_name": "No project selected",
             "title": "No Active Sprint",
             "goal": "No active sprint has been created yet.",
@@ -288,6 +289,7 @@ def create_app():
                 active_sprint.total_story_points,
             )
             current_sprint = {
+                "id": active_sprint.id,
                 "project_name": active_sprint.project.name,
                 "title": f"Active Sprint ({active_sprint.name})",
                 "goal": active_sprint.goal or "No sprint goal has been added yet.",
@@ -353,6 +355,24 @@ def create_app():
                 active.status = "planned"
 
             sprint.status = "active"
+            db.session.commit()
+
+        return redirect(url_for("sprints"))
+
+    @app.route("/sprints/<int:sprint_id>/complete", methods=["POST"])
+    def complete_sprint(sprint_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        sprint = db.session.get(Sprint, sprint_id)
+        if sprint and sprint.status == "active":
+            # Use completed task points when possible before closing the sprint.
+            completed_points = sum(
+                task.story_points for task in sprint.tasks if task.status == "done"
+            )
+            if completed_points:
+                sprint.completed_story_points = completed_points
+            sprint.status = "completed"
             db.session.commit()
 
         return redirect(url_for("sprints"))

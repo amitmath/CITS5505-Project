@@ -53,7 +53,11 @@
       >
         + New Sprint
       </button>
-      <button class="btn primary-action-btn">Complete Sprint</button>
+      {% if current_sprint.id %}
+      <form method="POST" action="{{ url_for('complete_sprint', sprint_id=current_sprint.id) }}">
+        <button type="submit" class="btn primary-action-btn">Complete Sprint</button>
+      </form>
+      {% endif %}
     </div>
   </div>
 </section>
