@@ -9,7 +9,9 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+server-*.log
 
 # db files
 agilepm.db
 *.db
+*.db-journal
