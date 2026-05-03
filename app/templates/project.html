@@ -86,14 +86,17 @@
 
   {% else %}
 
-    <div class="no-projects-placeholder project-fade project-delay-2">
-      <i class="bi bi-folder-x"></i>
-      <h2>No active projects found</h2>
-      <p>
-        It looks like there are no active projects in your workspace.
-        Start by creating a new project to track your team's work and progress.
-      </p>
-    </div>
+    <div class="empty-state-card project-fade project-delay-2">
+  <div class="empty-icon">
+    <i class="bi bi-folder2-open"></i>
+  </div>
+
+  <h2>No active projects</h2>
+
+  <p>
+    You don’t have any active projects yet. 
+  </p>
+</div>
 
   {% endif %}
 
