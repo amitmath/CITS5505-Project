@@ -12,6 +12,7 @@
 {% endblock %}
 
 {% block content %}
+{% set topbar_title = 'Sprints' %}
 {% set topbar_search_placeholder = 'Search tasks or sprints...' %}
 {% set topbar_search_class = 'sprint-search-box' %}
 {% set topbar_action_label = '+ New Sprint' %}
@@ -22,14 +23,14 @@
   <div class="breadcrumb-row">
     <span>Projects</span>
     <i class="bi bi-chevron-right"></i>
-    <span>Quantum ERP</span>
+    <span>{{ current_sprint.project_name }}</span>
     <i class="bi bi-chevron-right"></i>
     <span class="breadcrumb-current">Sprints</span>
   </div>
 
   <div class="heading-row">
     <div>
-      <h1 class="welcome-title sprint-title mb-0">Active Sprint (Sprint 12)</h1>
+      <h1 class="welcome-title sprint-title mb-0">{{ current_sprint.title }}</h1>
     </div>
     <div class="heading-actions">
       <button class="btn outline-action-btn">+ New Sprint</button>
@@ -46,9 +47,7 @@
         <span>Sprint Goal</span>
       </div>
       <p class="goal-text mb-0">
-        Finalize core financial engine integration. Complete all
-        ledger-to-bank API endpoints and stress test concurrent
-        transaction throughput for the Q3 release.
+        {{ current_sprint.goal }}
       </p>
     </div>
 
@@ -56,17 +55,17 @@
       <div class="summary-card sprint-metric-card">
         <div class="metric-icon"><i class="bi bi-graph-up"></i></div>
         <p class="card-label mb-2">CURRENT VELOCITY</p>
-        <h4 class="sprint-metric-title">42.5 pts <span>/ week</span></h4>
+        <h4 class="sprint-metric-title">{{ current_sprint.velocity }} <span>/ sprint</span></h4>
       </div>
 
       <div class="summary-card sprint-metric-card" id="health">
         <div class="metric-icon">
           <i class="bi bi-bar-chart-line-fill"></i>
         </div>
-        <p class="card-label mb-2">PROJECT VELOCITY TREND</p>
+        <p class="card-label mb-2">SPRINT STATUS</p>
         <h4 class="sprint-metric-title">
-          +12%
-          <span class="trend-pill">Improving</span>
+          {{ current_sprint.status }}
+          <span class="trend-pill">{{ current_sprint.progress }}%</span>
         </h4>
       </div>
     </div>
@@ -77,21 +76,21 @@
       <div class="summary-card sprint-side-card progress-card">
         <div class="side-card-head">
           <span class="card-label mb-0">COMPLETION PROGRESS</span>
-          <strong class="progress-percent">68%</strong>
+          <strong class="progress-percent">{{ current_sprint.progress }}%</strong>
         </div>
         <div class="progress sprint-progress sprint-progress-tight">
-          <div class="progress-bar completed-bar" style="width: 68%"></div>
+          <div class="progress-bar completed-bar" style="width: {{ current_sprint.progress }}%"></div>
         </div>
-        <p class="mini-note mb-0">42 of 62 story points completed</p>
+        <p class="mini-note mb-0">{{ current_sprint.story_points }}</p>
       </div>
 
       <div class="summary-card sprint-side-card time-card">
         <div class="time-card-top">
           <div>
             <p class="card-label mb-2">TIME REMAINING</p>
-            <h2 class="time-value mb-0">14 <span>Days</span></h2>
+            <h2 class="time-value mb-0">{{ current_sprint.days_left }} <span>{{ current_sprint.day_label }}</span></h2>
           </div>
-          <span class="time-pill">Ends July 24, 2024</span>
+          <span class="time-pill">{{ current_sprint.end_label }}</span>
         </div>
 
         <div class="mini-chart" aria-hidden="true">
@@ -125,62 +124,26 @@
           </tr>
         </thead>
         <tbody>
+          {% for sprint in past_sprints %}
           <tr>
-            <td>Sprint 11</td>
-            <td>Jun 14 - Jun 28</td>
-            <td><span class="status-badge completed">Completed</span></td>
-            <td>84 / 88</td>
+            <td>{{ sprint.name }}</td>
+            <td>{{ sprint.duration }}</td>
+            <td><span class="status-badge completed">{{ sprint.status }}</span></td>
+            <td>{{ sprint.story_points }}</td>
             <td>
               <div class="success-rate-cell">
                 <div class="success-bar">
-                  <div class="success-bar-fill" style="width: 95.4%"></div>
+                  <div class="success-bar-fill" style="width: {{ sprint.success_rate }}%"></div>
                 </div>
-                <span>95.4%</span>
+                <span>{{ sprint.success_rate }}%</span>
               </div>
             </td>
           </tr>
+          {% else %}
           <tr>
-            <td>Sprint 10</td>
-            <td>May 30 - Jun 13</td>
-            <td><span class="status-badge completed">Completed</span></td>
-            <td>92 / 92</td>
-            <td>
-              <div class="success-rate-cell">
-                <div class="success-bar">
-                  <div class="success-bar-fill" style="width: 100%"></div>
-                </div>
-                <span>100%</span>
-              </div>
-            </td>
+            <td colspan="5" class="text-center text-muted">No completed sprints yet.</td>
           </tr>
-          <tr>
-            <td>Sprint 9</td>
-            <td>May 15 - May 29</td>
-            <td><span class="status-badge completed">Completed</span></td>
-            <td>78 / 85</td>
-            <td>
-              <div class="success-rate-cell">
-                <div class="success-bar">
-                  <div class="success-bar-fill" style="width: 91.7%"></div>
-                </div>
-                <span>91.7%</span>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Sprint 8</td>
-            <td>May 01 - May 14</td>
-            <td><span class="status-badge completed">Completed</span></td>
-            <td>85 / 85</td>
-            <td>
-              <div class="success-rate-cell">
-                <div class="success-bar">
-                  <div class="success-bar-fill" style="width: 100%"></div>
-                </div>
-                <span>100%</span>
-              </div>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>

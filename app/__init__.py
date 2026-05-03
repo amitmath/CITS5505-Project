@@ -204,7 +204,68 @@ def create_app():
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
 
-        return render_template("sprints.html")
+        # Load the current sprint and previous completed sprints for this page.
+        active_sprint = Sprint.query.filter_by(status="active").order_by(Sprint.end_date.asc()).first()
+        completed_sprints = Sprint.query.filter_by(status="completed").order_by(Sprint.end_date.desc()).all()
+
+        def progress_percent(completed_points, total_points):
+            return round((completed_points / total_points) * 100, 1) if total_points else 0
+
+        current_sprint = {
+            "project_name": "No project selected",
+            "title": "No Active Sprint",
+            "goal": "No active sprint has been created yet.",
+            "velocity": "0 pts",
+            "status": "Not Started",
+            "progress": 0,
+            "story_points": "0 of 0 story points completed",
+            "days_left": 0,
+            "day_label": "Days",
+            "end_label": "No end date",
+        }
+
+        if active_sprint:
+            days_left = max((active_sprint.end_date - date.today()).days, 0)
+            progress = progress_percent(
+                active_sprint.completed_story_points,
+                active_sprint.total_story_points,
+            )
+            current_sprint = {
+                "project_name": active_sprint.project.name,
+                "title": f"Active Sprint ({active_sprint.name})",
+                "goal": active_sprint.goal or "No sprint goal has been added yet.",
+                "velocity": f"{active_sprint.velocity_points} pts",
+                "status": active_sprint.status.replace("_", " ").title(),
+                "progress": progress,
+                "story_points": (
+                    f"{active_sprint.completed_story_points} of "
+                    f"{active_sprint.total_story_points} story points completed"
+                ),
+                "days_left": days_left,
+                "day_label": "Day" if days_left == 1 else "Days",
+                "end_label": active_sprint.end_date.strftime("Ends %b %d, %Y"),
+            }
+
+        # Build simple rows for the past sprint table.
+        past_sprints = []
+        for sprint in completed_sprints:
+            success_rate = progress_percent(
+                sprint.completed_story_points,
+                sprint.total_story_points,
+            )
+            past_sprints.append({
+                "name": sprint.name,
+                "duration": f"{sprint.start_date.strftime('%b %d')} - {sprint.end_date.strftime('%b %d')}",
+                "status": sprint.status.replace("_", " ").title(),
+                "story_points": f"{sprint.completed_story_points} / {sprint.total_story_points}",
+                "success_rate": success_rate,
+            })
+
+        return render_template(
+            "sprints.html",
+            current_sprint=current_sprint,
+            past_sprints=past_sprints,
+        )
 
     # Route for project page
     @app.route("/project")
