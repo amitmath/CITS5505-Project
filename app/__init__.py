@@ -1,6 +1,8 @@
 import re
 from datetime import date
 
+import os
+from werkzeug.utils import secure_filename
 from flask import Flask, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -211,6 +213,34 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         return render_template("project.html")
+    
+    # Route for user profile page
+    @app.route("/profile", methods=["GET", "POST"])
+    def profile():
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+        
+        user = g.user
+        tasks = Task.query.filter_by(assignee_id=user.id).all()
+        success = False
+
+        if request.method == "POST":
+            full_name = request.form.get("full_name", "").strip()
+            if full_name:
+                user.full_name = full_name
+            user.title = request.form.get("title", user.title)
+            user.location = request.form.get("location", user.location)
+            user.bio = request.form.get("bio", user.bio)
+            avatar = request.files.get("avatar")
+            if avatar and avatar.filename:
+                filename = secure_filename(f"user_{user.id}_{avatar.filename}")
+                upload_path = os.path.join("app", "static", "uploads", filename)
+                avatar.save(upload_path)
+                user.avatar_url = url_for("static", filename=f"uploads/{filename}")
+            db.session.commit()
+            success = True
+
+        return render_template("profile.html", user=user, tasks=tasks, success=success)
 
     with app.app_context():
         db.create_all()
