@@ -17,9 +17,21 @@
 {% set topbar_search_class = 'sprint-search-box' %}
 {% set topbar_action_label = '+ New Sprint' %}
 {% set topbar_action_class = 'primary-action-btn' %}
+{% set topbar_action_modal_id = 'newSprintModal' %}
 {% include "components/topbar.html" %}
 
 <section class="welcome-section sprint-page-heading">
+  {% if sprint_errors %}
+  <div class="alert alert-danger" role="alert">
+    <strong>Could not create sprint.</strong>
+    <ul class="mb-0 mt-2">
+      {% for error in sprint_errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
   <div class="breadcrumb-row">
     <span>Projects</span>
     <i class="bi bi-chevron-right"></i>
@@ -33,7 +45,14 @@
       <h1 class="welcome-title sprint-title mb-0">{{ current_sprint.title }}</h1>
     </div>
     <div class="heading-actions">
-      <button class="btn outline-action-btn">+ New Sprint</button>
+      <button
+        class="btn outline-action-btn"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#newSprintModal"
+      >
+        + New Sprint
+      </button>
       <button class="btn primary-action-btn">Complete Sprint</button>
     </div>
   </div>
@@ -108,6 +127,43 @@
 <section class="sprint-history-section">
   <div class="table-card sprint-history-card">
     <div class="section-heading d-flex justify-content-between align-items-center mb-3">
+      <h2 class="section-title mb-0">Planned Sprints</h2>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table task-table sprint-history-table mb-0">
+        <thead>
+          <tr>
+            <th>SPRINT NAME</th>
+            <th>PROJECT</th>
+            <th>DURATION</th>
+            <th>STORY POINTS</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sprint in upcoming_sprints %}
+          <tr>
+            <td>{{ sprint.name }}</td>
+            <td>{{ sprint.project_name }}</td>
+            <td>{{ sprint.duration }}</td>
+            <td>{{ sprint.story_points }}</td>
+            <td><span class="status-badge todo">{{ sprint.status }}</span></td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">No planned sprints yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="sprint-history-section">
+  <div class="table-card sprint-history-card">
+    <div class="section-heading d-flex justify-content-between align-items-center mb-3">
       <h2 class="section-title mb-0">Past Sprints</h2>
       <a href="#" class="section-link">View Historical Reports</a>
     </div>
@@ -149,4 +205,99 @@
     </div>
   </div>
 </section>
+
+<div class="modal fade" id="newSprintModal" tabindex="-1" aria-labelledby="newSprintModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('sprints') }}">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="newSprintModalLabel">Create New Sprint</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="project_id">Project</label>
+              <select class="form-select" id="project_id" name="project_id" required>
+                <option value="">Select project</option>
+                {% for project in projects %}
+                <option
+                  value="{{ project.id }}"
+                  {% if form_data.get('project_id') == project.id|string %}selected{% endif %}
+                >
+                  {{ project.name }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="name">Sprint Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                value="{{ form_data.get('name', '') }}"
+                required
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="start_date">Start Date</label>
+              <input
+                type="date"
+                class="form-control"
+                id="start_date"
+                name="start_date"
+                value="{{ form_data.get('start_date', '') }}"
+                required
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="end_date">End Date</label>
+              <input
+                type="date"
+                class="form-control"
+                id="end_date"
+                name="end_date"
+                value="{{ form_data.get('end_date', '') }}"
+                required
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="total_story_points">Total Story Points</label>
+              <input
+                type="number"
+                class="form-control"
+                id="total_story_points"
+                name="total_story_points"
+                min="0"
+                value="{{ form_data.get('total_story_points', 0) }}"
+              />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold" for="goal">Sprint Goal</label>
+              <textarea
+                class="form-control"
+                id="goal"
+                name="goal"
+                rows="3"
+              >{{ form_data.get('goal', '') }}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn primary-action-btn">Save Sprint</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

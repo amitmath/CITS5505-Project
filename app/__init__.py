@@ -199,13 +199,70 @@ def create_app():
         )
 
     # Route for sprints page
-    @app.route("/sprints")
+    @app.route("/sprints", methods=["GET", "POST"])
     def sprints():
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
 
+        sprint_errors = []
+        form_data = {}
+        projects = Project.query.filter_by(status="active").order_by(Project.name.asc()).all()
+
+        if request.method == "POST":
+            form_data = request.form
+            name = request.form.get("name", "").strip()
+            project_id = request.form.get("project_id")
+            goal = request.form.get("goal", "").strip()
+            start_date_raw = request.form.get("start_date", "")
+            end_date_raw = request.form.get("end_date", "")
+            total_points_raw = request.form.get("total_story_points", "0")
+
+            # Validate the modal form before adding a sprint to the database.
+            project = db.session.get(Project, int(project_id)) if project_id and project_id.isdigit() else None
+            if not project:
+                sprint_errors.append("Please select a project.")
+            if not name:
+                sprint_errors.append("Sprint name is required.")
+
+            try:
+                start_date = date.fromisoformat(start_date_raw)
+                end_date = date.fromisoformat(end_date_raw)
+            except ValueError:
+                start_date = None
+                end_date = None
+                sprint_errors.append("Please enter valid start and end dates.")
+
+            try:
+                total_story_points = int(total_points_raw)
+            except ValueError:
+                total_story_points = 0
+                sprint_errors.append("Story points must be a number.")
+
+            if start_date and end_date and end_date < start_date:
+                sprint_errors.append("End date must be after the start date.")
+
+            if total_story_points < 0:
+                sprint_errors.append("Story points cannot be negative.")
+
+            if not sprint_errors:
+                sprint = Sprint(
+                    project_id=project.id,
+                    name=name,
+                    goal=goal,
+                    status="planned",
+                    start_date=start_date,
+                    end_date=end_date,
+                    total_story_points=total_story_points,
+                    completed_story_points=0,
+                    velocity_points=0,
+                )
+                db.session.add(sprint)
+                db.session.commit()
+                return redirect(url_for("sprints"))
+
         # Load the current sprint and previous completed sprints for this page.
         active_sprint = Sprint.query.filter_by(status="active").order_by(Sprint.end_date.asc()).first()
+        planned_sprints = Sprint.query.filter_by(status="planned").order_by(Sprint.start_date.asc()).all()
         completed_sprints = Sprint.query.filter_by(status="completed").order_by(Sprint.end_date.desc()).all()
 
         def progress_percent(completed_points, total_points):
@@ -246,6 +303,17 @@ def create_app():
                 "end_label": active_sprint.end_date.strftime("Ends %b %d, %Y"),
             }
 
+        # Planned sprints are shown separately so newly created sprints are easy to find.
+        upcoming_sprints = []
+        for sprint in planned_sprints:
+            upcoming_sprints.append({
+                "name": sprint.name,
+                "project_name": sprint.project.name,
+                "duration": f"{sprint.start_date.strftime('%b %d')} - {sprint.end_date.strftime('%b %d')}",
+                "story_points": sprint.total_story_points,
+                "status": sprint.status.title(),
+            })
+
         # Build simple rows for the past sprint table.
         past_sprints = []
         for sprint in completed_sprints:
@@ -264,7 +332,11 @@ def create_app():
         return render_template(
             "sprints.html",
             current_sprint=current_sprint,
+            upcoming_sprints=upcoming_sprints,
             past_sprints=past_sprints,
+            projects=projects,
+            sprint_errors=sprint_errors,
+            form_data=form_data,
         )
 
     # Route for project page
