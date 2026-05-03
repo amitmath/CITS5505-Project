@@ -307,6 +307,7 @@ def create_app():
         upcoming_sprints = []
         for sprint in planned_sprints:
             upcoming_sprints.append({
+                "id": sprint.id,
                 "name": sprint.name,
                 "project_name": sprint.project.name,
                 "duration": f"{sprint.start_date.strftime('%b %d')} - {sprint.end_date.strftime('%b %d')}",
@@ -338,6 +339,23 @@ def create_app():
             sprint_errors=sprint_errors,
             form_data=form_data,
         )
+
+    @app.route("/sprints/<int:sprint_id>/activate", methods=["POST"])
+    def activate_sprint(sprint_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        sprint = db.session.get(Sprint, sprint_id)
+        if sprint and sprint.status == "planned":
+            # Keep only one active sprint at a time for the demo workflow.
+            active_sprints = Sprint.query.filter_by(status="active").all()
+            for active in active_sprints:
+                active.status = "planned"
+
+            sprint.status = "active"
+            db.session.commit()
+
+        return redirect(url_for("sprints"))
 
     # Route for project page
     @app.route("/project")

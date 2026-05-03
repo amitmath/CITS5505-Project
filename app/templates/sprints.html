@@ -139,6 +139,7 @@
             <th>DURATION</th>
             <th>STORY POINTS</th>
             <th>STATUS</th>
+            <th>ACTION</th>
           </tr>
         </thead>
         <tbody>
@@ -149,10 +150,15 @@
             <td>{{ sprint.duration }}</td>
             <td>{{ sprint.story_points }}</td>
             <td><span class="status-badge todo">{{ sprint.status }}</span></td>
+            <td>
+              <form method="POST" action="{{ url_for('activate_sprint', sprint_id=sprint.id) }}">
+                <button type="submit" class="btn btn-sm primary-action-btn">Activate</button>
+              </form>
+            </td>
           </tr>
           {% else %}
           <tr>
-            <td colspan="5" class="text-center text-muted">No planned sprints yet.</td>
+            <td colspan="6" class="text-center text-muted">No planned sprints yet.</td>
           </tr>
           {% endfor %}
         </tbody>
