@@ -40,9 +40,9 @@
     <a href="#" class="section-link">View all projects</a>
   </div>
 
-  <div class="row g-4">
+  <div class="project-slider">
     {% for project in projects %}
-    <div class="col-md-6 col-xl-3">
+    <div class="project-slide-card">
       <div class="project-card">
         <div class="project-icon"><i class="bi bi-laptop"></i></div>
         <h5>{{ project.name }}</h5>
@@ -53,13 +53,6 @@
       </div>
     </div>
     {% endfor %}
-    <div class="col-md-6 col-xl-3">
-      <div class="project-card new-project-card">
-        <div class="project-icon"><i class="bi bi-plus-lg"></i></div>
-        <h5>New Project</h5>
-        <p>Create a new workspace for your team.</p>
-      </div>
-    </div>
   </div>
 </section>
 
