@@ -26,8 +26,8 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 22px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .projects-hero-title {
@@ -590,4 +590,37 @@ body {
   background: #1d4ed8;
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+}
+
+/* Right-side actions */
+.projects-hero-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Add Project Button */
+.add-project-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #0f4c5c;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.add-project-btn i {
+  font-size: 14px;
+}
+
+/* Hover effect */
+.add-project-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
 }
