@@ -99,48 +99,6 @@ topbar_search_placeholder = 'Search projects...' %} {% include
   {% endif %}
 </section>
 
-{# Summary section (performance + sprint details) #}
-
-<section class="project-insight-grid">
-  <article class="performance-card project-fade project-delay-5">
-    <div class="performance-copy">
-      <p class="insight-label">Performance Pulse</p>
-      <h2>
-        Overall Efficiency is up<br />
-        by {{ efficiency_change | default('12.4') }}%
-      </h2>
-      <p>
-        Your teams have completed {{ completed_tasks | default('48') }} tasks in
-        the last 48 hours. {{ top_project_name | default('Quantum ERP') }} is
-        leading the workspace in throughput speed.
-      </p>
-    </div>
-
-    <div class="mini-chart" aria-label="Performance bar chart">
-      <span style="height: 24%; opacity: 0.18"></span>
-      <span style="height: 40%; opacity: 0.28"></span>
-      <span style="height: 34%; opacity: 0.2"></span>
-      <span style="height: 62%; opacity: 0.55"></span>
-      <span style="height: 88%; opacity: 1"></span>
-    </div>
-  </article>
-
-  <article class="velocity-panel project-fade project-delay-6">
-    <div class="velocity-panel-icon">
-      <i class="bi bi-lightning-charge-fill"></i>
-    </div>
-    <h2>Sprint Velocity</h2>
-    <p>
-      The current sprint capacity is {{ sprint_velocity | default('85') }}%
-      utilized. Consider reassigning tasks from {{ at_risk_project_name |
-      default('Starlight Mobile') }}.
-    </p>
-    <a href="{{ url_for('sprints') }}" class="review-capacity-btn"
-      >Review Capacity</a
-    >
-  </article>
-</section>
-
 <div class="project-modal-backdrop" id="projectModal">
   <div class="project-modal-card">
     <div class="project-modal-header">
