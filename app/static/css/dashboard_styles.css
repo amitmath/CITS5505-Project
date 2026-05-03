@@ -231,44 +231,6 @@ body {
   height: 100%;
 }
 
-.project-slider {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
-}
-
-/* Each card behaves like a slide */
-.project-slide-card {
-  flex: 0 0 280px;
-  scroll-snap-align: start;
-}
-
-/* Optional: smooth scroll */
-.project-slider {
-  scroll-behavior: smooth;
-}
-
-/* Scrollbar styling */
-.project-slider::-webkit-scrollbar {
-  height: 8px;
-}
-
-.project-slider::-webkit-scrollbar-track {
-  background: #e5e7eb;
-  border-radius: 999px;
-}
-
-.project-slider::-webkit-scrollbar-thumb {
-  background: #94a3b8;
-  border-radius: 999px;
-}
-
-.project-slider::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
 .project-icon {
   width: 48px;
   height: 48px;

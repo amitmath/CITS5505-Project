@@ -129,7 +129,13 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         user = g.user
-        projects = Project.query.filter_by(status="active").all()
+        projects = (
+        Project.query
+            .filter_by(status="active")
+            .order_by(Project.created_at.desc())
+            .limit(3)
+            .all()
+        )
         # Used by the dashboard summary card to show the live project count.
         active_project_count = len(projects)
         tasks = Task.query.filter_by(assignee_id=user.id).all() if user else []
