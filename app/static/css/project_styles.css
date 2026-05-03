@@ -604,14 +604,16 @@ body {
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background-color: #0f4c5c;
+  background-color: #059669;;
   color: #ffffff;
   font-size: 14px;
   font-weight: 500;
   border-radius: 10px;
   text-decoration: none;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  border: none;          
+  outline: none;        
+  box-shadow: none;  
 }
 
 .add-project-btn i {
@@ -620,7 +622,133 @@ body {
 
 /* Hover effect */
 .add-project-btn:hover {
-  background: #1d4ed8;
+  background: #059669;;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+.project-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.project-modal-backdrop.show {
+  display: flex;
+}
+
+.project-modal-card {
+  width: min(520px, calc(100% - 32px));
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+  border-bottom: 5px solid #059669;
+}
+
+.project-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.project-modal-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.project-modal-close {
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.project-form-row {
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  gap: 14px;
+}
+
+.project-form-group {
+  margin-bottom: 18px;
+}
+
+.project-form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.project-form-group input,
+.project-form-group textarea,
+.project-form-group select {
+  width: 100%;
+  border: none;
+  background: #eef0f2;
+  border-radius: 6px;
+  padding: 13px 14px;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+}
+
+.project-form-group textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.project-form-group input:focus,
+.project-form-group textarea:focus,
+.project-form-group select:focus {
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.16);
+  background: #f8fafc;
+}
+
+.project-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.project-cancel-btn,
+.project-submit-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 11px 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.project-cancel-btn {
+  background: transparent;
+  color: #374151;
+}
+
+.project-submit-btn {
+  background: #059669;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(5, 150, 105, 0.24);
+}
+
+.project-submit-btn:hover {
+  background: #047857;
+}
+
+@media (max-width: 560px) {
+  .project-form-row {
+    grid-template-columns: 1fr;
+  }
 }

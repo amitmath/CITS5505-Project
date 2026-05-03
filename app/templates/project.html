@@ -1,112 +1,102 @@
-{% extends "base.html" %}
-
-{% block title %}Projects | Agile PM{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/project_styles.css') }}" />
-{% endblock %}
-
-{% block content %}
-
-{# Projects page layout - shows active projects and summary info #}
-
-{% set topbar_title = 'Projects' %}
-{% set topbar_search_placeholder = 'Search projects...' %}
-{% include "components/topbar.html" %}
-{% set project_items = projects or [] %}
+{% extends "base.html" %} {% block title %}Projects | Agile PM{% endblock %} {%
+block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/project_styles.css') }}"
+/>
+{% endblock %} {% block content %} {# Projects page layout - shows active
+projects and summary info #} {% set topbar_title = 'Projects' %} {% set
+topbar_search_placeholder = 'Search projects...' %} {% include
+"components/topbar.html" %} {% set project_items = projects or [] %}
 
 <section class="projects-hero project-fade project-delay-1">
   <div>
     <h1 class="projects-hero-title">Active Projects</h1>
     <p class="projects-hero-text">
-      Overview of ongoing enterprise initiatives, resource allocation,
-      and sprint health across the workspace.
+      Overview of ongoing enterprise initiatives, resource allocation, and
+      sprint health across the workspace.
     </p>
   </div>
 
   <div class="projects-hero-actions">
-    <a href="" class="add-project-btn">
+    <button type="button" class="add-project-btn" id="openProjectModal">
       <i class="bi bi-plus-lg"></i>
       <span>New Project</span>
-    </a>
+    </button>
   </div>
 </section>
 
 <section class="project-grid mb-4">
+  {% if project_items and project_items|length > 0 %} {% for project in
+  project_items[:3] %} {% set status = project.health_status or 'healthy' %} {%
+  set progress_value = project.progress_percent or 0 %} {% set project_name =
+  project.name %} {% set project_description = project.description %} {# Safe
+  defaults for fields not in DB yet #} {% set due_label = 'No deadline' %} {%
+  set icon_name = 'bi-kanban' %} {% set members = [] %}
 
-  {% if project_items and project_items|length > 0 %}
+  <article
+    class="project-page-card project-fade project-delay-{{ loop.index + 1 }}"
+  >
+    <div class="project-card-top">
+      <div
+        class="project-page-icon {{ 'icon-risk' if status != 'healthy' else 'icon-healthy' }}"
+      >
+        <i class="bi {{ icon_name }}"></i>
+      </div>
+      <span
+        class="project-status {{ 'healthy' if status == 'healthy' else 'risk' }}"
+      >
+        {{ 'Healthy' if status == 'healthy' else 'At-Risk' }}
+      </span>
+    </div>
 
-  {% for project in project_items[:3] %}
+    <h2 class="project-page-title">{{ project_name }}</h2>
+    <p class="project-page-description">
+      {{ project_description or 'No description available.' }}
+    </p>
 
-    {% set status = project.health_status or 'healthy' %}
-    {% set progress_value = project.progress_percent or 0 %}
-    {% set project_name = project.name %}
-    {% set project_description = project.description %}
+    <div class="project-progress-row">
+      <span>Progress</span>
+      <strong class="{{ 'text-risk' if status != 'healthy' else '' }}">
+        {{ progress_value }}%
+      </strong>
+    </div>
 
-    {# Safe defaults for fields not in DB yet #}
-    {% set due_label = 'No deadline' %}
-    {% set icon_name = 'bi-kanban' %}
-    {% set members = [] %}
+    <div
+      class="project-progress-track"
+      aria-label="{{ project_name }} progress"
+    >
+      <div
+        class="project-progress-fill {{ 'progress-risk' if status != 'healthy' else 'progress-healthy' }}"
+        style="width: {{ progress_value }}%;"
+      ></div>
+    </div>
 
-      <article class="project-page-card project-fade project-delay-{{ loop.index + 1 }}">
-        <div class="project-card-top">
-          <div class="project-page-icon {{ 'icon-risk' if status != 'healthy' else 'icon-healthy' }}">
-            <i class="bi {{ icon_name }}"></i>
-          </div>
-          <span class="project-status {{ 'healthy' if status == 'healthy' else 'risk' }}">
-            {{ 'Healthy' if status == 'healthy' else 'At-Risk' }}
-          </span>
-        </div>
+    <div class="project-card-footer">
+      <div class="member-stack">
+        {% for member in members[:2] %}
+        <span class="member-avatar member-{{ loop.index }}">{{ member }}</span>
+        {% endfor %}
+      </div>
+      <span class="project-due {{ 'due-risk' if status != 'healthy' else '' }}">
+        {{ due_label }}
+      </span>
+    </div>
+  </article>
 
-        <h2 class="project-page-title">{{ project_name }}</h2>
-        <p class="project-page-description">
-          {{ project_description or 'No description available.' }}
-        </p>
+  {% endfor %} {% else %}
 
-        <div class="project-progress-row">
-          <span>Progress</span>
-          <strong class="{{ 'text-risk' if status != 'healthy' else '' }}">
-            {{ progress_value }}%
-          </strong>
-        </div>
+  <div class="empty-state-card project-fade project-delay-2">
+    <div class="empty-icon">
+      <i class="bi bi-folder2-open"></i>
+    </div>
 
-        <div class="project-progress-track" aria-label="{{ project_name }} progress">
-          <div
-            class="project-progress-fill {{ 'progress-risk' if status != 'healthy' else 'progress-healthy' }}"
-            style="width: {{ progress_value }}%;"
-          ></div>
-        </div>
+    <h2>No active projects</h2>
 
-        <div class="project-card-footer">
-          <div class="member-stack">
-            {% for member in members[:2] %}
-              <span class="member-avatar member-{{ loop.index }}">{{ member }}</span>
-            {% endfor %}
-          </div>
-          <span class="project-due {{ 'due-risk' if status != 'healthy' else '' }}">
-            {{ due_label }}
-          </span>
-        </div>
-      </article>
-
-    {% endfor %}
-
-  {% else %}
-
-    <div class="empty-state-card project-fade project-delay-2">
-  <div class="empty-icon">
-    <i class="bi bi-folder2-open"></i>
+    <p>You don’t have any active projects yet.</p>
   </div>
 
-  <h2>No active projects</h2>
-
-  <p>
-    You don’t have any active projects yet. 
-  </p>
-</div>
-
   {% endif %}
-
 </section>
 
 {# Summary section (performance + sprint details) #}
@@ -116,21 +106,22 @@
     <div class="performance-copy">
       <p class="insight-label">Performance Pulse</p>
       <h2>
-          Overall Efficiency is up<br />
-          by {{ efficiency_change | default('12.4') }}%
+        Overall Efficiency is up<br />
+        by {{ efficiency_change | default('12.4') }}%
       </h2>
       <p>
-           Your teams have completed {{ completed_tasks | default('48') }} tasks in the last 48 hours.
-        {{ top_project_name | default('Quantum ERP') }} is leading the workspace in throughput speed.
+        Your teams have completed {{ completed_tasks | default('48') }} tasks in
+        the last 48 hours. {{ top_project_name | default('Quantum ERP') }} is
+        leading the workspace in throughput speed.
       </p>
     </div>
 
     <div class="mini-chart" aria-label="Performance bar chart">
-      <span style="height: 24%; opacity: .18;"></span>
-      <span style="height: 40%; opacity: .28;"></span>
-      <span style="height: 34%; opacity: .20;"></span>
-      <span style="height: 62%; opacity: .55;"></span>
-      <span style="height: 88%; opacity: 1;"></span>
+      <span style="height: 24%; opacity: 0.18"></span>
+      <span style="height: 40%; opacity: 0.28"></span>
+      <span style="height: 34%; opacity: 0.2"></span>
+      <span style="height: 62%; opacity: 0.55"></span>
+      <span style="height: 88%; opacity: 1"></span>
     </div>
   </article>
 
@@ -140,10 +131,96 @@
     </div>
     <h2>Sprint Velocity</h2>
     <p>
-      The current sprint capacity is {{ sprint_velocity | default('85') }}% utilized.
-      Consider reassigning tasks from {{ at_risk_project_name | default('Starlight Mobile') }}.
+      The current sprint capacity is {{ sprint_velocity | default('85') }}%
+      utilized. Consider reassigning tasks from {{ at_risk_project_name |
+      default('Starlight Mobile') }}.
     </p>
-    <a href="{{ url_for('sprints') }}" class="review-capacity-btn">Review Capacity</a>
+    <a href="{{ url_for('sprints') }}" class="review-capacity-btn"
+      >Review Capacity</a
+    >
   </article>
 </section>
+
+<div class="project-modal-backdrop" id="projectModal">
+  <div class="project-modal-card">
+    <div class="project-modal-header">
+      <h2>Add New Project</h2>
+      <button type="button" class="project-modal-close" id="closeProjectModal">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <form method="POST" action="">
+      <div class="project-form-row">
+        <div class="project-form-group project-name-field">
+          <label for="projectName">Project Name</label>
+          <input
+            type="text"
+            id="projectName"
+            name="name"
+            placeholder="e.g. Project Phoenix"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="project-form-group">
+        <label for="projectDescription">Project Description</label>
+        <textarea
+          id="projectDescription"
+          name="description"
+          placeholder="Briefly describe the goals and scope..."
+        ></textarea>
+      </div>
+
+      <div class="project-form-group">
+        <label for="projectStatus">Project Status</label>
+        <select id="projectStatus" name="status" required>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div class="project-modal-actions">
+        <button type="button" class="project-cancel-btn" id="cancelProjectModal">
+          Cancel
+        </button>
+        <button type="submit" class="project-submit-btn">
+          Create Project
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const projectModal = document.getElementById("projectModal");
+  const openProjectModal = document.getElementById("openProjectModal");
+  const closeProjectModal = document.getElementById("closeProjectModal");
+  const cancelProjectModal = document.getElementById("cancelProjectModal");
+
+  function openModal() {
+    projectModal.classList.add("show");
+  }
+
+  function closeModal() {
+    projectModal.classList.remove("show");
+  }
+
+  openProjectModal.addEventListener("click", openModal);
+  closeProjectModal.addEventListener("click", closeModal);
+  cancelProjectModal.addEventListener("click", closeModal);
+
+  projectModal.addEventListener("click", function (event) {
+    if (event.target === projectModal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      closeModal();
+    }
+  });
+</script>
 {% endblock %}
