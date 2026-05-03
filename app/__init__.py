@@ -2,6 +2,7 @@ import re
 from datetime import date
 
 import os
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from flask import Flask, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -212,7 +213,21 @@ def create_app():
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
 
-        return render_template("project.html")
+        projects = [] 
+
+        try:
+            projects = Project.query.filter(
+                func.lower(func.trim(Project.status)) == "active"
+            ).all()
+
+            print("COUNT:", len(projects))
+            for p in projects:
+                print(p.name, p.progress_percent)
+
+        except Exception as e:
+            print(f"Error fetching projects: {e}")
+
+        return render_template("project.html", projects=projects)
     
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
