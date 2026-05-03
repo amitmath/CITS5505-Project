@@ -84,9 +84,12 @@ body {
 }
 
 .project-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  margin-top: 25px;
   gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  scroll-snap-type: x mandatory;
 }
 
 /* project cards */
@@ -100,12 +103,27 @@ body {
 }
 
 .project-page-card {
-  min-height: 268px;
-  padding: 18px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  min-width: 360px;
+  flex: 0 0 360px;
+  scroll-snap-align: start;
+}
+
+.project-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.project-grid::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 999px;
+}
+
+.project-grid::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 999px;
+}
+
+.project-grid::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 .project-page-card:hover {
