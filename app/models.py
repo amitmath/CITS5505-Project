@@ -58,6 +58,17 @@ class Project(db.Model):
     """
     __tablename__ = "projects"
 
+    @property
+    def calculated_progress(self):
+        total_tasks = len(self.tasks)
+
+        if total_tasks == 0:
+            return 0
+
+        completed_tasks = sum(1 for task in self.tasks if task.status == "done")
+
+        return round((completed_tasks / total_tasks) * 100)
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text, nullable=True)
