@@ -57,13 +57,14 @@
 
 .detail-btn {
   min-width: 118px;
-  padding: 14px 18px;
+  padding: 6px 6px;
   border-radius: 10px;
   border: 1px solid #dbe2ea;
-  background: #ffffff;
-  color: #111827;
+  background: #059669;
+  color: #ffffff;
   text-decoration: none;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 500;
   text-align: center;
   line-height: 1.25;
   cursor: pointer;
@@ -75,6 +76,11 @@
 
 .detail-btn.delete {
   color: #111827;
+}
+
+.detail-btn.delete {
+  background: #b03c12;
+  color: #ffffff;
 }
 
 .detail-grid {
