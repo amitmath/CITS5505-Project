@@ -8,6 +8,7 @@ from flask import Flask, app, flash, g, redirect, render_template, request, sess
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
+from app.models import Project, User
 from config import Config
 
 # Create extension objects globally
@@ -277,6 +278,23 @@ def create_app():
         project=project,
         users=users
         )
+    
+    @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
+    def assign_project_users(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+
+        selected_user_ids = request.form.getlist("user_ids")
+        selected_users = User.query.filter(User.id.in_(selected_user_ids)).all()
+
+        project.assigned_users = selected_users
+
+        db.session.commit()
+
+        flash("Project users updated successfully.", "success")
+        return redirect(url_for("project_detail", project_id=project.id))
     
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
