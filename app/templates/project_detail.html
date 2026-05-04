@@ -64,7 +64,7 @@ topbar_search_placeholder = 'Search projects...' %} {% include
 
         <div>
           <span>Progress</span>
-          <strong>{{ project.progress_percent or 0 }}%</strong>
+          <strong>{{ project.calculated_progress }}%</strong>
         </div>
       </div>
     </section>
@@ -106,7 +106,7 @@ topbar_search_placeholder = 'Search projects...' %} {% include
 
     <section class="detail-card active-task-card">
         <div class="task-card-header">
-            <p class="detail-label">Active Tasks</p>
+            <p class="detail-label">Tasks</p>
             <a href="{{ url_for('project_backlog', project_id=project.id) }}">View Full Backlog</a>
         </div>
 
