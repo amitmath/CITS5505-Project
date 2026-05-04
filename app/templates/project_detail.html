@@ -70,32 +70,26 @@ topbar_search_placeholder = 'Search projects...' %} {% include
     <aside class="detail-card project-team-card">
       <div class="team-card-header">
         <p class="detail-label">Project Team</p>
-        <a href="#">+ Assign Users</a>
+        <button
+          type="button"
+          class="assign-users-btn"
+          id="openAssignUsersModal"
+        >
+          + Assign Users
+        </button>
       </div>
 
+      {% if project.assigned_users %} {% for user in project.assigned_users %}
       <div class="team-member">
-        <div class="team-avatar-sm">A</div>
+        <div class="team-avatar-sm">{{ user.full_name[:1] | upper }}</div>
         <div>
-          <strong>Alex Chen</strong>
-          <span>Backend Architect</span>
+          <strong>{{ user.full_name }}</strong>
+          <span>{{ user.title or user.email }}</span>
         </div>
       </div>
-
-      <div class="team-member">
-        <div class="team-avatar-sm">S</div>
-        <div>
-          <strong>Sarah Jenkins</strong>
-          <span>Senior UX Designer</span>
-        </div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-avatar-sm">M</div>
-        <div>
-          <strong>Marcus Thorne</strong>
-          <span>DevOps Engineer</span>
-        </div>
-      </div>
+      {% endfor %} {% else %}
+      <p class="no-team-text">No users assigned yet.</p>
+      {% endif %}
     </aside>
 
     <section class="detail-card active-task-card">
