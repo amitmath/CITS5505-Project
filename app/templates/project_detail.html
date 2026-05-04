@@ -35,8 +35,8 @@ topbar_search_placeholder = 'Search projects...' %} {% include
       </button>
 
       <form method="POST" action="">
-        <button type="submit" class="detail-btn delete">
-          Delete<br />Project
+        <button type="button" class="detail-btn delete" id="openDeleteProjectModal">
+            Delete<br />Project
         </button>
       </form>
     </div>
@@ -270,6 +270,35 @@ topbar_search_placeholder = 'Search projects...' %} {% include
   </div>
 </div>
 
+## Delete Modal
+<div class="project-modal-backdrop" id="deleteProjectModal">
+  <div class="project-modal-card delete-modal-card">
+    <div class="project-modal-header">
+      <h2>Delete Project</h2>
+      <button type="button" class="project-modal-close" id="closeDeleteProjectModal">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <p class="delete-warning-text">
+      Are you sure you want to delete <strong>{{ project.name }}</strong>?
+      This action cannot be undone.
+    </p>
+
+    <div class="project-modal-actions">
+      <button type="button" class="project-cancel-btn" id="cancelDeleteProjectModal">
+        Cancel
+      </button>
+
+      <form method="POST" action="{{ url_for('delete_project', project_id=project.id) }}">
+        <button type="submit" class="project-delete-submit-btn">
+          Delete Project
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const assignUsersModal = document.getElementById("assignUsersModal");
@@ -367,5 +396,36 @@ topbar_search_placeholder = 'Search projects...' %} {% include
       });
     }
   });
+
+  const deleteProjectModal = document.getElementById("deleteProjectModal");
+const openDeleteProjectModal = document.getElementById("openDeleteProjectModal");
+const closeDeleteProjectModal = document.getElementById("closeDeleteProjectModal");
+const cancelDeleteProjectModal = document.getElementById("cancelDeleteProjectModal");
+
+if (openDeleteProjectModal && deleteProjectModal) {
+  openDeleteProjectModal.addEventListener("click", () => {
+    deleteProjectModal.classList.add("show");
+  });
+}
+
+if (closeDeleteProjectModal) {
+  closeDeleteProjectModal.addEventListener("click", () => {
+    deleteProjectModal.classList.remove("show");
+  });
+}
+
+if (cancelDeleteProjectModal) {
+  cancelDeleteProjectModal.addEventListener("click", () => {
+    deleteProjectModal.classList.remove("show");
+  });
+}
+
+if (deleteProjectModal) {
+  deleteProjectModal.addEventListener("click", (event) => {
+    if (event.target === deleteProjectModal) {
+      deleteProjectModal.classList.remove("show");
+    }
+  });
+}
 </script>
 {% endblock %}

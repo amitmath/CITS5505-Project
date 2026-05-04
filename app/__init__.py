@@ -323,6 +323,19 @@ def create_app():
         flash("Project updated successfully.", "success")
         return redirect(url_for("project_detail", project_id=project.id))
     
+    @app.route("/projects/<int:project_id>/delete", methods=["POST"])
+    def delete_project(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+
+        db.session.delete(project)
+        db.session.commit()
+
+        flash("Project deleted successfully.", "success")
+        return redirect(url_for("project"))
+    
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
     def profile():
