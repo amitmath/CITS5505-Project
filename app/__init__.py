@@ -137,7 +137,7 @@ def create_app():
             .all()
         )
         # Used by the dashboard summary card to show the live project count.
-        active_project_count = len(projects)
+        active_project_count = Project.query.filter_by(status="active").count()
         tasks = Task.query.filter_by(assignee_id=user.id).all() if user else []
         # Show the user's assigned tasks in due-date order on the dashboard.
         tasks = sorted(tasks, key=lambda task: (task.due_date is None, task.due_date or date.max))
