@@ -780,18 +780,44 @@ body {
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
 }
 
-.project-page-card::after {
-  content: "View details →";
-  position: absolute;
-  bottom: 5px;
-  right: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #2563eb;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+.project-page-card {
+  position: relative;
+  overflow: hidden;
 }
 
-.project-page-card:hover::after {
+.project-page-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 2;
+}
+
+.project-page-card::after {
+  content: "Click to view project details";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.25s ease;
+  z-index: 3;
+}
+
+.project-card-link:hover .project-page-card::before,
+.project-card-link:hover .project-page-card::after {
   opacity: 1;
+}
+
+.project-card-link:hover .project-page-card::after {
+  transform: translateY(0);
 }
