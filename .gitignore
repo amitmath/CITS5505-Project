@@ -9,7 +9,13 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+server-*.log
 
 # db files
 agilepm.db
 *.db
+*.db-journal
+
+# Uploaded profile images
+app/static/uploads/*
+!app/static/uploads/.gitkeep

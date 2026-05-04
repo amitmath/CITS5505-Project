@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import User, Project, Task, project_users
+from app.models import User, Project, Sprint, Task, project_users
 from datetime import date, datetime
 from werkzeug.security import generate_password_hash
 
@@ -10,6 +10,7 @@ with app.app_context():
 
     # Clear existing data
     Task.query.delete()
+    Sprint.query.delete()
     Project.query.delete()
     User.query.delete()
     db.session.execute(project_users.delete())
@@ -127,6 +128,52 @@ with app.app_context():
     print("Projects seeded successfully.")
 
     # -------------------------
+    # Create sample sprints
+    # -------------------------
+
+    # These sprints make the dashboard and sprints page show realistic data.
+    sprint1 = Sprint(
+        project_id=1,
+        name="Sprint 12",
+        goal="Finalize core financial engine integration and test the main API workflow.",
+        status="active",
+        start_date=date(2026, 10, 14),
+        end_date=date(2026, 10, 28),
+        total_story_points=62,
+        completed_story_points=24,
+        velocity_points=42,
+    )
+
+    sprint2 = Sprint(
+        project_id=1,
+        name="Sprint 11",
+        goal="Complete project setup and prepare first user testing cycle.",
+        status="completed",
+        start_date=date(2026, 9, 30),
+        end_date=date(2026, 10, 13),
+        total_story_points=54,
+        completed_story_points=50,
+        velocity_points=50,
+    )
+
+    sprint3 = Sprint(
+        project_id=2,
+        name="Sprint 5",
+        goal="Improve checkout screens and review mobile layout issues.",
+        status="completed",
+        start_date=date(2026, 9, 16),
+        end_date=date(2026, 9, 29),
+        total_story_points=40,
+        completed_story_points=36,
+        velocity_points=36,
+    )
+
+    db.session.add_all([sprint1, sprint2, sprint3])
+    db.session.commit()
+
+    print("Sprints seeded successfully.")
+
+    # -------------------------
     # Create sample tasks
     # -------------------------
 
@@ -138,6 +185,8 @@ with app.app_context():
         title="Update API Documentation",
         priority="high",
         status="in_progress",
+        sprint_id=sprint1.id,
+        story_points=8,
         due_date=date(2026, 10, 24),
         created_at=datetime(2026, 4, 29, 3, 43, 57, 995091),
         updated_at=datetime(2026, 4, 29, 3, 43, 57, 995093),
@@ -149,7 +198,9 @@ with app.app_context():
         title="Finalize UI Kit Components",
         priority="medium",
         status="todo",
-        due_date=date(2026, 10, 26),
+        sprint_id=sprint1.id,
+        story_points=8,
+        due_date=date(2026, 10, 24),
         created_at=datetime(2026, 4, 29, 3, 43, 57, 995095),
         updated_at=datetime(2026, 4, 29, 3, 43, 57, 995095),
     ),
@@ -160,9 +211,11 @@ with app.app_context():
         title="Database Indexing Review",
         priority="low",
         status="todo",
-        due_date=date(2026, 10, 28),
-        created_at=datetime(2026, 4, 29, 3, 43, 57, 995096),
-        updated_at=datetime(2026, 4, 29, 3, 43, 57, 995097),
+        sprint_id=sprint1.id,
+        story_points=5,
+        due_date=date(2026, 10, 26),
+        created_at=datetime(2026, 4, 29, 3, 43, 57, 995095),
+        updated_at=datetime(2026, 4, 29, 3, 43, 57, 995095),
     ),
     Task(
         id=4,
@@ -171,6 +224,8 @@ with app.app_context():
         title="Create Landing Page",
         priority="high",
         status="done",
+        sprint_id=sprint1.id,
+        story_points=4,
         due_date=date(2026, 10, 24),
         created_at=datetime(2026, 5, 4, 9, 56, 59),
         updated_at=datetime(2026, 5, 4, 9, 56, 59),
@@ -182,6 +237,8 @@ with app.app_context():
         title="Create dashboard",
         priority="high",
         status="done",
+        sprint_id=sprint2.id,
+        story_points=4,
         due_date=date(2026, 10, 24),
         created_at=datetime(2026, 5, 4, 9, 57, 13),
         updated_at=datetime(2026, 5, 4, 9, 57, 13),
@@ -193,6 +250,8 @@ with app.app_context():
         title="Implement API Integration",
         priority="medium",
         status="in_progress",
+        sprint_id=sprint2.id,
+        story_points=5,
         due_date=date(2026, 10, 25),
         created_at=datetime(2026, 5, 4, 9, 59, 1),
         updated_at=datetime(2026, 5, 4, 9, 59, 1),
@@ -204,6 +263,8 @@ with app.app_context():
         title="Design Database Schema",
         priority="high",
         status="done",
+        sprint_id=sprint2.id,
+        story_points=4,
         due_date=date(2026, 10, 26),
         created_at=datetime(2026, 5, 4, 10, 2, 52),
         updated_at=datetime(2026, 5, 4, 10, 2, 52),
@@ -215,6 +276,8 @@ with app.app_context():
         title="Build API Endpoints",
         priority="medium",
         status="in_progress",
+        sprint_id=sprint2.id,
+        story_points=5,
         due_date=date(2026, 10, 27),
         created_at=datetime(2026, 5, 4, 10, 3, 3),
         updated_at=datetime(2026, 5, 4, 10, 3, 3),

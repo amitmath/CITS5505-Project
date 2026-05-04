@@ -206,12 +206,183 @@ def create_app():
         )
 
     # Route for sprints page
-    @app.route("/sprints")
+    @app.route("/sprints", methods=["GET", "POST"])
     def sprints():
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
 
-        return render_template("sprints.html")
+        sprint_errors = []
+        form_data = {}
+        projects = Project.query.filter_by(status="active").order_by(Project.name.asc()).all()
+
+        if request.method == "POST":
+            form_data = request.form
+            name = request.form.get("name", "").strip()
+            project_id = request.form.get("project_id")
+            goal = request.form.get("goal", "").strip()
+            start_date_raw = request.form.get("start_date", "")
+            end_date_raw = request.form.get("end_date", "")
+            total_points_raw = request.form.get("total_story_points", "0")
+
+            # Validate the modal form before adding a sprint to the database.
+            project = db.session.get(Project, int(project_id)) if project_id and project_id.isdigit() else None
+            if not project:
+                sprint_errors.append("Please select a project.")
+            if not name:
+                sprint_errors.append("Sprint name is required.")
+
+            try:
+                start_date = date.fromisoformat(start_date_raw)
+                end_date = date.fromisoformat(end_date_raw)
+            except ValueError:
+                start_date = None
+                end_date = None
+                sprint_errors.append("Please enter valid start and end dates.")
+
+            try:
+                total_story_points = int(total_points_raw)
+            except ValueError:
+                total_story_points = 0
+                sprint_errors.append("Story points must be a number.")
+
+            if start_date and end_date and end_date < start_date:
+                sprint_errors.append("End date must be after the start date.")
+
+            if total_story_points < 0:
+                sprint_errors.append("Story points cannot be negative.")
+
+            if not sprint_errors:
+                sprint = Sprint(
+                    project_id=project.id,
+                    name=name,
+                    goal=goal,
+                    status="planned",
+                    start_date=start_date,
+                    end_date=end_date,
+                    total_story_points=total_story_points,
+                    completed_story_points=0,
+                    velocity_points=0,
+                )
+                db.session.add(sprint)
+                db.session.commit()
+                return redirect(url_for("sprints"))
+
+        # Load the current sprint and previous completed sprints for this page.
+        active_sprint = Sprint.query.filter_by(status="active").order_by(Sprint.end_date.asc()).first()
+        planned_sprints = Sprint.query.filter_by(status="planned").order_by(Sprint.start_date.asc()).all()
+        completed_sprints = Sprint.query.filter_by(status="completed").order_by(Sprint.end_date.desc()).all()
+
+        def progress_percent(completed_points, total_points):
+            return round((completed_points / total_points) * 100, 1) if total_points else 0
+
+        current_sprint = {
+            "id": None,
+            "project_name": "No project selected",
+            "title": "No Active Sprint",
+            "goal": "No active sprint has been created yet.",
+            "velocity": "0 pts",
+            "status": "Not Started",
+            "progress": 0,
+            "story_points": "0 of 0 story points completed",
+            "days_left": 0,
+            "day_label": "Days",
+            "end_label": "No end date",
+        }
+
+        if active_sprint:
+            days_left = max((active_sprint.end_date - date.today()).days, 0)
+            progress = progress_percent(
+                active_sprint.completed_story_points,
+                active_sprint.total_story_points,
+            )
+            current_sprint = {
+                "id": active_sprint.id,
+                "project_name": active_sprint.project.name,
+                "title": f"Active Sprint ({active_sprint.name})",
+                "goal": active_sprint.goal or "No sprint goal has been added yet.",
+                "velocity": f"{active_sprint.velocity_points} pts",
+                "status": active_sprint.status.replace("_", " ").title(),
+                "progress": progress,
+                "story_points": (
+                    f"{active_sprint.completed_story_points} of "
+                    f"{active_sprint.total_story_points} story points completed"
+                ),
+                "days_left": days_left,
+                "day_label": "Day" if days_left == 1 else "Days",
+                "end_label": active_sprint.end_date.strftime("Ends %b %d, %Y"),
+            }
+
+        # Planned sprints are shown separately so newly created sprints are easy to find.
+        upcoming_sprints = []
+        for sprint in planned_sprints:
+            upcoming_sprints.append({
+                "id": sprint.id,
+                "name": sprint.name,
+                "project_name": sprint.project.name,
+                "duration": f"{sprint.start_date.strftime('%b %d')} - {sprint.end_date.strftime('%b %d')}",
+                "story_points": sprint.total_story_points,
+                "status": sprint.status.title(),
+            })
+
+        # Build simple rows for the past sprint table.
+        past_sprints = []
+        for sprint in completed_sprints:
+            success_rate = progress_percent(
+                sprint.completed_story_points,
+                sprint.total_story_points,
+            )
+            past_sprints.append({
+                "name": sprint.name,
+                "duration": f"{sprint.start_date.strftime('%b %d')} - {sprint.end_date.strftime('%b %d')}",
+                "status": sprint.status.replace("_", " ").title(),
+                "story_points": f"{sprint.completed_story_points} / {sprint.total_story_points}",
+                "success_rate": success_rate,
+            })
+
+        return render_template(
+            "sprints.html",
+            current_sprint=current_sprint,
+            upcoming_sprints=upcoming_sprints,
+            past_sprints=past_sprints,
+            projects=projects,
+            sprint_errors=sprint_errors,
+            form_data=form_data,
+        )
+
+    @app.route("/sprints/<int:sprint_id>/activate", methods=["POST"])
+    def activate_sprint(sprint_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        sprint = db.session.get(Sprint, sprint_id)
+        if sprint and sprint.status == "planned":
+            # Keep only one active sprint at a time for the demo workflow.
+            active_sprints = Sprint.query.filter_by(status="active").all()
+            for active in active_sprints:
+                active.status = "planned"
+
+            sprint.status = "active"
+            db.session.commit()
+
+        return redirect(url_for("sprints"))
+
+    @app.route("/sprints/<int:sprint_id>/complete", methods=["POST"])
+    def complete_sprint(sprint_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        sprint = db.session.get(Sprint, sprint_id)
+        if sprint and sprint.status == "active":
+            # Use completed task points when possible before closing the sprint.
+            completed_points = sum(
+                task.story_points for task in sprint.tasks if task.status == "done"
+            )
+            if completed_points:
+                sprint.completed_story_points = completed_points
+            sprint.status = "completed"
+            db.session.commit()
+
+        return redirect(url_for("sprints"))
 
     # Route for project page
     @app.route("/project")

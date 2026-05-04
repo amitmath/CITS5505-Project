@@ -16,7 +16,14 @@
 
   <div class="topbar-right d-flex align-items-center gap-3">
     {% if topbar_action_label %}
-    <button class="btn {{ topbar_action_class | default('primary-action-btn') }}">
+    <button
+      class="btn {{ topbar_action_class | default('primary-action-btn') }}"
+      {% if topbar_action_modal_id %}
+      type="button"
+      data-bs-toggle="modal"
+      data-bs-target="#{{ topbar_action_modal_id }}"
+      {% endif %}
+    >
       {{ topbar_action_label }}
     </button>
     {% endif %}
