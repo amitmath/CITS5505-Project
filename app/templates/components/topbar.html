@@ -33,7 +33,7 @@
     <div class="profile-box d-flex align-items-center gap-2">
       <div>
         <p class="profile-name mb-0">{{ profile_name | default(g.user.full_name if g.user else 'Amit') }}</p>
-        <a href="{{ url_for('logout') }}" class="profile-link">LOG OUT</a>
+        <a href="{{ url_for('profile') }}" class="text-decoration-none" style="color:#1D9E75;font-size:0.75rem;display:block;">View Profile</a>
       </div>
       <div class="profile-avatar d-flex align-items-center justify-content-center rounded-circle"
         style="width:36px;height:36px;background:#1D9E75;font-size:0.9rem;color:white;font-weight:600;overflow:hidden;">
