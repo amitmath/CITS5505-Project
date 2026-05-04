@@ -105,22 +105,41 @@ topbar_search_placeholder = 'Search projects...' %} {% include
     </aside>
 
     <section class="detail-card active-task-card">
-      <div class="task-card-header">
-        <p class="detail-label">Active Tasks</p>
-        <a href="#">View Full Backlog</a>
-      </div>
+        <div class="task-card-header">
+            <p class="detail-label">Active Tasks</p>
+            <a href="#">View Full Backlog</a>
+        </div>
 
-      <div class="task-row">
+        {% if tasks %}
+            {% for task in tasks %}
+            <div class="task-row">
+                <div class="task-icon green">
+                <i class="bi bi-check2-square"></i>
+                </div>
+
+                <div>
+                <strong>{{ task.title }}</strong>
+                <span>
+                    {{ task.status | replace('_', ' ') | title }}
+                    {% if task.priority %}
+                    · Priority: {{ task.priority | title }}
+                    {% endif %}
+                </span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="task-row">
         <div class="task-icon green">
-          <i class="bi bi-diagram-3-fill"></i>
+            <i class="bi bi-diagram-3-fill"></i>
         </div>
         <div>
-          <strong>No active tasks yet</strong>
-          <span>Create tasks later and connect them to this project.</span>
+            <strong>No active tasks yet</strong>
+            <span>Create tasks later and connect them to this project.</span>
         </div>
-        <i class="bi bi-chevron-right"></i>
-      </div>
-    </section>
+        </div>
+        {% endif %}
+</section>
   </div>
 </div>
 
@@ -270,7 +289,7 @@ topbar_search_placeholder = 'Search projects...' %} {% include
   </div>
 </div>
 
-## Delete Modal
+{# Delete Modal #}
 <div class="project-modal-backdrop" id="deleteProjectModal">
   <div class="project-modal-card delete-modal-card">
     <div class="project-modal-header">

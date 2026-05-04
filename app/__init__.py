@@ -271,11 +271,13 @@ def create_app():
 
         project = Project.query.get_or_404(project_id)
         users = User.query.filter_by(is_active=True).all()
+        tasks = Task.query.filter_by(project_id=project.id).all()
 
         return render_template(
         "project_detail.html",
         project=project,
-        users=users
+        users=users,
+        tasks=tasks
         )
     
     @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
