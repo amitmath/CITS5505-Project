@@ -372,9 +372,9 @@ def create_app():
             avatar = request.files.get("avatar")
             if avatar and avatar.filename:
                 filename = secure_filename(f"user_{user.id}_{avatar.filename}")
-                upload_path = os.path.join("app", "static", "uploads", filename)
+                upload_path = os.path.join(app.root_path, "static", "uploads", filename)
                 avatar.save(upload_path)
-                user.avatar_url = url_for("static", filename=f"uploads/{filename}")
+                user.avatar_url = filename
             db.session.commit()
             success = True
 
