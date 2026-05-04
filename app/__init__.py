@@ -297,6 +297,32 @@ def create_app():
         flash("Project users updated successfully.", "success")
         return redirect(url_for("project_detail", project_id=project.id))
     
+    @app.route("/projects/<int:project_id>/edit", methods=["POST"])
+    def edit_project(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+
+        name = request.form.get("name", "").strip()
+        description = request.form.get("description", "").strip()
+        status = request.form.get("status", "active").strip()
+        health_status = request.form.get("health_status", "healthy").strip()
+
+        if not name:
+            flash("Project name is required.", "error")
+            return redirect(url_for("project_detail", project_id=project.id))
+
+        project.name = name
+        project.description = description
+        project.status = status
+        project.health_status = health_status
+
+        db.session.commit()
+
+        flash("Project updated successfully.", "success")
+        return redirect(url_for("project_detail", project_id=project.id))
+    
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
     def profile():

@@ -71,7 +71,7 @@
 }
 
 .detail-btn:hover {
-  background: #f8fafc;
+  background: #0ab47e;
 }
 
 .detail-btn.delete {
@@ -362,13 +362,6 @@
   background: #e2e8f0;
 }
 
-.project-modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 16px;
-}
-
 /* Cancel button */
 .project-cancel-btn {
   border: 1px solid #d1d5db;
@@ -401,4 +394,61 @@
 .project-submit-btn:hover {
   background: #047857;
   transform: translateY(-1px);
+}
+
+.project-modal-backdrop {
+  display: none;
+}
+
+.project-modal-backdrop.show {
+  display: flex;
+}
+
+.project-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.project-form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.project-form-group label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 7px;
+}
+
+.project-form-group input,
+.project-form-group textarea,
+.project-form-group select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  outline: none;
+}
+
+.project-form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.project-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.project-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 22px;
 }

@@ -30,7 +30,9 @@ topbar_search_placeholder = 'Search projects...' %} {% include
     </div>
 
     <div class="detail-actions">
-      <a href="" class="detail-btn"> Edit<br />Project </a>
+      <button type="button" class="detail-btn" id="openEditProjectModal">
+        Edit<br />Project
+      </button>
 
       <form method="POST" action="">
         <button type="submit" class="detail-btn delete">
@@ -181,6 +183,93 @@ topbar_search_placeholder = 'Search projects...' %} {% include
     </form>
   </div>
 </div>
+
+<div class="project-modal-backdrop" id="editProjectModal">
+  <div class="project-modal-card">
+    <div class="project-modal-header">
+      <h2>Edit Project</h2>
+      <button
+        type="button"
+        class="project-modal-close"
+        id="closeEditProjectModal"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <form
+      method="POST"
+      action="{{ url_for('edit_project', project_id=project.id) }}"
+    >
+      <div class="project-form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ project.name }}" required />
+      </div>
+
+      <div class="project-form-group">
+        <label>Description</label>
+        <textarea name="description">{{ project.description or '' }}</textarea>
+      </div>
+
+      <div class="project-form-row">
+        <div class="project-form-group">
+          <label>Status</label>
+          <select name="status">
+  <option value="active" {% if project.status == "active" %}selected{% endif %}>
+    Active
+  </option>
+
+  <option value="inactive" {% if project.status == "inactive" %}selected{% endif %}>
+    Inactive
+  </option>
+</select>
+        </div>
+
+        <div class="project-form-group">
+          <label>Health</label>
+          <select name="health_status">
+            <option
+              value="healthy"
+              {%
+              if
+              project.health_status=="healthy"
+              %}selected{%
+              endif
+              %}
+            >
+              Healthy
+            </option>
+
+            <option
+              value="risk"
+              {%
+              if
+              project.health_status
+              !="healthy"
+              %}selected{%
+              endif
+              %}
+            >
+              At-Risk
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="project-modal-actions">
+        <button
+          type="button"
+          class="project-cancel-btn"
+          id="cancelEditProjectModal"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="project-submit-btn">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const assignUsersModal = document.getElementById("assignUsersModal");
@@ -216,6 +305,64 @@ topbar_search_placeholder = 'Search projects...' %} {% include
       assignUsersModal.addEventListener("click", (event) => {
         if (event.target === assignUsersModal) {
           assignUsersModal.classList.remove("show");
+        }
+      });
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Assign Users modal
+    const assignUsersModal = document.getElementById("assignUsersModal");
+    const openAssignUsersModal = document.getElementById("openAssignUsersModal");
+    const closeAssignUsersModal = document.getElementById("closeAssignUsersModal");
+    const cancelAssignUsersModal = document.getElementById("cancelAssignUsersModal");
+
+    if (openAssignUsersModal && assignUsersModal) {
+      openAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.add("show");
+      });
+    }
+
+    if (closeAssignUsersModal) {
+      closeAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.remove("show");
+      });
+    }
+
+    if (cancelAssignUsersModal) {
+      cancelAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.remove("show");
+      });
+    }
+
+    // Edit Project modal
+    const editProjectModal = document.getElementById("editProjectModal");
+    const openEditProjectModal = document.getElementById("openEditProjectModal");
+    const closeEditProjectModal = document.getElementById("closeEditProjectModal");
+    const cancelEditProjectModal = document.getElementById("cancelEditProjectModal");
+
+    if (openEditProjectModal && editProjectModal) {
+      openEditProjectModal.addEventListener("click", () => {
+        editProjectModal.classList.add("show");
+      });
+    }
+
+    if (closeEditProjectModal) {
+      closeEditProjectModal.addEventListener("click", () => {
+        editProjectModal.classList.remove("show");
+      });
+    }
+
+    if (cancelEditProjectModal) {
+      cancelEditProjectModal.addEventListener("click", () => {
+        editProjectModal.classList.remove("show");
+      });
+    }
+
+    if (editProjectModal) {
+      editProjectModal.addEventListener("click", (event) => {
+        if (event.target === editProjectModal) {
+          editProjectModal.classList.remove("show");
         }
       });
     }
