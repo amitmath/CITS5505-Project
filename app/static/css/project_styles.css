@@ -109,6 +109,10 @@ body {
   width: 100%;
   min-width: 360px;
   scroll-snap-align: start;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  padding: 12px;
 }
 
 .project-grid::-webkit-scrollbar {
@@ -473,14 +477,6 @@ body {
 }
 
 
-/* =========================
-   Final pixel-perfect polish
-   ========================= */
-.project-page-card {
-  padding: 18px;
-  position: relative;
-}
-
 .project-page-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
@@ -774,12 +770,28 @@ body {
   display: block;
 }
 
-.project-page-card {
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
 .project-card-link:hover .project-page-card {
   transform: translateY(-6px);
   box-shadow: 0 16px 30px rgba(0, 0, 0, 0.12);
+}
+
+.project-page-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+}
+
+.project-page-card::after {
+  content: "View details →";
+  position: absolute;
+  bottom: 5px;
+  right: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.project-page-card:hover::after {
+  opacity: 1;
 }
