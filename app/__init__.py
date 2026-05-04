@@ -8,7 +8,6 @@ from flask import Flask, app, flash, g, redirect, render_template, request, sess
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
-from app.models import Project, User
 from config import Config
 
 # Create extension objects globally
@@ -287,6 +286,8 @@ def create_app():
         project = Project.query.get_or_404(project_id)
 
         selected_user_ids = request.form.getlist("user_ids")
+        selected_user_ids = [int(uid) for uid in selected_user_ids]
+
         selected_users = User.query.filter(User.id.in_(selected_user_ids)).all()
 
         project.assigned_users = selected_users

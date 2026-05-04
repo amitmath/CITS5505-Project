@@ -111,4 +111,82 @@ topbar_search_placeholder = 'Search projects...' %} {% include
     </section>
   </div>
 </div>
+
+<div class="project-modal-backdrop" id="assignUsersModal">
+  <div class="project-modal-card">
+    <div class="project-modal-header">
+      <h2>Assign Users</h2>
+      <button type="button" class="project-modal-close" id="closeAssignUsersModal">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <form method="POST" action="{{ url_for('assign_project_users', project_id=project.id) }}">
+      <div class="assign-users-list">
+        {% for user in users %}
+          <label class="assign-user-row">
+            <input
+              type="checkbox"
+              name="user_ids"
+              value="{{ user.id }}"
+              {% if user in project.assigned_users %}checked{% endif %}
+            />
+
+            <div class="team-avatar-sm">
+              {{ user.full_name[:1] | upper }}
+            </div>
+
+            <div>
+              <strong>{{ user.full_name }}</strong>
+              <span>{{ user.title or user.email }}</span>
+            </div>
+          </label>
+        {% endfor %}
+      </div>
+
+      <div class="project-modal-actions">
+        <button type="button" class="project-cancel-btn" id="cancelAssignUsersModal">
+          Cancel
+        </button>
+        <button type="submit" class="project-submit-btn">
+          Save Assignments
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const assignUsersModal = document.getElementById("assignUsersModal");
+    const openAssignUsersModal = document.getElementById("openAssignUsersModal");
+    const closeAssignUsersModal = document.getElementById("closeAssignUsersModal");
+    const cancelAssignUsersModal = document.getElementById("cancelAssignUsersModal");
+
+    if (openAssignUsersModal && assignUsersModal) {
+      openAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.add("show");
+      });
+    }
+
+    if (closeAssignUsersModal) {
+      closeAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.remove("show");
+      });
+    }
+
+    if (cancelAssignUsersModal) {
+      cancelAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.remove("show");
+      });
+    }
+
+    if (assignUsersModal) {
+      assignUsersModal.addEventListener("click", (event) => {
+        if (event.target === assignUsersModal) {
+          assignUsersModal.classList.remove("show");
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}
