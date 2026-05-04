@@ -1,21 +1,24 @@
-{% extends "base.html" %}
-
-{% block title %}{{ project.name }} | Project{% endblock %}
-
-{% block content %}
-{% set topbar_title = 'Projects' %} 
-{% set topbar_search_placeholder = 'Search projects...' %} 
-{% include "components/topbar.html" %}
+{% extends "base.html" %} {% block title %}{{ project.name }} | Project{%
+endblock %} {% block content %} {% set topbar_title = 'Projects' %} {% set
+topbar_search_placeholder = 'Search projects...' %} {% include
+"components/topbar.html" %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/project_detail.css') }}"
 />
 <div class="project-detail-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('project') }}">Projects</a>
+    <i class="bi bi-chevron-right"></i>
+    <span class="breadcrumb-current">{{ project.name }}</span>
+  </div>
 
   <div class="detail-header">
     <div>
       <div class="project-breadcrumb">
-        <span class="detail-status-pill {{ 'healthy' if project.health_status == 'healthy' else 'risk' }}">
+        <span
+          class="detail-status-pill {{ 'healthy' if project.health_status == 'healthy' else 'risk' }}"
+        >
           {{ project.health_status | upper }}
         </span>
         <span>•</span>
@@ -27,13 +30,11 @@
     </div>
 
     <div class="detail-actions">
-      <a href="" class="detail-btn">
-        Edit<br>Project
-      </a>
+      <a href="" class="detail-btn"> Edit<br />Project </a>
 
       <form method="POST" action="">
         <button type="submit" class="detail-btn delete">
-          Delete<br>Project
+          Delete<br />Project
         </button>
       </form>
     </div>
@@ -44,7 +45,8 @@
       <p class="detail-label">Project Overview</p>
 
       <p class="overview-text">
-        {{ project.description or "This project does not have a detailed overview yet." }}
+        {{ project.description or "This project does not have a detailed
+        overview yet." }}
       </p>
 
       <div class="overview-meta">
@@ -114,6 +116,5 @@
       </div>
     </section>
   </div>
-
 </div>
 {% endblock %}
