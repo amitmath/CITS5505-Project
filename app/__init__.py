@@ -280,6 +280,20 @@ def create_app():
         tasks=tasks
         )
     
+    @app.route("/projects/<int:project_id>/backlog")
+    def project_backlog(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+        tasks = Task.query.filter_by(project_id=project.id).all()
+
+        return render_template(
+            "backlog.html",
+            project=project,
+            tasks=tasks
+        )
+    
     @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
     def assign_project_users(project_id):
         if g.user is None:
