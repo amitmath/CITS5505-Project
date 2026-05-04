@@ -1,6 +1,13 @@
 from datetime import datetime
 from app import db
 
+project_users = db.Table(
+    "project_users",
+    db.Column("project_id", db.Integer, db.ForeignKey("projects.id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
+    db.Column("role", db.String(80), nullable=True),
+    db.Column("assigned_at", db.DateTime, default=datetime.utcnow),
+)
 
 class User(db.Model):
     """
@@ -34,6 +41,13 @@ class User(db.Model):
         back_populates="creator",
         foreign_keys="Task.created_by"
     )
+
+    projects = db.relationship(
+        "Project",
+        secondary=project_users,
+        back_populates="assigned_users"
+    )
+
 
     def __repr__(self):
         return f"<User {self.full_name}>"
@@ -70,6 +84,12 @@ class Project(db.Model):
         "Task",
         back_populates="project",
         cascade="all, delete-orphan"
+    )
+
+    assigned_users = db.relationship(
+        "User",
+        secondary=project_users,
+        back_populates="projects"
     )
 
     def __repr__(self):
@@ -182,3 +202,4 @@ class Task(db.Model):
 
     def __repr__(self):
         return f"<Task {self.title}>"
+    
