@@ -379,6 +379,55 @@ def create_app():
             form_data=form_data,
         )
 
+    @app.route("/sprints/<int:sprint_id>/check-in", methods=["POST"])
+    def submit_sprint_checkin(sprint_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        sprint = db.session.get(Sprint, sprint_id)
+        if not sprint or sprint.status != "active":
+            flash("Check-ins can only be added for the active sprint.", "error")
+            return redirect(url_for("sprints"))
+
+        blockers = request.form.get("blockers", "").strip()
+        needs_help = request.form.get("needs_help") == "on"
+
+        try:
+            confidence_level = int(request.form.get("confidence_level", ""))
+            workload_level = int(request.form.get("workload_level", ""))
+        except ValueError:
+            flash("Confidence and workload must be selected.", "error")
+            return redirect(url_for("sprints"))
+
+        if confidence_level not in range(1, 6) or workload_level not in range(1, 6):
+            flash("Confidence and workload must be between 1 and 5.", "error")
+            return redirect(url_for("sprints"))
+
+        today = date.today()
+        # A user should only have one check-in per sprint per day, so update if it exists.
+        checkin = SprintCheckIn.query.filter_by(
+            sprint_id=sprint.id,
+            user_id=g.user.id,
+            checkin_date=today,
+        ).first()
+
+        if checkin is None:
+            checkin = SprintCheckIn(
+                sprint_id=sprint.id,
+                user_id=g.user.id,
+                checkin_date=today,
+            )
+            db.session.add(checkin)
+
+        checkin.confidence_level = confidence_level
+        checkin.workload_level = workload_level
+        checkin.blockers = blockers
+        checkin.needs_help = needs_help
+        db.session.commit()
+
+        flash("Sprint check-in saved.", "success")
+        return redirect(url_for("sprints") + "#health")
+
     @app.route("/sprints/<int:sprint_id>/activate", methods=["POST"])
     def activate_sprint(sprint_id):
         if g.user is None:

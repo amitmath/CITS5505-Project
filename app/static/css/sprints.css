@@ -179,6 +179,36 @@
   line-height: 1.5;
 }
 
+.sprints-page .sprint-checkin-card {
+  padding: 22px 24px;
+}
+
+.sprints-page .checkin-date {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.sprints-page .sprint-checkin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.sprints-page .checkin-blockers {
+  grid-column: span 2;
+}
+
+.sprints-page .checkin-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  grid-column: span 2;
+  flex-wrap: wrap;
+}
+
 .sprints-page .sprint-side-stack {
   display: grid;
   gap: 18px;
@@ -361,6 +391,15 @@
 @media (max-width: 767.98px) {
   .sprints-page .sprint-metrics-grid {
     grid-template-columns: 1fr;
+  }
+
+  .sprints-page .sprint-checkin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sprints-page .checkin-blockers,
+  .sprints-page .checkin-actions {
+    grid-column: auto;
   }
 
   .sprints-page .time-card-top {
