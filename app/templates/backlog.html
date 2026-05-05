@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}Backlog | Agile PM{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/backlog_styles.css') }}" />
+{% endblock %}
+
+{% block content %}
+
+{# Topbar #}
+{% set topbar_title = 'Backlog' %}
+{% set topbar_search_placeholder = 'Search tasks...' %}
+{% include "components/topbar.html" %}
+
+{# Fallback task data #}
+{% set fallback_tasks = [
+  {
+    'id': 'ORC-1244',
+    'title': 'Finalize design system tokens',
+    'created': 'Created 2d ago',
+    'priority': 'high',
+    'status': 'in-progress',
+    'status_label': 'In Progress',
+    'assignee': 'Alex Rivera',
+    'assignee_initials': 'AR',
+    'sprint': 'Sprint 12'
+  },
+  {
+    'id': 'ORC-1245',
+    'title': 'API Authentication Refactoring',
+    'created': 'Created 3d ago',
+    'priority': 'medium',
+    'status': 'backlog',
+    'status_label': 'Backlog',
+    'assignee': None,
+    'assignee_initials': None,
+    'sprint': 'TBD'
+  },
+  {
+    'id': 'ORC-1246',
+    'title': 'Update documentation for webhooks',
+    'created': 'Created 5d ago',
+    'priority': 'low',
+    'status': 'backlog',
+    'status_label': 'Backlog',
+    'assignee': 'Mark J.',
+    'assignee_initials': 'MJ',
+    'sprint': 'Sprint 13'
+  },
+  {
+    'id': 'ORC-1247',
+    'title': 'Database migration to AWS Aurora',
+    'created': 'Created 1d ago',
+    'priority': 'high',
+    'status': 'blocker',
+    'status_label': 'Blocker',
+    'assignee': 'Sarah Chen',
+    'assignee_initials': 'SC',
+    'sprint': 'Sprint 12'
+  }
+] %}
+
+{# Use real data if passed from route, else show fallback #}
+{% set task_items = tasks if tasks is defined and tasks else fallback_tasks %}
+{% set total_tasks = total_tasks if total_tasks is defined else 142 %}
+{% set unassigned_count = unassigned_count if unassigned_count is defined else 28 %}
+{% set project_name = project_name if project_name is defined else 'Quantum ERP' %}
+
+{# Header Card #}
+<section class="backlog-hero">
+  <div class="backlog-hero-left">
+    <nav class="backlog-breadcrumb" aria-label="breadcrumb">
+      <a href="{{ url_for('project') }}">Projects</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>{{ project_name }}</span>
+    </nav>
+    <h1 class="backlog-hero-title">Project Backlog</h1>
+    <p class="backlog-hero-text">
+      Manage and prioritize tasks for the upcoming development cycles.
+      Drag to reorder or use filters to focus on specific workstreams.
+    </p>
+  </div>
+
+  <div class="backlog-hero-right">
+   
+    <div class="backlog-stat">
+      <span class="backlog-stat-label">TOTAL<br>TASKS</span>
+      <span class="backlog-stat-number">{{ total_tasks }}</span>
+    </div>
+
+   
+    <div class="backlog-stat">
+      <span class="backlog-stat-label">UNASSIGNED</span>
+      <span class="backlog-stat-number">{{ unassigned_count }}</span>
+    </div>
+
+   
+    <a href="#" class="backlog-create-btn">
+      <i class="bi bi-plus-lg me-1"></i> Create<br>Task
+    </a>
+  </div>
+</section>
+
+{# Toolbar #}
+<section class="backlog-toolbar">
+  <div class="backlog-toolbar-left">
+    {# List / Board toggle #}
+    <div class="view-toggle">
+      <a href="#" class="view-btn active">
+        <i class="bi bi-list-ul me-1"></i> List View
+      </a>
+      <a href="#" class="view-btn">
+        <i class="bi bi-grid me-1"></i> Board
+      </a>
+    </div>
+
+    <a href="#" class="toolbar-action-btn">
+      <i class="bi bi-funnel me-1"></i> Filters
+    </a>
+    <a href="#" class="toolbar-action-btn">
+      <i class="bi bi-sort-down me-1"></i> Sort
+    </a>
+  </div>
+
+  
+  <div class="backlog-member-stack" aria-label="Assigned members">
+    <span class="bl-avatar bl-av-1"><i class="bi bi-person-fill"></i></span>
+    <span class="bl-avatar bl-av-2"><i class="bi bi-person-fill"></i></span>
+    <span class="bl-avatar bl-av-3"><i class="bi bi-person-fill"></i></span>
+    <span class="bl-avatar bl-av-more">+12</span>
+  </div>
+</section>
+
+{# Task Table #}
+<section class="backlog-table-card">
+  <div class="table-responsive">
+    <table class="table backlog-table mb-0">
+      <thead>
+        <tr>
+          <th>TASK DETAILS</th>
+          <th>PRIORITY</th>
+          <th>STATUS</th>
+          <th>ASSIGNEE</th>
+          <th>SPRINT</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in task_items %}
+
+        {# read task fields #}
+        {% set t_id       = task.id if task.id is defined else task['id'] %}
+        {% set t_title    = task.title if task.title is defined else task['title'] %}
+        {% set t_created  = task.created if task.created is defined else task['created'] %}
+        {% set t_priority = task.priority if task.priority is defined else task['priority'] %}
+        {% set t_status   = task.status if task.status is defined else task['status'] %}
+        {% set t_label    = task.status_label if task.status_label is defined else task['status_label'] %}
+        {% set t_assignee = task.assignee if task.assignee is defined else task['assignee'] %}
+        {% set t_initials = task.assignee_initials if task.assignee_initials is defined else task['assignee_initials'] %}
+        {% set t_sprint   = task.sprint if task.sprint is defined else task['sprint'] %}
+
+        <tr class="backlog-row">
+          
+          <td class="task-details-cell">
+            <a href="#" class="task-title-link">{{ t_title }}</a>
+            <span class="task-meta">{{ t_id }} &bull; {{ t_created }}</span>
+          </td>
+
+          
+          <td>
+            {% if t_priority == 'high' %}
+              <span class="priority-badge priority-high">
+                <i class="bi bi-circle-fill me-1"></i> HIGH
+              </span>
+            {% elif t_priority == 'medium' %}
+              <span class="priority-badge priority-medium">
+                <i class="bi bi-circle-fill me-1"></i> MEDIUM
+              </span>
+            {% else %}
+              <span class="priority-badge priority-low">
+                <i class="bi bi-circle-fill me-1"></i> LOW
+              </span>
+            {% endif %}
+          </td>
+
+         
+          <td>
+            {% if t_status == 'in-progress' %}
+              <span class="status-badge in-progress">{{ t_label }}</span>
+            {% elif t_status == 'blocker' %}
+              <span class="status-badge blocker">{{ t_label }}</span>
+            {% else %}
+              <span class="status-badge todo">{{ t_label }}</span>
+            {% endif %}
+          </td>
+
+          
+          <td>
+            {% if t_assignee %}
+              <div class="assignee-cell">
+                <span class="assignee-avatar">{{ t_initials }}</span>
+                <span class="assignee-name">{{ t_assignee }}</span>
+              </div>
+            {% else %}
+              <a href="#" class="assign-btn">
+                <i class="bi bi-person-plus me-1"></i> Assign
+              </a>
+            {% endif %}
+          </td>
+
+          
+          <td>
+            {% if t_sprint and t_sprint != 'TBD' %}
+              <a href="#" class="sprint-link">{{ t_sprint }}</a>
+            {% else %}
+              <span class="sprint-tbd">TBD</span>
+            {% endif %}
+          </td>
+        </tr>
+
+        {% else %}
+        {# Empty state row if no tasks at all #}
+        <tr>
+          <td colspan="5" class="text-center py-5 text-muted">
+            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+            No tasks in the backlog yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# Table footer: count + pagination #}
+  <div class="backlog-table-footer">
+    <span class="showing-label">
+      Showing {{ task_items | length }} of {{ total_tasks }} items
+    </span>
+    <div class="pagination-btns">
+      <a href="#" class="page-btn">Previous</a>
+      <a href="#" class="page-btn page-btn-active">Next</a>
+    </div>
+  </div>
+</section>
+
+{# Footer  #}
+<footer class="backlog-footer">
+  <span>&copy; 2024 Agile Project Management (APM) Workspace. All rights reserved.</span>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Security</a>
+  </div>
+</footer>
+
+{% endblock %}
