@@ -8,23 +8,39 @@
       </div>
 
       <nav class="nav flex-column sidebar-nav">
-        <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+        <a
+          href="{{ url_for('dashboard') }}"
+          class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"
+        >
           <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard
         </a>
-        <a href="{{ url_for('sprints') }}" class="nav-link {% if request.endpoint == 'sprints' %}active{% endif %}">
+        <a
+          href="{{ url_for('sprints') }}"
+          class="nav-link {% if request.endpoint == 'sprints' %}active{% endif %}"
+        >
           <i class="bi bi-flag me-2"></i> Sprints
         </a>
         <a href="{{ url_for('sprints') }}#health" class="nav-link sub-link">
           <i class="bi bi-activity me-2"></i> Sprint Health
         </a>
-        <a href="{{ url_for('project') }}" class="nav-link {% if request.endpoint == 'project' %}active{% endif %}">
-          <i class="bi bi-folder me-2"></i> Projects
+        <a
+          href="{{ url_for('project') }}"
+          class="nav-link {% if request.endpoint in ['project', 'project_detail', 'edit_project'] %}active{% endif %}"
+        >
+          <i class="bi bi-folder"></i>
+          <span>Projects</span>
         </a>
         <a href="#" class="nav-link">
           <i class="bi bi-card-checklist me-2"></i> Backlog
         </a>
         <a href="#" class="nav-link">
           <i class="bi bi-bar-chart me-2"></i> Analytics
+        </a>
+        <a
+          href="{{ url_for('profile') }}"
+          class="nav-link {% if request.endpoint == 'profile' %}active{% endif %}"
+        >
+          <i class="bi bi-person me-2"></i> Profile
         </a>
       </nav>
     </div>
