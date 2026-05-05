@@ -186,6 +186,34 @@
         </div>
       </div>
     </form>
+
+    <div class="recent-checkins">
+      <div class="recent-checkins-head">
+        <h3 class="recent-checkins-title">Recent Check-ins</h3>
+        <span>{{ recent_checkins | length }} shown</span>
+      </div>
+
+      {% for checkin in recent_checkins %}
+      <div class="recent-checkin-item">
+        <span class="recent-checkin-avatar">{{ checkin.initial }}</span>
+        <div class="recent-checkin-main">
+          <div class="recent-checkin-top">
+            <strong>{{ checkin.user_name }}</strong>
+            <span>{{ checkin.date }}</span>
+          </div>
+          <p class="mb-1">
+            Confidence {{ checkin.confidence }}/5 · Workload {{ checkin.workload }}/5
+          </p>
+          <p class="recent-checkin-blocker mb-0">{{ checkin.blockers }}</p>
+        </div>
+        {% if checkin.needs_help %}
+        <span class="help-pill">Needs help</span>
+        {% endif %}
+      </div>
+      {% else %}
+      <p class="text-muted mb-0">No check-ins have been submitted for this sprint yet.</p>
+      {% endfor %}
+    </div>
   </div>
 </section>
 {% endif %}

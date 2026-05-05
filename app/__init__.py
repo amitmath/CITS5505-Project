@@ -295,6 +295,7 @@ def create_app():
             "blocker_count": 0,
             "help_count": 0,
         }
+        recent_checkins = []
 
         if active_sprint:
             days_left = max((active_sprint.end_date - date.today()).days, 0)
@@ -320,7 +321,12 @@ def create_app():
             }
 
             # Sprint health is based on team check-ins saved for the active sprint.
-            checkins = SprintCheckIn.query.filter_by(sprint_id=active_sprint.id).all()
+            checkins = (
+                SprintCheckIn.query
+                .filter_by(sprint_id=active_sprint.id)
+                .order_by(SprintCheckIn.checkin_date.desc())
+                .all()
+            )
             checkin_count = len(checkins)
             if checkins:
                 average_confidence = round(
@@ -335,11 +341,24 @@ def create_app():
                 help_count = sum(1 for checkin in checkins if checkin.needs_help)
                 sprint_health = {
                     "confidence_label": f"{average_confidence}/5 confidence",
-                    "checkin_label": f"{checkin_count} check-ins",
+                    "checkin_label": f"{checkin_count} check-in" if checkin_count == 1 else f"{checkin_count} check-ins",
                     "workload_label": f"{average_workload}/5 workload",
                     "blocker_count": blocker_count,
                     "help_count": help_count,
                 }
+
+            recent_checkins = []
+            for checkin in checkins[:5]:
+                user_name = checkin.user.full_name if checkin.user else "Team member"
+                recent_checkins.append({
+                    "user_name": user_name,
+                    "initial": user_name[:1].upper(),
+                    "confidence": checkin.confidence_level,
+                    "workload": checkin.workload_level,
+                    "blockers": checkin.blockers or "No blockers added.",
+                    "needs_help": checkin.needs_help,
+                    "date": checkin.checkin_date.strftime("%b %d"),
+                })
 
         # Planned sprints are shown separately so newly created sprints are easy to find.
         upcoming_sprints = []
@@ -377,6 +396,7 @@ def create_app():
             projects=projects,
             sprint_errors=sprint_errors,
             form_data=form_data,
+            recent_checkins=recent_checkins,
         )
 
     @app.route("/sprints/<int:sprint_id>/check-in", methods=["POST"])
