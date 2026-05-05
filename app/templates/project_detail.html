@@ -1,0 +1,450 @@
+{% extends "base.html" %} {% block title %}{{ project.name }} | Project{%
+endblock %} {% block content %} {% set topbar_title = 'Projects' %} {% set
+topbar_search_placeholder = 'Search projects...' %} {% include
+"components/topbar.html" %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/project_detail.css') }}"
+/>
+<div class="project-detail-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('project') }}">Projects</a>
+    <i class="bi bi-chevron-right"></i>
+    <span class="breadcrumb-current">{{ project.name }}</span>
+  </div>
+
+  <div class="detail-header">
+    <div>
+      <div class="project-breadcrumb">
+        <span
+          class="detail-status-pill {{ 'healthy' if project.health_status == 'healthy' else 'risk' }}"
+        >
+          {{ project.health_status | upper }}
+        </span>
+        <span>•</span>
+        <span>Project #{{ project.id }}</span>
+      </div>
+
+      <h1>{{ project.name }}</h1>
+      <p>{{ project.description or "No description available." }}</p>
+    </div>
+
+    <div class="detail-actions">
+      <button type="button" class="detail-btn" id="openEditProjectModal">
+        Edit<br />Project
+      </button>
+
+      <form method="POST" action="">
+        <button type="button" class="detail-btn delete" id="openDeleteProjectModal">
+            Delete<br />Project
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <section class="detail-card project-overview-card">
+      <p class="detail-label">Project Overview</p>
+
+      <p class="overview-text">
+        {{ project.description or "This project does not have a detailed
+        overview yet." }}
+      </p>
+
+      <div class="overview-meta">
+        <div>
+          <span>Current Status</span>
+          <strong class="status-dot">{{ project.status | capitalize }}</strong>
+        </div>
+
+        <div>
+          <span>Health</span>
+          <strong>{{ project.health_status | capitalize }}</strong>
+        </div>
+
+        <div>
+          <span>Progress</span>
+          <strong>{{ project.calculated_progress }}%</strong>
+        </div>
+      </div>
+    </section>
+
+    <aside class="detail-card project-team-card">
+      <div class="team-card-header">
+        <p class="detail-label">Project Team</p>
+        <button
+          type="button"
+          class="assign-users-btn"
+          id="openAssignUsersModal"
+        >
+          + Assign Users
+        </button>
+      </div>
+
+      {% if project.assigned_users %} {% for user in project.assigned_users %}
+      <div class="team-member">
+        <div class="team-avatar-sm">
+          {% if user.avatar_url %} {% if user.avatar_url.startswith('/static/')
+          %}
+          <img src="{{ user.avatar_url }}" alt="{{ user.full_name }}" />
+          {% else %}
+          <img
+            src="{{ url_for('static', filename='uploads/' ~ user.avatar_url) }}"
+            alt="{{ user.full_name }}"
+          />
+          {% endif %} {% else %} {{ user.full_name[:1] | upper }} {% endif %}
+        </div>
+        <div>
+          <strong>{{ user.full_name }}</strong>
+          <span>{{ user.title or user.email }}</span>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <p class="no-team-text">No users assigned yet.</p>
+      {% endif %}
+    </aside>
+
+    <section class="detail-card active-task-card">
+        <div class="task-card-header">
+            <p class="detail-label">Tasks</p>
+            <a href="{{ url_for('project_backlog', project_id=project.id) }}">View Full Backlog</a>
+        </div>
+
+        {% if tasks %}
+            {% for task in tasks %}
+            <div class="task-row">
+                <div class="task-icon green">
+                <i class="bi bi-check2-square"></i>
+                </div>
+
+                <div>
+                <strong>{{ task.title }}</strong>
+                <span>
+                    {{ task.status | replace('_', ' ') | title }}
+                    {% if task.priority %}
+                    · Priority: {{ task.priority | title }}
+                    {% endif %}
+                </span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="task-row">
+        <div class="task-icon green">
+            <i class="bi bi-diagram-3-fill"></i>
+        </div>
+        <div>
+            <strong>No active tasks yet</strong>
+            <span>Create tasks later and connect them to this project.</span>
+        </div>
+        </div>
+        {% endif %}
+</section>
+  </div>
+</div>
+
+<div class="project-modal-backdrop" id="assignUsersModal">
+  <div class="project-modal-card">
+    <div class="project-modal-header">
+      <h2>Assign Users</h2>
+      <button
+        type="button"
+        class="project-modal-close"
+        id="closeAssignUsersModal"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <form
+      method="POST"
+      action="{{ url_for('assign_project_users', project_id=project.id) }}"
+    >
+      <div class="assign-users-list">
+        {% for user in users %}
+        <label class="assign-user-row">
+          <input
+            type="checkbox"
+            name="user_ids"
+            value="{{ user.id }}"
+            {%
+            if
+            user
+            in
+            project.assigned_users
+            %}checked{%
+            endif
+            %}
+          />
+
+          <div class="team-avatar-sm">{{ user.full_name[:1] | upper }}</div>
+
+          <div>
+            <strong>{{ user.full_name }}</strong>
+            <span>{{ user.title or user.email }}</span>
+          </div>
+        </label>
+        {% endfor %}
+      </div>
+
+      <div class="project-modal-actions">
+        <button
+          type="button"
+          class="project-cancel-btn"
+          id="cancelAssignUsersModal"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="project-submit-btn">
+          Save Assignments
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="project-modal-backdrop" id="editProjectModal">
+  <div class="project-modal-card">
+    <div class="project-modal-header">
+      <h2>Edit Project</h2>
+      <button
+        type="button"
+        class="project-modal-close"
+        id="closeEditProjectModal"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <form
+      method="POST"
+      action="{{ url_for('edit_project', project_id=project.id) }}"
+    >
+      <div class="project-form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ project.name }}" required />
+      </div>
+
+      <div class="project-form-group">
+        <label>Description</label>
+        <textarea name="description">{{ project.description or '' }}</textarea>
+      </div>
+
+      <div class="project-form-row">
+        <div class="project-form-group">
+          <label>Status</label>
+          <select name="status">
+  <option value="active" {% if project.status == "active" %}selected{% endif %}>
+    Active
+  </option>
+
+  <option value="inactive" {% if project.status == "inactive" %}selected{% endif %}>
+    Inactive
+  </option>
+</select>
+        </div>
+
+        <div class="project-form-group">
+          <label>Health</label>
+          <select name="health_status">
+            <option
+              value="healthy"
+              {%
+              if
+              project.health_status=="healthy"
+              %}selected{%
+              endif
+              %}
+            >
+              Healthy
+            </option>
+
+            <option
+              value="risk"
+              {%
+              if
+              project.health_status
+              !="healthy"
+              %}selected{%
+              endif
+              %}
+            >
+              At-Risk
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="project-modal-actions">
+        <button
+          type="button"
+          class="project-cancel-btn"
+          id="cancelEditProjectModal"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="project-submit-btn">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{# Delete Modal #}
+<div class="project-modal-backdrop" id="deleteProjectModal">
+  <div class="project-modal-card delete-modal-card">
+    <div class="project-modal-header">
+      <h2>Delete Project</h2>
+      <button type="button" class="project-modal-close" id="closeDeleteProjectModal">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <p class="delete-warning-text">
+      Are you sure you want to delete <strong>{{ project.name }}</strong>?
+      This action cannot be undone.
+    </p>
+
+    <div class="project-modal-actions">
+      <button type="button" class="project-cancel-btn" id="cancelDeleteProjectModal">
+        Cancel
+      </button>
+
+      <form method="POST" action="{{ url_for('delete_project', project_id=project.id) }}">
+        <button type="submit" class="project-delete-submit-btn">
+          Delete Project
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const assignUsersModal = document.getElementById("assignUsersModal");
+    const openAssignUsersModal = document.getElementById(
+      "openAssignUsersModal",
+    );
+    const closeAssignUsersModal = document.getElementById(
+      "closeAssignUsersModal",
+    );
+    const cancelAssignUsersModal = document.getElementById(
+      "cancelAssignUsersModal",
+    );
+
+    if (openAssignUsersModal && assignUsersModal) {
+      openAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.add("show");
+      });
+    }
+
+    if (closeAssignUsersModal) {
+      closeAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.remove("show");
+      });
+    }
+
+    if (cancelAssignUsersModal) {
+      cancelAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.remove("show");
+      });
+    }
+
+    if (assignUsersModal) {
+      assignUsersModal.addEventListener("click", (event) => {
+        if (event.target === assignUsersModal) {
+          assignUsersModal.classList.remove("show");
+        }
+      });
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Assign Users modal
+    const assignUsersModal = document.getElementById("assignUsersModal");
+    const openAssignUsersModal = document.getElementById("openAssignUsersModal");
+    const closeAssignUsersModal = document.getElementById("closeAssignUsersModal");
+    const cancelAssignUsersModal = document.getElementById("cancelAssignUsersModal");
+
+    if (openAssignUsersModal && assignUsersModal) {
+      openAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.add("show");
+      });
+    }
+
+    if (closeAssignUsersModal) {
+      closeAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.remove("show");
+      });
+    }
+
+    if (cancelAssignUsersModal) {
+      cancelAssignUsersModal.addEventListener("click", () => {
+        assignUsersModal.classList.remove("show");
+      });
+    }
+
+    // Edit Project modal
+    const editProjectModal = document.getElementById("editProjectModal");
+    const openEditProjectModal = document.getElementById("openEditProjectModal");
+    const closeEditProjectModal = document.getElementById("closeEditProjectModal");
+    const cancelEditProjectModal = document.getElementById("cancelEditProjectModal");
+
+    if (openEditProjectModal && editProjectModal) {
+      openEditProjectModal.addEventListener("click", () => {
+        editProjectModal.classList.add("show");
+      });
+    }
+
+    if (closeEditProjectModal) {
+      closeEditProjectModal.addEventListener("click", () => {
+        editProjectModal.classList.remove("show");
+      });
+    }
+
+    if (cancelEditProjectModal) {
+      cancelEditProjectModal.addEventListener("click", () => {
+        editProjectModal.classList.remove("show");
+      });
+    }
+
+    if (editProjectModal) {
+      editProjectModal.addEventListener("click", (event) => {
+        if (event.target === editProjectModal) {
+          editProjectModal.classList.remove("show");
+        }
+      });
+    }
+  });
+
+  const deleteProjectModal = document.getElementById("deleteProjectModal");
+const openDeleteProjectModal = document.getElementById("openDeleteProjectModal");
+const closeDeleteProjectModal = document.getElementById("closeDeleteProjectModal");
+const cancelDeleteProjectModal = document.getElementById("cancelDeleteProjectModal");
+
+if (openDeleteProjectModal && deleteProjectModal) {
+  openDeleteProjectModal.addEventListener("click", () => {
+    deleteProjectModal.classList.add("show");
+  });
+}
+
+if (closeDeleteProjectModal) {
+  closeDeleteProjectModal.addEventListener("click", () => {
+    deleteProjectModal.classList.remove("show");
+  });
+}
+
+if (cancelDeleteProjectModal) {
+  cancelDeleteProjectModal.addEventListener("click", () => {
+    deleteProjectModal.classList.remove("show");
+  });
+}
+
+if (deleteProjectModal) {
+  deleteProjectModal.addEventListener("click", (event) => {
+    if (event.target === deleteProjectModal) {
+      deleteProjectModal.classList.remove("show");
+    }
+  });
+}
+</script>
+{% endblock %}

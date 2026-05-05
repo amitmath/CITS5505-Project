@@ -1,9 +1,10 @@
 import re
-from datetime import date
+from datetime import date, datetime
 
 import os
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
-from flask import Flask, g, redirect, render_template, request, session, url_for
+from flask import Flask, app, flash, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -128,9 +129,15 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         user = g.user
-        projects = Project.query.filter_by(status="active").all()
+        projects = (
+        Project.query
+            .filter_by(status="active")
+            .order_by(Project.created_at.desc())
+            .limit(3)
+            .all()
+        )
         # Used by the dashboard summary card to show the live project count.
-        active_project_count = len(projects)
+        active_project_count = Project.query.filter_by(status="active").count()
         tasks = Task.query.filter_by(assignee_id=user.id).all() if user else []
         # Show the user's assigned tasks in due-date order on the dashboard.
         tasks = sorted(tasks, key=lambda task: (task.due_date is None, task.due_date or date.max))
@@ -383,7 +390,138 @@ def create_app():
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
 
-        return render_template("project.html")
+        projects = [] 
+
+        try:
+            projects = Project.query.filter(
+                func.lower(func.trim(Project.status)) == "active"
+            ).all()
+
+            print("COUNT:", len(projects))
+            for p in projects:
+                print(p.name, p.progress_percent)
+
+        except Exception as e:
+            print(f"Error fetching projects: {e}")
+
+        return render_template("project.html", projects=projects)
+    
+    @app.route("/projects/create", methods=["POST"])
+    def create_project():
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        name = request.form.get("name", "").strip()
+        description = request.form.get("description", "").strip()
+        status = request.form.get("status", "active").strip()
+
+        if not name:
+            flash("Project name is required.", "error")
+            return redirect(url_for("project"))
+
+        new_project = Project(
+            name=name,
+            description=description,
+            status=status,
+            health_status="healthy",
+            progress_percent=0,
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow()
+        )
+
+        db.session.add(new_project)
+        db.session.commit()
+
+        flash("Project created successfully.", "success")
+        return redirect(url_for("project"))
+    
+    @app.route("/projects/<int:project_id>")
+    def project_detail(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+        users = User.query.filter_by(is_active=True).all()
+        tasks = Task.query.filter_by(project_id=project.id).all()
+
+        return render_template(
+        "project_detail.html",
+        project=project,
+        users=users,
+        tasks=tasks
+        )
+    
+    @app.route("/projects/<int:project_id>/backlog")
+    def project_backlog(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+        tasks = Task.query.filter_by(project_id=project.id).all()
+
+        return render_template(
+            "backlog.html",
+            project=project,
+            tasks=tasks
+        )
+    
+    @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
+    def assign_project_users(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+
+        selected_user_ids = request.form.getlist("user_ids")
+        selected_user_ids = [int(uid) for uid in selected_user_ids]
+
+        selected_users = User.query.filter(User.id.in_(selected_user_ids)).all()
+
+        project.assigned_users = selected_users
+
+        db.session.commit()
+
+        flash("Project users updated successfully.", "success")
+        return redirect(url_for("project_detail", project_id=project.id))
+    
+    @app.route("/projects/<int:project_id>/edit", methods=["POST"])
+    def edit_project(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+
+        name = request.form.get("name", "").strip()
+        description = request.form.get("description", "").strip()
+        status = request.form.get("status", "active").strip()
+        health_status = request.form.get("health_status", "healthy").strip()
+
+        if not name:
+            flash("Project name is required.", "error")
+            return redirect(url_for("project_detail", project_id=project.id))
+
+        project.name = name
+        project.description = description
+        project.status = status
+        project.health_status = health_status
+
+        db.session.commit()
+
+        flash("Project updated successfully.", "success")
+        return redirect(url_for("project_detail", project_id=project.id))
+    
+    @app.route("/projects/<int:project_id>/delete", methods=["POST"])
+    def delete_project(project_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        project = Project.query.get_or_404(project_id)
+
+        db.session.delete(project)
+        db.session.commit()
+
+        flash("Project deleted successfully.", "success")
+        return redirect(url_for("project"))
     
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
@@ -405,9 +543,9 @@ def create_app():
             avatar = request.files.get("avatar")
             if avatar and avatar.filename:
                 filename = secure_filename(f"user_{user.id}_{avatar.filename}")
-                upload_path = os.path.join("app", "static", "uploads", filename)
+                upload_path = os.path.join(app.root_path, "static", "uploads", filename)
                 avatar.save(upload_path)
-                user.avatar_url = url_for("static", filename=f"uploads/{filename}")
+                user.avatar_url = filename
             db.session.commit()
             success = True
 
