@@ -85,11 +85,15 @@
         <div class="metric-icon">
           <i class="bi bi-bar-chart-line-fill"></i>
         </div>
-        <p class="card-label mb-2">SPRINT STATUS</p>
+        <p class="card-label mb-2">TEAM HEALTH</p>
         <h4 class="sprint-metric-title">
-          {{ current_sprint.status }}
-          <span class="trend-pill">{{ current_sprint.progress }}%</span>
+          {{ sprint_health.confidence_label }}
+          <span class="trend-pill">{{ sprint_health.checkin_label }}</span>
         </h4>
+        <p class="sprint-health-note mb-0">
+          {{ sprint_health.workload_label }} · {{ sprint_health.blocker_count }} blockers ·
+          {{ sprint_health.help_count }} need help
+        </p>
       </div>
     </div>
   </div>

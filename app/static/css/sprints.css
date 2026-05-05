@@ -173,6 +173,12 @@
   font-weight: 700;
 }
 
+.sprints-page .sprint-health-note {
+  color: #64748b;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 .sprints-page .sprint-side-stack {
   display: grid;
   gap: 18px;

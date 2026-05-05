@@ -31,7 +31,7 @@ def create_app():
 
     # Import models so SQLAlchemy and migrations can detect them
     from app import models
-    from app.models import Project, Sprint, Task, User
+    from app.models import Project, Sprint, SprintCheckIn, Task, User
 
     # Register API blueprint
     from app.routes import api
@@ -288,6 +288,13 @@ def create_app():
             "day_label": "Days",
             "end_label": "No end date",
         }
+        sprint_health = {
+            "confidence_label": "No check-ins",
+            "checkin_label": "0 check-ins",
+            "workload_label": "No workload data",
+            "blocker_count": 0,
+            "help_count": 0,
+        }
 
         if active_sprint:
             days_left = max((active_sprint.end_date - date.today()).days, 0)
@@ -311,6 +318,28 @@ def create_app():
                 "day_label": "Day" if days_left == 1 else "Days",
                 "end_label": active_sprint.end_date.strftime("Ends %b %d, %Y"),
             }
+
+            # Sprint health is based on team check-ins saved for the active sprint.
+            checkins = SprintCheckIn.query.filter_by(sprint_id=active_sprint.id).all()
+            checkin_count = len(checkins)
+            if checkins:
+                average_confidence = round(
+                    sum(checkin.confidence_level for checkin in checkins) / checkin_count,
+                    1
+                )
+                average_workload = round(
+                    sum(checkin.workload_level for checkin in checkins) / checkin_count,
+                    1
+                )
+                blocker_count = sum(1 for checkin in checkins if checkin.blockers)
+                help_count = sum(1 for checkin in checkins if checkin.needs_help)
+                sprint_health = {
+                    "confidence_label": f"{average_confidence}/5 confidence",
+                    "checkin_label": f"{checkin_count} check-ins",
+                    "workload_label": f"{average_workload}/5 workload",
+                    "blocker_count": blocker_count,
+                    "help_count": help_count,
+                }
 
         # Planned sprints are shown separately so newly created sprints are easy to find.
         upcoming_sprints = []
@@ -344,6 +373,7 @@ def create_app():
             current_sprint=current_sprint,
             upcoming_sprints=upcoming_sprints,
             past_sprints=past_sprints,
+            sprint_health=sprint_health,
             projects=projects,
             sprint_errors=sprint_errors,
             form_data=form_data,
