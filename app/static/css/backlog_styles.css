@@ -1,0 +1,487 @@
+/* backlog page style */
+
+/*Hero card*/
+.backlog-hero {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.backlog-breadcrumb {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.backlog-breadcrumb a {
+  color: #6b7280;
+  text-decoration: none;
+}
+
+.backlog-breadcrumb a:hover {
+  color: #0f4c5c;
+}
+
+.breadcrumb-sep {
+  margin: 0 6px;
+  color: #d1d5db;
+}
+
+.backlog-hero-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f4c5c;
+  margin-bottom: 8px;
+}
+
+.backlog-hero-text {
+  color: #6b7280;
+  font-size: 0.95rem;
+  max-width: 420px;
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+.backlog-hero-right {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-shrink: 0;
+}
+
+
+.backlog-stat {
+  text-align: center;
+}
+
+.backlog-stat-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  margin-bottom: 4px;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.backlog-stat-number {
+  font-family: 'Manrope', sans-serif;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #0f4c5c;
+  line-height: 1;
+}
+
+.backlog-create-btn {
+  background-color: #0f4c5c;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 14px 22px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  text-decoration: none;
+  line-height: 1.3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: background-color 0.18s ease;
+}
+
+.backlog-create-btn:hover {
+  background-color: #0b3a46;
+  color: #ffffff;
+}
+
+/* Toolbar */
+.backlog-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.backlog-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.view-toggle {
+  display: flex;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.view-btn {
+  padding: 9px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.15s;
+}
+
+.view-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f4c5c;
+}
+
+.view-btn.active {
+  background-color: #e0f2f1;
+  color: #0f4c5c;
+}
+
+.toolbar-action-btn {
+  padding: 9px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #475569;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.toolbar-action-btn:hover {
+  background-color: #eaf3f4;
+  color: #0f4c5c;
+}
+
+.backlog-member-stack {
+  display: flex;
+  align-items: center;
+}
+
+.bl-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-left: -8px;
+  color: #ffffff;
+}
+
+.bl-avatar:first-child {
+  margin-left: 0;
+}
+
+.bl-av-1 { background-color: #0f766e; }
+.bl-av-2 { background-color: #dc2626; }
+.bl-av-3 { background-color: #2563eb; }
+
+.bl-avatar-more {
+  background-color: #e5e7eb;
+  color: #374151;
+  font-size: 0.72rem;
+}
+
+/* Task table card */
+.backlog-table-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.backlog-table thead th {
+  background-color: #f8fafc;
+  color: #6b7280;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 20px;
+  white-space: nowrap;
+}
+
+.backlog-table tbody td {
+  padding: 18px 20px;
+  vertical-align: middle;
+  border-bottom: 1px solid #eef2f7;
+}
+
+/* Remove bottom border on last row */
+.backlog-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.backlog-row:hover {
+  background-color: #f8fafc;
+}
+
+/* Task title + meta */
+.task-details-cell {
+  min-width: 200px;
+}
+
+.task-title-link {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #111827;
+  text-decoration: none;
+  margin-bottom: 4px;
+}
+
+.task-title-link:hover {
+  color: #0f4c5c;
+}
+
+.task-meta {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* Priority badges */
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.priority-badge i {
+  font-size: 0.45rem;
+}
+
+.priority-high {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.priority-medium {
+  background-color: #cffafe;
+  color: #0c4a6e;
+}
+
+.priority-low {
+  background-color: #f0fdf4;
+  color: #166534;
+}
+
+/* Status badges */
+.backlog-table .status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.backlog-table .status-badge.in-progress {
+  background-color: #cffafe;
+  color: #0c4a6e;
+}
+
+.backlog-table .status-badge.blocker {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.backlog-table .status-badge.todo {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+/*  Assignee cell */
+.assignee-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assignee-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #0f766e;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.assignee-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.assign-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f4c5c;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.assign-btn:hover {
+  color: #0b3a46;
+}
+
+/* Sprint cell */
+.sprint-link {
+  color: #0f4c5c;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.sprint-link:hover {
+  text-decoration: underline;
+}
+
+.sprint-tbd {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* Table footer */
+.backlog-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-top: 1px solid #eef2f7;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.showing-label {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.pagination-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.page-btn {
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #374151;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.page-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f4c5c;
+}
+
+.page-btn-active {
+  background-color: #0f4c5c;
+  color: #ffffff;
+  border-color: #0f4c5c;
+}
+
+.page-btn-active:hover {
+  background-color: #0b3a46;
+  color: #ffffff;
+}
+
+/* Page footer */
+.backlog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  padding-top: 8px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-links a {
+  color: #9ca3af;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: #0f4c5c;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .backlog-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px 20px;
+  }
+
+  .backlog-hero-right {
+    gap: 20px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .backlog-stat-number {
+    font-size: 2rem;
+  }
+
+  .backlog-hero-title {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .backlog-table thead th:nth-child(4),
+  .backlog-table tbody td:nth-child(4) {
+    display: none; /* hide assignee on very small screens */
+  }
+
+  .backlog-footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
