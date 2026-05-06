@@ -1,6 +1,6 @@
 from app import create_app, db
-from app.models import User, Project, Sprint, Task
-from datetime import date
+from app.models import User, Project, Sprint, Task, project_users
+from datetime import date, datetime
 from werkzeug.security import generate_password_hash
 
 app = create_app()
@@ -13,6 +13,7 @@ with app.app_context():
     Sprint.query.delete()
     Project.query.delete()
     User.query.delete()
+    db.session.execute(project_users.delete())
     db.session.commit()
 
     # -------------------------
@@ -26,7 +27,7 @@ with app.app_context():
         title="Project Lead",
         location="Perth, Australia",
         timezone="Australia/Perth",
-        avatar_url="https://example.com/avatars/liam.png",
+        avatar_url="liam_profile.avif",
     )
 
     user2 = User(
@@ -36,7 +37,7 @@ with app.app_context():
         title="UI/UX Designer",
         location="Sydney, Australia",
         timezone="Australia/Sydney",
-        avatar_url="https://example.com/avatars/olivia.png",
+        avatar_url="amina.png",
     )
 
     user3 = User(
@@ -46,10 +47,20 @@ with app.app_context():
         title="Backend Developer",
         location="Melbourne, Australia",
         timezone="Australia/Melbourne",
-        avatar_url="https://example.com/avatars/noah.png",
+        avatar_url="noah_profile.avif",
     )
 
-    db.session.add_all([user1, user2, user3])
+    user4 = User(
+        full_name="testUser",
+        email="test@gmail.com",
+        password_hash=generate_password_hash("123456"),
+        title="Software Engineer",
+        location="Perth, Australia",
+        timezone="Perth/Melbourne",
+        avatar_url="user_5_pngtree-user-profile-avatar-png-image_10211467.png",
+    )
+
+    db.session.add_all([user1, user2, user3, user4])
     db.session.commit()
 
     print("Users seeded successfully.")
@@ -58,28 +69,60 @@ with app.app_context():
     # Create sample projects
     # -------------------------
 
-    p1 = Project(
-        name="Quantum ERP",
-        description="Infrastructure optimization for retail partners.",
-        status="active",
-        health_status="healthy",
-    )
+    projects = [
+        Project(
+            id=1,
+            name="Quantum ERP",
+            description="Infrastructure optimization for retail partners.",
+            status="active",
+            health_status="healthy",
+            progress_percent=0,
+            created_at=datetime(2026, 4, 29, 3, 43, 57, 977348),
+            updated_at=datetime(2026, 4, 29, 3, 43, 57, 977351),
+        ),
+        Project(
+            id=2,
+            name="Starlight Mobile",
+            description="Redesigning the guest checkout experience.",
+            status="active",
+            health_status="at-risk",
+            progress_percent=0,
+            created_at=datetime(2026, 4, 29, 3, 43, 57, 977352),
+            updated_at=datetime(2026, 4, 29, 3, 43, 57, 977353),
+        ),
+        Project(
+            id=3,
+            name="Core Database",
+            description="Migration to high-availability clusters.",
+            status="active",
+            health_status="healthy",
+            progress_percent=0,
+            created_at=datetime(2026, 4, 29, 3, 43, 57, 977354),
+            updated_at=datetime(2026, 4, 29, 3, 43, 57, 977355),
+        ),
+        Project(
+            id=4,
+            name="test project",
+            description="This is a test description of the test project. Editing the description to test",
+            status="inactive",
+            health_status="healthy",
+            progress_percent=0,
+            created_at=datetime(2026, 5, 3, 17, 26, 13, 408319),
+            updated_at=datetime(2026, 5, 4, 9, 4, 24, 635972),
+        ),
+        Project(
+            id=6,
+            name="Test Project 3",
+            description="This is a Project created for testing purposes.",
+            status="active",
+            health_status="healthy",
+            progress_percent=0,
+            created_at=datetime(2026, 5, 3, 17, 33, 44, 728509),
+            updated_at=datetime(2026, 5, 4, 9, 15, 51, 857306),
+        ),
+    ]
 
-    p2 = Project(
-        name="Starlight Mobile",
-        description="Redesigning the guest checkout experience.",
-        status="active",
-        health_status="at-risk",
-    )
-
-    p3 = Project(
-        name="Core Database",
-        description="Migration to high-availability clusters.",
-        status="active",
-        health_status="healthy",
-    )
-
-    db.session.add_all([p1, p2, p3])
+    db.session.add_all(projects)
     db.session.commit()
 
     print("Projects seeded successfully.")
@@ -90,7 +133,7 @@ with app.app_context():
 
     # These sprints make the dashboard and sprints page show realistic data.
     sprint1 = Sprint(
-        project_id=p1.id,
+        project_id=1,
         name="Sprint 12",
         goal="Finalize core financial engine integration and test the main API workflow.",
         status="active",
@@ -102,7 +145,7 @@ with app.app_context():
     )
 
     sprint2 = Sprint(
-        project_id=p1.id,
+        project_id=1,
         name="Sprint 11",
         goal="Complete project setup and prepare first user testing cycle.",
         status="completed",
@@ -114,7 +157,7 @@ with app.app_context():
     )
 
     sprint3 = Sprint(
-        project_id=p2.id,
+        project_id=2,
         name="Sprint 5",
         goal="Improve checkout screens and review mobile layout issues.",
         status="completed",
@@ -134,40 +177,146 @@ with app.app_context():
     # Create sample tasks
     # -------------------------
 
-    t1 = Task(
+    tasks = [
+    Task(
+        id=1,
+        project_id=1,
+        assignee_id=1,
         title="Update API Documentation",
-        project_id=p1.id,
-        sprint_id=sprint1.id,
-        assignee_id=user1.id,
-        status="in_progress",
         priority="high",
+        status="in_progress",
+        sprint_id=sprint1.id,
         story_points=8,
         due_date=date(2026, 10, 24),
-    )
-
-    t2 = Task(
+        created_at=datetime(2026, 4, 29, 3, 43, 57, 995091),
+        updated_at=datetime(2026, 4, 29, 3, 43, 57, 995093),
+    ),
+    Task(
+        id=2,
+        project_id=1,
+        assignee_id=2,
         title="Finalize UI Kit Components",
-        project_id=p2.id,
-        sprint_id=sprint1.id,
-        assignee_id=user1.id,
-        status="todo",
         priority="medium",
+        status="todo",
+        sprint_id=sprint1.id,
+        story_points=8,
+        due_date=date(2026, 10, 24),
+        created_at=datetime(2026, 4, 29, 3, 43, 57, 995095),
+        updated_at=datetime(2026, 4, 29, 3, 43, 57, 995095),
+    ),
+    Task(
+        id=3,
+        project_id=1,
+        assignee_id=3,
+        title="Database Indexing Review",
+        priority="low",
+        status="todo",
+        sprint_id=sprint1.id,
         story_points=5,
         due_date=date(2026, 10, 26),
-    )
-
-    t3 = Task(
-        title="Database Indexing Review",
-        project_id=p3.id,
+        created_at=datetime(2026, 4, 29, 3, 43, 57, 995095),
+        updated_at=datetime(2026, 4, 29, 3, 43, 57, 995095),
+    ),
+    Task(
+        id=4,
+        project_id=1,
+        assignee_id=2,
+        title="Create Landing Page",
+        priority="high",
+        status="done",
         sprint_id=sprint1.id,
-        assignee_id=user1.id,
-        status="blocker",
-        priority="low",
-        story_points=11,
+        story_points=4,
+        due_date=date(2026, 10, 24),
+        created_at=datetime(2026, 5, 4, 9, 56, 59),
+        updated_at=datetime(2026, 5, 4, 9, 56, 59),
+    ),
+    Task(
+        id=5,
+        project_id=1,
+        assignee_id=3,
+        title="Create dashboard",
+        priority="high",
+        status="done",
+        sprint_id=sprint2.id,
+        story_points=4,
+        due_date=date(2026, 10, 24),
+        created_at=datetime(2026, 5, 4, 9, 57, 13),
+        updated_at=datetime(2026, 5, 4, 9, 57, 13),
+    ),
+    Task(
+        id=6,
+        project_id=1,
+        assignee_id=2,
+        title="Implement API Integration",
+        priority="medium",
+        status="in_progress",
+        sprint_id=sprint2.id,
+        story_points=5,
+        due_date=date(2026, 10, 25),
+        created_at=datetime(2026, 5, 4, 9, 59, 1),
+        updated_at=datetime(2026, 5, 4, 9, 59, 1),
+    ),
+    Task(
+        id=7,
+        project_id=3,
+        assignee_id=1,
+        title="Design Database Schema",
+        priority="high",
+        status="done",
+        sprint_id=sprint2.id,
+        story_points=4,
+        due_date=date(2026, 10, 26),
+        created_at=datetime(2026, 5, 4, 10, 2, 52),
+        updated_at=datetime(2026, 5, 4, 10, 2, 52),
+    ),
+    Task(
+        id=8,
+        project_id=3,
+        assignee_id=3,
+        title="Build API Endpoints",
+        priority="medium",
+        status="in_progress",
+        sprint_id=sprint2.id,
+        story_points=5,
+        due_date=date(2026, 10, 27),
+        created_at=datetime(2026, 5, 4, 10, 3, 3),
+        updated_at=datetime(2026, 5, 4, 10, 3, 3),
+    ),
+    Task(
+        id=9,
+        project_id=3,
+        assignee_id=1,
+        title="Frontend Integration",
+        priority="medium",
+        status="in_progress",
         due_date=date(2026, 10, 28),
-    )
+        created_at=datetime(2026, 5, 4, 10, 3, 20),
+        updated_at=datetime(2026, 5, 4, 10, 3, 20),
+    ),
+    ]
 
-    db.session.add_all([t1, t2, t3])
+    db.session.add_all(tasks)
     db.session.commit()
 
     print("Tasks seeded successfully.")
+
+  # -------------------------
+    # Create projects-user relationships
+    # -------------------------
+
+    project_user_data = [
+        {"project_id": 1, "user_id": 1, "assigned_at": datetime(2026, 5, 4, 6, 59, 36, 74425)},
+        {"project_id": 1, "user_id": 2, "assigned_at": datetime(2026, 5, 4, 6, 59, 36, 74432)},
+        {"project_id": 1, "user_id": 3, "assigned_at": datetime(2026, 5, 4, 7, 0, 28, 909741)},
+        {"project_id": 4, "user_id": 2, "assigned_at": datetime(2026, 5, 4, 9, 4, 14, 499581)},
+        {"project_id": 6, "user_id": 3, "assigned_at": datetime(2026, 5, 4, 9, 15, 13, 581862)},
+        {"project_id": 3, "user_id": 1, "assigned_at": datetime(2026, 5, 4, 9, 19, 53, 233734)},
+        {"project_id": 3, "user_id": 3, "assigned_at": datetime(2026, 5, 4, 9, 19, 53, 233749)},
+        {"project_id": 2, "user_id": 1, "assigned_at": datetime(2026, 5, 4, 9, 20, 9, 466330)},
+    ]
+
+    # Insert into association table
+    db.session.execute(project_users.insert(), project_user_data)
+    db.session.commit()
+
+    print("Project-user assignments seeded successfully.")
