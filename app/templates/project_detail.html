@@ -455,7 +455,11 @@ document.addEventListener("DOMContentLoaded", function() {
       if (event.key === "Enter") {
         const searchQuery = this.value.trim();
         if (searchQuery) {
+          // Search with query
           window.location.href = "{{ url_for('project') }}?search=" + encodeURIComponent(searchQuery);
+        } else {
+          // Clear search and go back to all projects
+          window.location.href = "{{ url_for('project') }}";
         }
       }
     });
