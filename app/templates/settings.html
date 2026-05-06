@@ -10,193 +10,197 @@
 {% block content %}
 <div class="settings-wrapper">
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="flash-settings flash-{{ category }}">
-                    {% if category == 'success' %}
-                        <i class="bi bi-check-circle-fill"></i>
-                    {% else %}
-                        <i class="bi bi-exclamation-circle-fill"></i>
-                    {% endif %}
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <h1 class="settings-page-title">Settings</h1>
-    <p class="settings-page-sub">Manage your account and core preferences.</p>
-
-    <form method="POST" action="{{ url_for('settings') }}" enctype="multipart/form-data" id="settings-form">
-
-        <!-- ── Section 1: Account ── -->
-        <div class="settings-card">
-            <div class="settings-section-heading">
-                <span class="settings-section-number">1</span>
-                Account
+    <!-- ── Topbar (matches dashboard style) ── -->
+    <div class="settings-topbar">
+        <span class="settings-topbar-title">Settings</span>
+        <div class="settings-topbar-right">
+            <button class="topbar-icon-btn">
+                <i class="bi bi-bell" style="font-size:16px;"></i>
+            </button>
+            <button class="topbar-icon-btn">
+                <i class="bi bi-gear" style="font-size:16px;"></i>
+            </button>
+            <div style="text-align:right;">
+                <div class="topbar-user-name">{{ g.user.full_name or g.user.username }}</div>
+                <a href="{{ url_for('logout') }}" class="topbar-logout">LOG OUT</a>
             </div>
-            <div class="account-display">
-                <div class="account-avatar-wrap">
+            {% if g.user.avatar_url %}
+                <img src="{{ url_for('static', filename='uploads/' + g.user.avatar_url) }}"
+                     alt="Avatar" class="topbar-avatar">
+            {% else %}
+                <div class="topbar-avatar-initials">
+                    {{ g.user.full_name[0].upper() if g.user.full_name else 'U' }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ── Main body ── -->
+    <div class="settings-body">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-settings flash-{{ category }}">
+                        {% if category == 'success' %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <p class="settings-page-sub">Manage your account and core preferences.</p>
+
+        <form method="POST" action="{{ url_for('settings') }}"
+              enctype="multipart/form-data" id="settings-form">
+
+            <!-- ── Section 1: Account ── -->
+            <div class="settings-card">
+                <div class="settings-section-heading">
+                    <span class="settings-section-number">1</span>
+                    Account
+                </div>
+                <div class="account-display">
                     {% if g.user.avatar_url %}
                         <img src="{{ url_for('static', filename='uploads/' + g.user.avatar_url) }}"
-                             alt="Avatar"
-                             class="account-avatar"
-                             id="avatar-preview">
+                             alt="Avatar" class="account-avatar" id="avatar-preview">
                     {% else %}
                         <div class="account-avatar-initials" id="avatar-initials">
                             {{ g.user.full_name[0].upper() if g.user.full_name else 'U' }}
                         </div>
                     {% endif %}
+                    <div class="account-info">
+                        <div class="account-name">{{ g.user.full_name or g.user.username }}</div>
+                        <div class="account-role">{{ g.user.title or 'No title set' }}</div>
+                        <div class="account-meta">
+                            <span class="account-meta-item">
+                                <i class="bi bi-envelope"></i>
+                                {{ g.user.email }}
+                            </span>
+                            {% if g.user.location %}
+                            <span class="account-meta-item">
+                                <i class="bi bi-geo-alt"></i>
+                                {{ g.user.location }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <label class="btn-upload" for="avatar-upload">
+                        <i class="bi bi-upload"></i>
+                        Upload Photo
+                    </label>
+                    <input type="file" id="avatar-upload" name="avatar"
+                           accept="image/*" class="d-none">
                 </div>
-                <div class="account-info">
-                    <div class="account-name">{{ g.user.full_name or g.user.username }}</div>
-                    <div class="account-role">{{ g.user.job_title or 'No title set' }}</div>
-                    <div class="account-meta">
-                        <span class="account-meta-item">
-                            <i class="bi bi-envelope"></i>
-                            {{ g.user.email }}
-                        </span>
-                        {% if g.user.location %}
-                        <span class="account-meta-item">
-                            <i class="bi bi-geo-alt"></i>
-                            {{ g.user.location }}
-                        </span>
-                        {% endif %}
+            </div>
+
+            <!-- ── Section 2: Account Information ── -->
+            <div class="settings-card">
+                <div class="settings-section-heading">
+                    <span class="settings-section-number">2</span>
+                    Account Information
+                </div>
+                <div class="info-grid">
+                    <div>
+                        <label class="form-label-settings">Full Name</label>
+                        <input type="text" name="full_name" class="form-input-settings"
+                               value="{{ g.user.full_name or '' }}" placeholder="Your full name">
+                    </div>
+                    <div>
+                        <label class="form-label-settings">Email</label>
+                        <input type="email" name="email" class="form-input-settings"
+                               value="{{ g.user.email or '' }}" placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label class="form-label-settings">Role</label>
+                        <input type="text" name="job_title" class="form-input-settings"
+                               value="{{ g.user.title or '' }}" placeholder="e.g. Developer">
+                    </div>
+                    <div>
+                        <label class="form-label-settings">Location</label>
+                        <input type="text" name="location" class="form-input-settings"
+                               value="{{ g.user.location or '' }}" placeholder="e.g. Perth">
                     </div>
                 </div>
-                <label class="btn-upload" for="avatar-upload">
-                    <i class="bi bi-upload"></i>
-                    Upload Photo
-                </label>
-                <input type="file"
-                       id="avatar-upload"
-                       name="avatar"
-                       accept="image/*"
-                       class="d-none">
-            </div>
-        </div>
-
-        <!-- ── Section 2: Account Information ── -->
-        <div class="settings-card">
-            <div class="settings-section-heading">
-                <span class="settings-section-number">2</span>
-                Account Information
-            </div>
-            <div class="info-grid">
-                <div>
-                    <label class="form-label-settings" for="full_name">Full Name</label>
-                    <input type="text"
-                           id="full_name"
-                           name="full_name"
-                           class="form-input-settings"
-                           value="{{ g.user.full_name or '' }}"
-                           placeholder="Your full name">
-                </div>
-                <div>
-                    <label class="form-label-settings" for="email">Email</label>
-                    <input type="email"
-                           id="email"
-                           name="email"
-                           class="form-input-settings"
-                           value="{{ g.user.email or '' }}"
-                           placeholder="your@email.com">
-                </div>
-                <div>
-                    <label class="form-label-settings" for="job_title">Role</label>
-                    <input type="text"
-                           id="job_title"
-                           name="job_title"
-                           class="form-input-settings"
-                           value="{{ g.user.job_title or '' }}"
-                           placeholder="e.g. Developer">
-                </div>
-                <div>
-                    <label class="form-label-settings" for="location">Location</label>
-                    <input type="text"
-                           id="location"
-                           name="location"
-                           class="form-input-settings"
-                           value="{{ g.user.location or '' }}"
-                           placeholder="e.g. Perth">
-                </div>
-            </div>
-        </div>
-
-        <!-- ── Section 3: Login & Security ── -->
-        <div class="settings-card">
-            <div class="settings-section-heading">
-                <span class="settings-section-number">3</span>
-                Login &amp; Security
             </div>
 
-            <div class="security-row">
-                <div class="security-row-left">
-                    <h6>Change Password</h6>
-                    <p>Update your password regularly to keep your account secure.</p>
+            <!-- ── Sections 3 & 4 side by side ── -->
+            <div class="security-notification-grid">
+
+                <div class="settings-card" style="margin-bottom:0;">
+                    <div class="settings-section-heading">
+                        <span class="settings-section-number">3</span>
+                        Login &amp; Security
+                    </div>
+                    <div class="security-row">
+                        <div class="security-row-left">
+                            <h6>Change Password</h6>
+                            <p>Update your password regularly to keep your account secure.</p>
+                        </div>
+                        <button type="button" class="btn-change-pw"
+                                data-bs-toggle="modal"
+                                data-bs-target="#changePasswordModal">
+                            Change Password
+                        </button>
+                    </div>
+                    <div class="security-row">
+                        <div class="security-row-left">
+                            <h6>Two-Factor Authentication</h6>
+                            <p>Add an extra layer of security to your account.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="tfa_enabled">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
                 </div>
-                <button type="button"
-                        class="btn-change-pw"
-                        data-bs-toggle="modal"
-                        data-bs-target="#changePasswordModal">
-                    Change Password
+
+                <div class="settings-card" style="margin-bottom:0;">
+                    <div class="settings-section-heading">
+                        <span class="settings-section-number">4</span>
+                        Notification Settings
+                    </div>
+                    <div class="security-row">
+                        <div class="security-row-left">
+                            <h6>Email Notifications</h6>
+                            <p>Receive important updates and alerts via email.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="email_notifications" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="security-row">
+                        <div class="security-row-left">
+                            <h6>Task Reminders</h6>
+                            <p>Get reminded about tasks and deadlines.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" name="task_reminders" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── Action Bar ── -->
+            <div class="settings-action-bar">
+                <button type="submit" name="action" value="save_profile" class="btn-save">
+                    Save Changes
                 </button>
+                <a href="{{ url_for('logout') }}" class="btn-logout-bar">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Log Out
+                </a>
             </div>
 
-            <div class="security-row">
-                <div class="security-row-left">
-                    <h6>Two-Factor Authentication</h6>
-                    <p>Add an extra layer of security to your account.</p>
-                </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" name="tfa_enabled">
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <!-- ── Section 4: Notification Settings ── -->
-        <div class="settings-card">
-            <div class="settings-section-heading">
-                <span class="settings-section-number">4</span>
-                Notification Settings
-            </div>
-
-            <div class="security-row">
-                <div class="security-row-left">
-                    <h6>Email Notifications</h6>
-                    <p>Receive important updates and alerts via email.</p>
-                </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" name="email_notifications" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-
-            <div class="security-row">
-                <div class="security-row-left">
-                    <h6>Task Reminders</h6>
-                    <p>Get reminded about tasks and deadlines.</p>
-                </div>
-                <label class="toggle-switch">
-                    <input type="checkbox" name="task_reminders" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <!-- ── Action Bar ── -->
-        <div class="settings-action-bar">
-            <button type="submit" name="action" value="save_profile" class="btn-save">
-                Save Changes
-            </button>
-            <a href="{{ url_for('logout') }}" class="btn-logout">
-                <i class="bi bi-box-arrow-right"></i>
-                Log Out
-            </a>
-        </div>
-
-    </form>
+        </form>
+    </div>
 </div>
 
 <!-- ── Change Password Modal ── -->
@@ -210,22 +214,15 @@
             <form method="POST" action="{{ url_for('settings') }}" id="pw-form">
                 <div class="modal-body">
                     <div id="pw-flash" class="flash-settings flash-danger d-none"></div>
-
                     <div class="mb-3">
                         <label class="form-label-settings">Current Password</label>
-                        <input type="password"
-                               name="current_password"
-                               id="current_password"
-                               class="form-input-settings"
-                               placeholder="Enter current password">
+                        <input type="password" name="current_password" id="current_password"
+                               class="form-input-settings" placeholder="Enter current password">
                     </div>
                     <div class="mb-3">
                         <label class="form-label-settings">New Password</label>
-                        <input type="password"
-                               name="new_password"
-                               id="new_password"
-                               class="form-input-settings"
-                               placeholder="At least 8 characters"
+                        <input type="password" name="new_password" id="new_password"
+                               class="form-input-settings" placeholder="At least 8 characters"
                                oninput="checkStrength(this.value)">
                         <div class="password-strength-bar">
                             <div class="password-strength-fill" id="strength-fill"></div>
@@ -234,16 +231,16 @@
                     </div>
                     <div class="mb-1">
                         <label class="form-label-settings">Confirm New Password</label>
-                        <input type="password"
-                               name="confirm_password"
-                               id="confirm_password"
-                               class="form-input-settings"
-                               placeholder="Repeat new password">
+                        <input type="password" name="confirm_password" id="confirm_password"
+                               class="form-input-settings" placeholder="Repeat new password">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-outline-secondary btn btn-sm" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn-save" onclick="submitPassword()">Update Password</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                            data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-save" onclick="submitPassword()">
+                        Update Password
+                    </button>
                 </div>
             </form>
         </div>
@@ -254,7 +251,6 @@
 
 {% block extra_js %}
 <script>
-// ── Avatar preview ──
 document.getElementById('avatar-upload').addEventListener('change', function(e) {
     var file = e.target.files[0];
     if (!file) return;
@@ -275,7 +271,6 @@ document.getElementById('avatar-upload').addEventListener('change', function(e) 
     reader.readAsDataURL(file);
 });
 
-// ── Password strength ──
 function checkStrength(val) {
     var fill = document.getElementById('strength-fill');
     var label = document.getElementById('strength-label');
@@ -298,26 +293,15 @@ function checkStrength(val) {
     label.style.color = lv.c;
 }
 
-// ── Password form submit ──
 function submitPassword() {
     var cur = document.getElementById('current_password').value.trim();
     var nw  = document.getElementById('new_password').value;
     var cf  = document.getElementById('confirm_password').value;
     var flash = document.getElementById('pw-flash');
-
     flash.classList.add('d-none');
-
-    if (!cur) {
-        showPwFlash('Current password is required.'); return;
-    }
-    if (nw.length < 8) {
-        showPwFlash('New password must be at least 8 characters.'); return;
-    }
-    if (nw !== cf) {
-        showPwFlash('Passwords do not match.'); return;
-    }
-
-    // add hidden action field and submit
+    if (!cur) { showPwFlash('Current password is required.'); return; }
+    if (nw.length < 8) { showPwFlash('New password must be at least 8 characters.'); return; }
+    if (nw !== cf) { showPwFlash('Passwords do not match.'); return; }
     var input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'action';
