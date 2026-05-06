@@ -186,5 +186,22 @@ block extra_css %}
       closeModal();
     }
   });
+
+  // Search functionality
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.querySelector(".search-box input");
+    if (searchInput) {
+      searchInput.value = "{{ search_query }}";
+      
+      searchInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+          const searchQuery = this.value.trim();
+          if (searchQuery) {
+            window.location.href = "{{ url_for('project') }}?search=" + encodeURIComponent(searchQuery);
+          }
+        }
+      });
+    }
+  });
 </script>
 {% endblock %}
