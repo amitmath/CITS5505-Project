@@ -1,4 +1,6 @@
+{% set topbar_title = 'Settings' %}
 {% extends "base.html" %}
+{% set topbar_title = 'Settings' %}
 {% set topbar_search_class = 'd-none' %}
 
 {% block title %}Settings{% endblock %}
@@ -8,32 +10,10 @@
 {% endblock %}
 
 {% block content %}
+{% include 'components/topbar.html' %}
 <div class="settings-wrapper">
 
-    <!-- ── Topbar (matches dashboard style) ── -->
-    <div class="settings-topbar">
-        <span class="settings-topbar-title">Settings</span>
-        <div class="settings-topbar-right">
-            <button class="topbar-icon-btn">
-                <i class="bi bi-bell" style="font-size:16px;"></i>
-            </button>
-            <button class="topbar-icon-btn">
-                <i class="bi bi-gear" style="font-size:16px;"></i>
-            </button>
-            <div style="text-align:right;">
-                <div class="topbar-user-name">{{ g.user.full_name or g.user.username }}</div>
-                <a href="{{ url_for('logout') }}" class="topbar-logout">LOG OUT</a>
-            </div>
-            {% if g.user.avatar_url %}
-                <img src="{{ url_for('static', filename='uploads/' + g.user.avatar_url) }}"
-                     alt="Avatar" class="topbar-avatar">
-            {% else %}
-                <div class="topbar-avatar-initials">
-                    {{ g.user.full_name[0].upper() if g.user.full_name else 'U' }}
-                </div>
-            {% endif %}
-        </div>
-    </div>
+
 
     <!-- ── Main body ── -->
     <div class="settings-body">
@@ -131,37 +111,10 @@
             <!-- ── Sections 3 & 4 side by side ── -->
             <div class="security-notification-grid">
 
-                <div class="settings-card" style="margin-bottom:0;">
-                    <div class="settings-section-heading">
-                        <span class="settings-section-number">3</span>
-                        Login &amp; Security
-                    </div>
-                    <div class="security-row">
-                        <div class="security-row-left">
-                            <h6>Change Password</h6>
-                            <p>Update your password regularly to keep your account secure.</p>
-                        </div>
-                        <button type="button" class="btn-change-pw"
-                                data-bs-toggle="modal"
-                                data-bs-target="#changePasswordModal">
-                            Change Password
-                        </button>
-                    </div>
-                    <div class="security-row">
-                        <div class="security-row-left">
-                            <h6>Two-Factor Authentication</h6>
-                            <p>Add an extra layer of security to your account.</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" name="tfa_enabled">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
 
                 <div class="settings-card" style="margin-bottom:0;">
                     <div class="settings-section-heading">
-                        <span class="settings-section-number">4</span>
+                        <span class="settings-section-number">3</span>
                         Notification Settings
                     </div>
                     <div class="security-row">
