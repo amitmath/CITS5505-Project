@@ -82,7 +82,8 @@
 }
 
 .backlog-create-btn {
-  background-color: #0f4c5c;
+  background-color: #1D9E75;
+  border-color: #1D9E75;
   color: #ffffff;
   border-radius: 12px;
   padding: 14px 22px;
@@ -99,7 +100,8 @@
 }
 
 .backlog-create-btn:hover {
-  background-color: #0b3a46;
+  background-color: #157a5a;
+  border-color: #157a5a;
   color: #ffffff;
 }
 
@@ -414,13 +416,14 @@
 }
 
 .page-btn-active {
-  background-color: #0f4c5c;
+  background-color: #1D9E75;
   color: #ffffff;
-  border-color: #0f4c5c;
+  border-color: #1D9E75;
 }
 
 .page-btn-active:hover {
-  background-color: #0b3a46;
+  background-color: #157a5a;
+  border-color: #157a5a;
   color: #ffffff;
 }
 
