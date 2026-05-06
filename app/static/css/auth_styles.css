@@ -177,13 +177,13 @@ body {
 
 /* Button */
 .btn-main {
-  background: #1f9b79;
+  background: #1D9E75;
   color: white;
   border-radius: 8px;
 }
 
 .btn-main:hover {
-  background: #1c7e64;
+  background: #157a5a;
 }
 
 /* Labels */
@@ -282,7 +282,7 @@ body {
 .btn-main {
   height: 52px;
   border-radius: 10px;
-  background: #1f9b79;
+  background: #1D9E75;
   color: #ffffff;
   font-weight: 700;
   border: none;
@@ -290,8 +290,8 @@ body {
 }
 
 .btn-main:hover {
-  background: #187a60;
-  box-shadow: 0 8px 18px rgba(31, 155, 121, 0.2);
+  background: #157a5a;
+  box-shadow: 0 8px 18px rgba(29, 158, 117, 0.2);
 }
 
 /* Divider */
