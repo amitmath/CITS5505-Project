@@ -505,9 +505,9 @@ def create_app():
             
             projects = query.all()
             
-            # If exactly one project found and search was used, redirect to project detail
+            # If exactly one project found and search was used, redirect to project detail with search query
             if search_query and len(projects) == 1:
-                return redirect(url_for("project_detail", project_id=projects[0].id))
+                return redirect(url_for("project_detail", project_id=projects[0].id, search=search_query))
 
             print("COUNT:", len(projects))
             for p in projects:
@@ -555,12 +555,14 @@ def create_app():
         project = Project.query.get_or_404(project_id)
         users = User.query.filter_by(is_active=True).all()
         tasks = Task.query.filter_by(project_id=project.id).all()
+        search_query = request.args.get("search", "").strip()
 
         return render_template(
         "project_detail.html",
         project=project,
         users=users,
-        tasks=tasks
+        tasks=tasks,
+        search_query=search_query
         )
     
     @app.route("/projects/<int:project_id>/backlog")

@@ -451,6 +451,8 @@ if (deleteProjectModal) {
 document.addEventListener("DOMContentLoaded", function() {
   const searchInput = document.querySelector(".search-box input");
   if (searchInput) {
+    searchInput.value = "{{ search_query }}";
+    
     searchInput.addEventListener("keypress", function(event) {
       if (event.key === "Enter") {
         const searchQuery = this.value.trim();
