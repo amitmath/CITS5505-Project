@@ -551,6 +551,61 @@ def create_app():
 
         return render_template("profile.html", user=user, tasks=tasks, success=success)
 
+    @app.route('/settings', methods=['GET', 'POST'])
+    def settings():
+        if g.user is None:
+            return redirect(url_for('auth', mode='login'))
+
+        if request.method == 'POST':
+            action = request.form.get('action')
+
+            if action == 'save_profile':
+                full_name = request.form.get('full_name', '').strip()
+                email     = request.form.get('email', '').strip()
+                job_title = request.form.get('job_title', '').strip()
+                location  = request.form.get('location', '').strip()
+
+                if not full_name:
+                    flash('Full name cannot be empty.', 'danger')
+                    return redirect(url_for('settings'))
+
+                avatar_file = request.files.get('avatar')
+                if avatar_file and avatar_file.filename:
+                    filename = secure_filename(f"user_{g.user.id}_{avatar_file.filename}")
+                    upload_path = os.path.join(app.root_path, 'static', 'uploads', filename)
+                    avatar_file.save(upload_path)
+                    g.user.avatar_url = filename
+
+                g.user.full_name = full_name
+                g.user.email     = email
+                g.user.title     = job_title
+                g.user.location  = location
+                db.session.commit()
+                flash('Settings saved successfully.', 'success')
+                return redirect(url_for('settings'))
+
+            elif action == 'change_password':
+                current_password = request.form.get('current_password', '')
+                new_password     = request.form.get('new_password', '')
+                confirm_password = request.form.get('confirm_password', '')
+
+                if not check_password_hash(g.user.password, current_password):
+                    flash('Current password is incorrect.', 'danger')
+                    return redirect(url_for('settings'))
+                if len(new_password) < 8:
+                    flash('New password must be at least 8 characters.', 'danger')
+                    return redirect(url_for('settings'))
+                if new_password != confirm_password:
+                    flash('Passwords do not match.', 'danger')
+                    return redirect(url_for('settings'))
+
+                g.user.password = generate_password_hash(new_password)
+                db.session.commit()
+                flash('Password updated successfully.', 'success')
+                return redirect(url_for('settings'))
+
+        return render_template('settings.html')
+
     with app.app_context():
         db.create_all()
 
