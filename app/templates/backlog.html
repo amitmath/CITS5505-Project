@@ -13,59 +13,11 @@
 {% set topbar_search_placeholder = 'Search tasks...' %}
 {% include "components/topbar.html" %}
 
-{# Fallback task data #}
-{% set fallback_tasks = [
-  {
-    'id': 'ORC-1244',
-    'title': 'Finalize design system tokens',
-    'created': 'Created 2d ago',
-    'priority': 'high',
-    'status': 'in-progress',
-    'status_label': 'In Progress',
-    'assignee': 'Alex Rivera',
-    'assignee_initials': 'AR',
-    'sprint': 'Sprint 12'
-  },
-  {
-    'id': 'ORC-1245',
-    'title': 'API Authentication Refactoring',
-    'created': 'Created 3d ago',
-    'priority': 'medium',
-    'status': 'backlog',
-    'status_label': 'Backlog',
-    'assignee': None,
-    'assignee_initials': None,
-    'sprint': 'TBD'
-  },
-  {
-    'id': 'ORC-1246',
-    'title': 'Update documentation for webhooks',
-    'created': 'Created 5d ago',
-    'priority': 'low',
-    'status': 'backlog',
-    'status_label': 'Backlog',
-    'assignee': 'Mark J.',
-    'assignee_initials': 'MJ',
-    'sprint': 'Sprint 13'
-  },
-  {
-    'id': 'ORC-1247',
-    'title': 'Database migration to AWS Aurora',
-    'created': 'Created 1d ago',
-    'priority': 'high',
-    'status': 'blocker',
-    'status_label': 'Blocker',
-    'assignee': 'Sarah Chen',
-    'assignee_initials': 'SC',
-    'sprint': 'Sprint 12'
-  }
-] %}
-
-{# Use real data if passed from route, else show fallback #}
-{% set task_items = tasks if tasks is defined and tasks else fallback_tasks %}
-{% set total_tasks = total_tasks if total_tasks is defined else 142 %}
-{% set unassigned_count = unassigned_count if unassigned_count is defined else 28 %}
-{% set project_name = project_name if project_name is defined else 'Quantum ERP' %}
+{# task data from backend route #}
+{% set task_items = tasks %}
+{% set total_tasks = task_items|length %}
+{% set unassigned_count = task_items|selectattr("assignee", "none")|list|length %}
+{% set project_name = project.name if project else 'No Project Selected' %}
 
 {# Header Card #}
 <section class="backlog-hero">
@@ -105,7 +57,6 @@
 {# Toolbar #}
 <section class="backlog-toolbar">
   <div class="backlog-toolbar-left">
-    {# List / Board toggle #}
     <div class="view-toggle">
       <a href="#" class="view-btn active">
         <i class="bi bi-list-ul me-1"></i> List View
@@ -122,14 +73,6 @@
       <i class="bi bi-sort-down me-1"></i> Sort
     </a>
   </div>
-
-  
-  <div class="backlog-member-stack" aria-label="Assigned members">
-    <span class="bl-avatar bl-av-1"><i class="bi bi-person-fill"></i></span>
-    <span class="bl-avatar bl-av-2"><i class="bi bi-person-fill"></i></span>
-    <span class="bl-avatar bl-av-3"><i class="bi bi-person-fill"></i></span>
-    <span class="bl-avatar bl-av-more">+12</span>
-  </div>
 </section>
 
 {# Task Table #}
@@ -142,31 +85,29 @@
           <th>PRIORITY</th>
           <th>STATUS</th>
           <th>ASSIGNEE</th>
-          <th>SPRINT</th>
+        <th>SPRINT</th>
         </tr>
-      </thead>
-      <tbody>
-        {% for task in task_items %}
-
-        {# read task fields #}
-        {% set t_id       = task.id if task.id is defined else task['id'] %}
-        {% set t_title    = task.title if task.title is defined else task['title'] %}
-        {% set t_created  = task.created if task.created is defined else task['created'] %}
-        {% set t_priority = task.priority if task.priority is defined else task['priority'] %}
-        {% set t_status   = task.status if task.status is defined else task['status'] %}
-        {% set t_label    = task.status_label if task.status_label is defined else task['status_label'] %}
-        {% set t_assignee = task.assignee if task.assignee is defined else task['assignee'] %}
-        {% set t_initials = task.assignee_initials if task.assignee_initials is defined else task['assignee_initials'] %}
-        {% set t_sprint   = task.sprint if task.sprint is defined else task['sprint'] %}
-
-        <tr class="backlog-row">
-          
-          <td class="task-details-cell">
-            <a href="#" class="task-title-link">{{ t_title }}</a>
-            <span class="task-meta">{{ t_id }} &bull; {{ t_created }}</span>
-          </td>
-
-          
+        </thead>
+        <tbody>
+            {% for task in task_items %}
+        
+            {# read task fields #}
+            {% set t_id = task.task_code if task.task_code else task.id %}
+            {% set t_title = task.title %}
+            {% set t_created = task.created_at.strftime('%b %d') %}
+            {% set t_priority = task.priority %}
+            {% set t_status = task.status %}
+            {% set t_label = t_status.replace('_', ' ')|title %}
+            {% set t_assignee = task.assignee.full_name if task.assignee else None %}
+            {% set t_initials = task.assignee.full_name[:2]|upper if task.assignee else None %}
+            {% set t_sprint = task.sprint.name if task.sprint else 'TBD' %}
+        
+            <tr class="backlog-row">
+        
+                <td class="task-details-cell">
+                    <a href="#" class="task-title-link">{{ t_title }}</a>
+                    <span class="task-meta">{{ t_id }} &bull; {{ t_created }}</span>
+                </td>
           <td>
             {% if t_priority == 'high' %}
               <span class="priority-badge priority-high">
@@ -185,7 +126,7 @@
 
          
           <td>
-            {% if t_status == 'in-progress' %}
+            {% if t_status == 'in_progress' %}
               <span class="status-badge in-progress">{{ t_label }}</span>
             {% elif t_status == 'blocker' %}
               <span class="status-badge blocker">{{ t_label }}</span>
@@ -242,15 +183,5 @@
     </div>
   </div>
 </section>
-
-{# Footer  #}
-<footer class="backlog-footer">
-  <span>&copy; 2024 Agile Project Management (APM) Workspace. All rights reserved.</span>
-  <div class="footer-links">
-    <a href="#">Privacy Policy</a>
-    <a href="#">Terms of Service</a>
-    <a href="#">Security</a>
-  </div>
-</footer>
 
 {% endblock %}
