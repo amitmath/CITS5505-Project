@@ -621,6 +621,21 @@ def create_app():
 
         flash("Project deleted successfully.", "success")
         return redirect(url_for("project"))
+
+    #Route for backlog page
+    
+    @app.route("/backlog")
+    def backlog():
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        tasks = Task.query.order_by(Task.created_at.desc()).all()
+
+        return render_template(
+          "backlog.html",
+          project=None,
+          tasks=tasks
+        )
     
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
