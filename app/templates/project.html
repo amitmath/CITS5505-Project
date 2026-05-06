@@ -95,9 +95,13 @@ block extra_css %}
       <i class="bi bi-folder2-open"></i>
     </div>
 
+    {% if search_query %}
+    <h2>No matching projects found</h2>
+    <p>No projects match your search for "<strong>{{ search_query }}</strong>"</p>
+    {% else %}
     <h2>No active projects</h2>
-
-    <p>You don’t have any active projects yet.</p>
+    <p>You don't have any active projects yet.</p>
+    {% endif %}
   </div>
 
   {% endif %}
