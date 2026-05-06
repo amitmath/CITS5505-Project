@@ -64,23 +64,23 @@
 
 .sprints-page .outline-action-btn {
   background-color: #ffffff;
-  border: 1px solid #d1d5db;
-  color: #0f4c5c;
+  border: 1px solid #1D9E75;
+  color: #1D9E75;
 }
 
 .sprints-page .primary-action-btn {
-  background-color: #0f4c5c;
-  border: 1px solid #0f4c5c;
+  background-color: #1D9E75;
+  border: 1px solid #1D9E75;
   color: #ffffff;
 }
 
 .sprints-page .outline-action-btn:hover {
-  background-color: #f8fafc;
-  color: #0f4c5c;
+  background-color: #e8f7f2;
+  color: #157a5a;
 }
 
 .sprints-page .primary-action-btn:hover {
-  background-color: #0b3a46;
+  background-color: #157a5a;
   color: #ffffff;
 }
 
