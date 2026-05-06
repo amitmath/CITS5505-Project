@@ -31,7 +31,7 @@ def create_app():
 
     # Import models so SQLAlchemy and migrations can detect them
     from app import models
-    from app.models import Project, Sprint, Task, User
+    from app.models import Project, Sprint, SprintCheckIn, Task, User
 
     # Register API blueprint
     from app.routes import api
@@ -288,6 +288,14 @@ def create_app():
             "day_label": "Days",
             "end_label": "No end date",
         }
+        sprint_health = {
+            "confidence_label": "No check-ins",
+            "checkin_label": "0 check-ins",
+            "workload_label": "No workload data",
+            "blocker_count": 0,
+            "help_count": 0,
+        }
+        recent_checkins = []
 
         if active_sprint:
             days_left = max((active_sprint.end_date - date.today()).days, 0)
@@ -311,6 +319,46 @@ def create_app():
                 "day_label": "Day" if days_left == 1 else "Days",
                 "end_label": active_sprint.end_date.strftime("Ends %b %d, %Y"),
             }
+
+            # Sprint health is based on team check-ins saved for the active sprint.
+            checkins = (
+                SprintCheckIn.query
+                .filter_by(sprint_id=active_sprint.id)
+                .order_by(SprintCheckIn.checkin_date.desc())
+                .all()
+            )
+            checkin_count = len(checkins)
+            if checkins:
+                average_confidence = round(
+                    sum(checkin.confidence_level for checkin in checkins) / checkin_count,
+                    1
+                )
+                average_workload = round(
+                    sum(checkin.workload_level for checkin in checkins) / checkin_count,
+                    1
+                )
+                blocker_count = sum(1 for checkin in checkins if checkin.blockers)
+                help_count = sum(1 for checkin in checkins if checkin.needs_help)
+                sprint_health = {
+                    "confidence_label": f"{average_confidence}/5 confidence",
+                    "checkin_label": f"{checkin_count} check-in" if checkin_count == 1 else f"{checkin_count} check-ins",
+                    "workload_label": f"{average_workload}/5 workload",
+                    "blocker_count": blocker_count,
+                    "help_count": help_count,
+                }
+
+            recent_checkins = []
+            for checkin in checkins[:5]:
+                user_name = checkin.user.full_name if checkin.user else "Team member"
+                recent_checkins.append({
+                    "user_name": user_name,
+                    "initial": user_name[:1].upper(),
+                    "confidence": checkin.confidence_level,
+                    "workload": checkin.workload_level,
+                    "blockers": checkin.blockers or "No blockers added.",
+                    "needs_help": checkin.needs_help,
+                    "date": checkin.checkin_date.strftime("%b %d"),
+                })
 
         # Planned sprints are shown separately so newly created sprints are easy to find.
         upcoming_sprints = []
@@ -344,10 +392,61 @@ def create_app():
             current_sprint=current_sprint,
             upcoming_sprints=upcoming_sprints,
             past_sprints=past_sprints,
+            sprint_health=sprint_health,
             projects=projects,
             sprint_errors=sprint_errors,
             form_data=form_data,
+            recent_checkins=recent_checkins,
         )
+
+    @app.route("/sprints/<int:sprint_id>/check-in", methods=["POST"])
+    def submit_sprint_checkin(sprint_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        sprint = db.session.get(Sprint, sprint_id)
+        if not sprint or sprint.status != "active":
+            flash("Check-ins can only be added for the active sprint.", "error")
+            return redirect(url_for("sprints"))
+
+        blockers = request.form.get("blockers", "").strip()
+        needs_help = request.form.get("needs_help") == "on"
+
+        try:
+            confidence_level = int(request.form.get("confidence_level", ""))
+            workload_level = int(request.form.get("workload_level", ""))
+        except ValueError:
+            flash("Confidence and workload must be selected.", "error")
+            return redirect(url_for("sprints"))
+
+        if confidence_level not in range(1, 6) or workload_level not in range(1, 6):
+            flash("Confidence and workload must be between 1 and 5.", "error")
+            return redirect(url_for("sprints"))
+
+        today = date.today()
+        # A user should only have one check-in per sprint per day, so update if it exists.
+        checkin = SprintCheckIn.query.filter_by(
+            sprint_id=sprint.id,
+            user_id=g.user.id,
+            checkin_date=today,
+        ).first()
+
+        if checkin is None:
+            checkin = SprintCheckIn(
+                sprint_id=sprint.id,
+                user_id=g.user.id,
+                checkin_date=today,
+            )
+            db.session.add(checkin)
+
+        checkin.confidence_level = confidence_level
+        checkin.workload_level = workload_level
+        checkin.blockers = blockers
+        checkin.needs_help = needs_help
+        db.session.commit()
+
+        flash("Sprint check-in saved.", "success")
+        return redirect(url_for("sprints") + "#health")
 
     @app.route("/sprints/<int:sprint_id>/activate", methods=["POST"])
     def activate_sprint(sprint_id):

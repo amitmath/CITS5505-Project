@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import User, Project, Sprint, Task, project_users
+from app.models import User, Project, Sprint, SprintCheckIn, Task, project_users
 from datetime import date, datetime
 from werkzeug.security import generate_password_hash
 
@@ -9,11 +9,12 @@ app = create_app()
 with app.app_context():
 
     # Clear existing data
+    SprintCheckIn.query.delete()
     Task.query.delete()
+    db.session.execute(project_users.delete())
     Sprint.query.delete()
     Project.query.delete()
     User.query.delete()
-    db.session.execute(project_users.delete())
     db.session.commit()
 
     # -------------------------
@@ -300,7 +301,56 @@ with app.app_context():
 
     print("Tasks seeded successfully.")
 
-  # -------------------------
+    # -------------------------
+    # Create sample sprint health check-ins
+    # -------------------------
+
+    # These check-ins give the sprint health page realistic demo data.
+    checkins = [
+        SprintCheckIn(
+            sprint_id=sprint1.id,
+            user_id=user1.id,
+            checkin_date=date.today(),
+            confidence_level=4,
+            workload_level=3,
+            blockers="",
+            needs_help=False,
+        ),
+        SprintCheckIn(
+            sprint_id=sprint1.id,
+            user_id=user2.id,
+            checkin_date=date.today(),
+            confidence_level=3,
+            workload_level=4,
+            blockers="Waiting for final API response examples.",
+            needs_help=True,
+        ),
+        SprintCheckIn(
+            sprint_id=sprint1.id,
+            user_id=user3.id,
+            checkin_date=date.today(),
+            confidence_level=2,
+            workload_level=5,
+            blockers="Database indexing review is taking longer than expected.",
+            needs_help=True,
+        ),
+        SprintCheckIn(
+            sprint_id=sprint1.id,
+            user_id=user4.id,
+            checkin_date=date.today(),
+            confidence_level=4,
+            workload_level=2,
+            blockers="",
+            needs_help=False,
+        ),
+    ]
+
+    db.session.add_all(checkins)
+    db.session.commit()
+
+    print("Sprint health check-ins seeded successfully.")
+
+    # -------------------------
     # Create projects-user relationships
     # -------------------------
 

@@ -85,11 +85,15 @@
         <div class="metric-icon">
           <i class="bi bi-bar-chart-line-fill"></i>
         </div>
-        <p class="card-label mb-2">SPRINT STATUS</p>
+        <p class="card-label mb-2">TEAM HEALTH</p>
         <h4 class="sprint-metric-title">
-          {{ current_sprint.status }}
-          <span class="trend-pill">{{ current_sprint.progress }}%</span>
+          {{ sprint_health.confidence_label }}
+          <span class="trend-pill">{{ sprint_health.checkin_label }}</span>
         </h4>
+        <p class="sprint-health-note mb-0">
+          {{ sprint_health.workload_label }} · {{ sprint_health.blocker_count }} blockers ·
+          {{ sprint_health.help_count }} need help
+        </p>
       </div>
     </div>
   </div>
@@ -127,6 +131,92 @@
     </div>
   </div>
 </section>
+
+{% if current_sprint.id %}
+<section class="sprint-history-section sprint-checkin-section">
+  <div class="table-card sprint-checkin-card">
+    <div class="section-heading d-flex justify-content-between align-items-center mb-3">
+      <h2 class="section-title mb-0">Daily Check-in</h2>
+      <span class="checkin-date">{{ current_sprint.status }}</span>
+    </div>
+
+    <form method="POST" action="{{ url_for('submit_sprint_checkin', sprint_id=current_sprint.id) }}">
+      <div class="sprint-checkin-grid">
+        <div>
+          <label class="form-label fw-semibold" for="confidence_level">Confidence</label>
+          <select class="form-select" id="confidence_level" name="confidence_level" required>
+            <option value="">Select level</option>
+            <option value="1">1 - Very low</option>
+            <option value="2">2 - Low</option>
+            <option value="3">3 - Okay</option>
+            <option value="4">4 - Good</option>
+            <option value="5">5 - Very confident</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label fw-semibold" for="workload_level">Workload</label>
+          <select class="form-select" id="workload_level" name="workload_level" required>
+            <option value="">Select level</option>
+            <option value="1">1 - Light</option>
+            <option value="2">2 - Manageable</option>
+            <option value="3">3 - Normal</option>
+            <option value="4">4 - Heavy</option>
+            <option value="5">5 - Too much</option>
+          </select>
+        </div>
+
+        <div class="checkin-blockers">
+          <label class="form-label fw-semibold" for="blockers">Blockers</label>
+          <textarea
+            class="form-control"
+            id="blockers"
+            name="blockers"
+            rows="2"
+            placeholder="Add blockers or leave blank"
+          ></textarea>
+        </div>
+
+        <div class="checkin-actions">
+          <label class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="needs_help" />
+            <span class="form-check-label">I need help</span>
+          </label>
+          <button type="submit" class="btn primary-action-btn">Save Check-in</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="recent-checkins">
+      <div class="recent-checkins-head">
+        <h3 class="recent-checkins-title">Recent Check-ins</h3>
+        <span>{{ recent_checkins | length }} shown</span>
+      </div>
+
+      {% for checkin in recent_checkins %}
+      <div class="recent-checkin-item">
+        <span class="recent-checkin-avatar">{{ checkin.initial }}</span>
+        <div class="recent-checkin-main">
+          <div class="recent-checkin-top">
+            <strong>{{ checkin.user_name }}</strong>
+            <span>{{ checkin.date }}</span>
+          </div>
+          <p class="mb-1">
+            Confidence {{ checkin.confidence }}/5 · Workload {{ checkin.workload }}/5
+          </p>
+          <p class="recent-checkin-blocker mb-0">{{ checkin.blockers }}</p>
+        </div>
+        {% if checkin.needs_help %}
+        <span class="help-pill">Needs help</span>
+        {% endif %}
+      </div>
+      {% else %}
+      <p class="text-muted mb-0">No check-ins have been submitted for this sprint yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <section class="sprint-history-section">
   <div class="table-card sprint-history-card">
