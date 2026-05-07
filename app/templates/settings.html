@@ -151,49 +151,6 @@ document.getElementById('avatar-upload').addEventListener('change', function(e) 
     reader.readAsDataURL(file);
 });
 
-function checkStrength(val) {
-    var fill = document.getElementById('strength-fill');
-    var label = document.getElementById('strength-label');
-    if (!val) { fill.style.width = '0%'; label.textContent = ''; return; }
-    var score = 0;
-    if (val.length >= 8) score++;
-    if (/[A-Z]/.test(val)) score++;
-    if (/[0-9]/.test(val)) score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
-    var levels = [
-        { w: '25%', c: '#e53e3e', t: 'Weak' },
-        { w: '50%', c: '#f59e0b', t: 'Fair' },
-        { w: '75%', c: '#3b82f6', t: 'Good' },
-        { w: '100%', c: '#1D9E75', t: 'Strong' }
-    ];
-    var lv = levels[score - 1] || levels[0];
-    fill.style.width = lv.w;
-    fill.style.background = lv.c;
-    label.textContent = lv.t;
-    label.style.color = lv.c;
-}
 
-function submitPassword() {
-    var cur = document.getElementById('current_password').value.trim();
-    var nw  = document.getElementById('new_password').value;
-    var cf  = document.getElementById('confirm_password').value;
-    var flash = document.getElementById('pw-flash');
-    flash.classList.add('d-none');
-    if (!cur) { showPwFlash('Current password is required.'); return; }
-    if (nw.length < 8) { showPwFlash('New password must be at least 8 characters.'); return; }
-    if (nw !== cf) { showPwFlash('Passwords do not match.'); return; }
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'action';
-    input.value = 'change_password';
-    document.getElementById('pw-form').appendChild(input);
-    document.getElementById('pw-form').submit();
-}
-
-function showPwFlash(msg) {
-    var flash = document.getElementById('pw-flash');
-    flash.textContent = msg;
-    flash.classList.remove('d-none');
-}
 </script>
 {% endblock %}
