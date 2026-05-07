@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from app import db
 
 project_users = db.Table(
@@ -48,6 +48,11 @@ class User(db.Model):
         back_populates="assigned_users"
     )
 
+    sprint_checkins = db.relationship(
+        "SprintCheckIn",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<User {self.full_name}>"
@@ -141,8 +146,56 @@ class Sprint(db.Model):
         back_populates="sprint"
     )
 
+    checkins = db.relationship(
+        "SprintCheckIn",
+        back_populates="sprint",
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<Sprint {self.name}>"
+
+class SprintCheckIn(db.Model):
+    """
+    Stores the short daily sprint health update submitted by a team member.
+    """
+    __tablename__ = "sprint_checkins"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    sprint_id = db.Column(
+        db.Integer,
+        db.ForeignKey("sprints.id"),
+        nullable=False
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    checkin_date = db.Column(db.Date, nullable=False, default=date.today)
+    confidence_level = db.Column(db.Integer, nullable=False, default=3)
+    workload_level = db.Column(db.Integer, nullable=False, default=3)
+    blockers = db.Column(db.Text, nullable=True)
+    needs_help = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    sprint = db.relationship("Sprint", back_populates="checkins")
+    user = db.relationship("User", back_populates="sprint_checkins")
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "sprint_id",
+            "user_id",
+            "checkin_date",
+            name="uq_sprint_user_checkin_date"
+        ),
+    )
+
+    def __repr__(self):
+        return f"<SprintCheckIn sprint={self.sprint_id} user={self.user_id}>"
 
 class Task(db.Model):
     """
@@ -213,4 +266,3 @@ class Task(db.Model):
 
     def __repr__(self):
         return f"<Task {self.title}>"
-    

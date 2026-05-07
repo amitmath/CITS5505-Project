@@ -283,7 +283,7 @@ body {
 
 /* Tasks table */
 .new-task-btn {
-  background-color: #0f4c5c;
+  background-color: #1D9E75;
   color: #ffffff;
   border-radius: 10px;
   padding: 10px 18px;
@@ -292,7 +292,7 @@ body {
 }
 
 .new-task-btn:hover {
-  background-color: #0b3a46;
+  background-color: #157a5a;
   color: #ffffff;
 }
 
