@@ -565,6 +565,20 @@ def create_app():
         search_query=search_query
         )
     
+    def apply_backlog_search(task_query, search_query):
+        # Search the task text fields shown in the backlog task details area.
+        if not search_query:
+            return task_query
+
+        search_value = search_query.lower()
+        return task_query.filter(
+            or_(
+                func.lower(Task.title).contains(search_value, autoescape=True),
+                func.lower(func.coalesce(Task.task_code, "")).contains(search_value, autoescape=True),
+                func.lower(func.coalesce(Task.description, "")).contains(search_value, autoescape=True),
+            )
+        )
+
     @app.route("/projects/<int:project_id>/backlog")
     def project_backlog(project_id):
         if g.user is None:
@@ -572,19 +586,10 @@ def create_app():
 
         project = Project.query.get_or_404(project_id)
         search_query = request.args.get("search", "").strip()
-
-        task_query = Task.query.filter_by(project_id=project.id)
-
-        # Let users search the backlog by the fields they can see on the page.
-        if search_query:
-            search_value = f"%{search_query.lower()}%"
-            task_query = task_query.filter(
-                or_(
-                    func.lower(Task.title).like(search_value),
-                    func.lower(func.coalesce(Task.task_code, "")).like(search_value),
-                    func.lower(func.coalesce(Task.description, "")).like(search_value),
-                )
-            )
+        base_task_query = Task.query.filter_by(project_id=project.id)
+        total_task_count = base_task_query.count()
+        total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        task_query = apply_backlog_search(base_task_query, search_query)
 
         tasks = task_query.order_by(Task.created_at.desc()).all()
 
@@ -592,7 +597,9 @@ def create_app():
             "backlog.html",
             project=project,
             tasks=tasks,
-            search_query=search_query
+            search_query=search_query,
+            total_task_count=total_task_count,
+            total_unassigned_count=total_unassigned_count
         )
     
     @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
@@ -661,18 +668,10 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         search_query = request.args.get("search", "").strip()
-        task_query = Task.query
-
-        # The global backlog uses the same search rules as a project backlog.
-        if search_query:
-            search_value = f"%{search_query.lower()}%"
-            task_query = task_query.filter(
-                or_(
-                    func.lower(Task.title).like(search_value),
-                    func.lower(func.coalesce(Task.task_code, "")).like(search_value),
-                    func.lower(func.coalesce(Task.description, "")).like(search_value),
-                )
-            )
+        base_task_query = Task.query
+        total_task_count = base_task_query.count()
+        total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        task_query = apply_backlog_search(base_task_query, search_query)
 
         tasks = task_query.order_by(Task.created_at.desc()).all()
 
@@ -680,7 +679,9 @@ def create_app():
           "backlog.html",
           project=None,
           tasks=tasks,
-          search_query=search_query
+          search_query=search_query,
+          total_task_count=total_task_count,
+          total_unassigned_count=total_unassigned_count
         )
     
     # Route for user profile page
