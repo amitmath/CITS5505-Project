@@ -11,14 +11,16 @@
 {# Topbar #}
 {% set topbar_title = 'Backlog' %}
 {% set topbar_search_placeholder = 'Search tasks...' %}
+{% set search_query = search_query|default('') %}
+{% set backlog_url = url_for('project_backlog', project_id=project.id) if project else url_for('backlog') %}
+{% set topbar_search_action = backlog_url %}
+{% set topbar_search_value = search_query %}
 {% include "components/topbar.html" %}
 
 {# task data from backend route #}
 {% set task_items = tasks %}
-{% set search_query = search_query|default('') %}
-{% set backlog_url = url_for('project_backlog', project_id=project.id) if project else url_for('backlog') %}
-{% set total_tasks = task_items|length %}
-{% set unassigned_count = task_items|selectattr("assignee", "none")|list|length %}
+{% set total_tasks = total_task_count|default(task_items|length) %}
+{% set unassigned_count = total_unassigned_count|default(task_items|selectattr("assignee", "none")|list|length) %}
 {% set project_name = project.name if project else 'No Project Selected' %}
 
 {# Header Card #}
@@ -198,34 +200,5 @@
     </div>
   </div>
 </section>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.querySelector(".search-box input");
-    const backlogUrl = "{{ backlog_url }}";
-    const currentSearch = {{ search_query|tojson }};
-
-    if (!searchInput) {
-      return;
-    }
-
-    searchInput.value = currentSearch;
-
-    searchInput.addEventListener("keydown", function (event) {
-      if (event.key !== "Enter") {
-        return;
-      }
-
-      event.preventDefault();
-      const nextSearch = searchInput.value.trim();
-
-      if (nextSearch) {
-        window.location.href = backlogUrl + "?search=" + encodeURIComponent(nextSearch);
-      } else {
-        window.location.href = backlogUrl;
-      }
-    });
-  });
-</script>
 
 {% endblock %}
