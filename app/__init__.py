@@ -2,7 +2,7 @@ import re
 from datetime import date, datetime
 
 import os
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from werkzeug.utils import secure_filename
 from flask import Flask, app, flash, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -571,12 +571,28 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         project = Project.query.get_or_404(project_id)
-        tasks = Task.query.filter_by(project_id=project.id).all()
+        search_query = request.args.get("search", "").strip()
+
+        task_query = Task.query.filter_by(project_id=project.id)
+
+        # Let users search the backlog by the fields they can see on the page.
+        if search_query:
+            search_value = f"%{search_query.lower()}%"
+            task_query = task_query.filter(
+                or_(
+                    func.lower(Task.title).like(search_value),
+                    func.lower(func.coalesce(Task.task_code, "")).like(search_value),
+                    func.lower(func.coalesce(Task.description, "")).like(search_value),
+                )
+            )
+
+        tasks = task_query.order_by(Task.created_at.desc()).all()
 
         return render_template(
             "backlog.html",
             project=project,
-            tasks=tasks
+            tasks=tasks,
+            search_query=search_query
         )
     
     @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
@@ -644,12 +660,27 @@ def create_app():
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
 
-        tasks = Task.query.order_by(Task.created_at.desc()).all()
+        search_query = request.args.get("search", "").strip()
+        task_query = Task.query
+
+        # The global backlog uses the same search rules as a project backlog.
+        if search_query:
+            search_value = f"%{search_query.lower()}%"
+            task_query = task_query.filter(
+                or_(
+                    func.lower(Task.title).like(search_value),
+                    func.lower(func.coalesce(Task.task_code, "")).like(search_value),
+                    func.lower(func.coalesce(Task.description, "")).like(search_value),
+                )
+            )
+
+        tasks = task_query.order_by(Task.created_at.desc()).all()
 
         return render_template(
           "backlog.html",
           project=None,
-          tasks=tasks
+          tasks=tasks,
+          search_query=search_query
         )
     
     # Route for user profile page
