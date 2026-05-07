@@ -490,11 +490,24 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         projects = [] 
+        search_query = request.args.get("search", "").strip()
 
         try:
-            projects = Project.query.filter(
+            query = Project.query.filter(
                 func.lower(func.trim(Project.status)) == "active"
-            ).all()
+            )
+            
+            # Filter by search query if provided
+            if search_query:
+                query = query.filter(
+                    func.lower(Project.name).contains(func.lower(search_query))
+                )
+            
+            projects = query.all()
+            
+            # If exactly one project found and search was used, redirect to project detail with search query
+            if search_query and len(projects) == 1:
+                return redirect(url_for("project_detail", project_id=projects[0].id, search=search_query))
 
             print("COUNT:", len(projects))
             for p in projects:
@@ -503,7 +516,7 @@ def create_app():
         except Exception as e:
             print(f"Error fetching projects: {e}")
 
-        return render_template("project.html", projects=projects)
+        return render_template("project.html", projects=projects, search_query=search_query)
     
     @app.route("/projects/create", methods=["POST"])
     def create_project():
@@ -542,12 +555,14 @@ def create_app():
         project = Project.query.get_or_404(project_id)
         users = User.query.filter_by(is_active=True).all()
         tasks = Task.query.filter_by(project_id=project.id).all()
+        search_query = request.args.get("search", "").strip()
 
         return render_template(
         "project_detail.html",
         project=project,
         users=users,
-        tasks=tasks
+        tasks=tasks,
+        search_query=search_query
         )
     
     @app.route("/projects/<int:project_id>/backlog")
@@ -621,6 +636,21 @@ def create_app():
 
         flash("Project deleted successfully.", "success")
         return redirect(url_for("project"))
+
+    #Route for backlog page
+    
+    @app.route("/backlog")
+    def backlog():
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        tasks = Task.query.order_by(Task.created_at.desc()).all()
+
+        return render_template(
+          "backlog.html",
+          project=None,
+          tasks=tasks
+        )
     
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
