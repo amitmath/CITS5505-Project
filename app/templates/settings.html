@@ -125,49 +125,7 @@
     </div>
 </div>
 
-<!-- ── Change Password Modal ── -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Change Password</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST" action="{{ url_for('settings') }}" id="pw-form">
-                <div class="modal-body">
-                    <div id="pw-flash" class="flash-settings flash-danger d-none"></div>
-                    <div class="mb-3">
-                        <label class="form-label-settings">Current Password</label>
-                        <input type="password" name="current_password" id="current_password"
-                               class="form-input-settings" placeholder="Enter current password">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label-settings">New Password</label>
-                        <input type="password" name="new_password" id="new_password"
-                               class="form-input-settings" placeholder="At least 8 characters"
-                               oninput="checkStrength(this.value)">
-                        <div class="password-strength-bar">
-                            <div class="password-strength-fill" id="strength-fill"></div>
-                        </div>
-                        <div class="strength-label" id="strength-label"></div>
-                    </div>
-                    <div class="mb-1">
-                        <label class="form-label-settings">Confirm New Password</label>
-                        <input type="password" name="confirm_password" id="confirm_password"
-                               class="form-input-settings" placeholder="Repeat new password">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-outline-secondary"
-                            data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn-save" onclick="submitPassword()">
-                        Update Password
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 
 {% endblock %}
 
