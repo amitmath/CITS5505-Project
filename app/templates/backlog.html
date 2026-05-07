@@ -15,6 +15,11 @@
 
 {# task data from backend route #}
 {% set task_items = tasks %}
+{% set backlog_options = backlog_options|default({}) %}
+{% set selected_status = backlog_options.get('status', 'all') %}
+{% set selected_priority = backlog_options.get('priority', 'all') %}
+{% set selected_assignee = backlog_options.get('assignee', 'all') %}
+{% set selected_sort = backlog_options.get('sort', 'newest') %}
 {% set total_tasks = task_items|length %}
 {% set unassigned_count = task_items|selectattr("assignee", "none")|list|length %}
 {% set project_name = project.name if project else 'No Project Selected' %}
@@ -66,12 +71,47 @@
       </a>
     </div>
 
-    <a href="#" class="toolbar-action-btn">
-      <i class="bi bi-funnel me-1"></i> Filters
-    </a>
-    <a href="#" class="toolbar-action-btn">
-      <i class="bi bi-sort-down me-1"></i> Sort
-    </a>
+    <form method="GET" class="backlog-filter-form">
+      <label class="backlog-filter-field">
+        <span>Status</span>
+        <select name="status" onchange="this.form.submit()">
+          <option value="all" {% if selected_status == 'all' %}selected{% endif %}>All</option>
+          <option value="todo" {% if selected_status == 'todo' %}selected{% endif %}>To Do</option>
+          <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>In Progress</option>
+          <option value="blocker" {% if selected_status == 'blocker' %}selected{% endif %}>Blocker</option>
+          <option value="done" {% if selected_status == 'done' %}selected{% endif %}>Done</option>
+        </select>
+      </label>
+
+      <label class="backlog-filter-field">
+        <span>Priority</span>
+        <select name="priority" onchange="this.form.submit()">
+          <option value="all" {% if selected_priority == 'all' %}selected{% endif %}>All</option>
+          <option value="high" {% if selected_priority == 'high' %}selected{% endif %}>High</option>
+          <option value="medium" {% if selected_priority == 'medium' %}selected{% endif %}>Medium</option>
+          <option value="low" {% if selected_priority == 'low' %}selected{% endif %}>Low</option>
+        </select>
+      </label>
+
+      <label class="backlog-filter-field">
+        <span>Assignee</span>
+        <select name="assignee" onchange="this.form.submit()">
+          <option value="all" {% if selected_assignee == 'all' %}selected{% endif %}>All</option>
+          <option value="assigned" {% if selected_assignee == 'assigned' %}selected{% endif %}>Assigned</option>
+          <option value="unassigned" {% if selected_assignee == 'unassigned' %}selected{% endif %}>Unassigned</option>
+        </select>
+      </label>
+
+      <label class="backlog-filter-field">
+        <span>Sort</span>
+        <select name="sort" onchange="this.form.submit()">
+          <option value="newest" {% if selected_sort == 'newest' %}selected{% endif %}>Newest</option>
+          <option value="due_date" {% if selected_sort == 'due_date' %}selected{% endif %}>Due Date</option>
+          <option value="priority" {% if selected_sort == 'priority' %}selected{% endif %}>Priority</option>
+          <option value="title" {% if selected_sort == 'title' %}selected{% endif %}>Title</option>
+        </select>
+      </label>
+    </form>
   </div>
 </section>
 
