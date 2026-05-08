@@ -680,6 +680,16 @@ def create_app():
 
         return render_template("profile.html", user=user, tasks=tasks, success=success)
 
+    # Route for analytics page
+    @app.route("/analytics")
+    def analytics():
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+        
+        projects = Project.query.all()
+        sprints = Sprint.query.all()
+        return render_template("analytics.html", projects=projects, sprints=sprints)
+
     @app.route('/settings', methods=['GET', 'POST'])
     def settings():
         if g.user is None:

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'components/topbar.html' %}
+
+      <div class="analytics-container">
+        <div class="analytics-header mb-5">
+          <h1 class="analytics-title">Analytics & Metrics</h1>
+          <p class="analytics-subtitle">Track team performance, sprint velocity, and project progress</p>
+        </div>
+
+        <!-- Key Metrics Cards -->
+        <div class="row mb-5">
+          <div class="col-md-3 mb-3">
+            <div class="metric-card">
+              <div class="metric-icon task-icon">
+                <i class="bi bi-list-check"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-label">Total Tasks</div>
+                <div class="metric-value" id="total-tasks">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <div class="metric-card">
+              <div class="metric-icon completed-icon">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-label">Completed Tasks</div>
+                <div class="metric-value" id="completed-tasks">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <div class="metric-card">
+              <div class="metric-icon sprint-icon">
+                <i class="bi bi-flag"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-label">Active Sprints</div>
+                <div class="metric-value" id="active-sprints">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <div class="metric-card">
+              <div class="metric-icon team-icon">
+                <i class="bi bi-people"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-label">Team Members</div>
+                <div class="metric-value" id="team-members">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mb-5">
+          <!-- Sprint Velocity Chart -->
+          <div class="col-lg-6 mb-4">
+            <div class="chart-card">
+              <h3 class="chart-title">
+                <i class="bi bi-graph-up me-2"></i>Sprint Velocity Trend
+              </h3>
+              <p class="chart-description">Completed story points across completed sprints</p>
+              <canvas id="velocityChart" height="100"></canvas>
+            </div>
+          </div>
+
+          <!-- Task Distribution Chart -->
+          <div class="col-lg-6 mb-4">
+            <div class="chart-card">
+              <h3 class="chart-title">
+                <i class="bi bi-pie-chart me-2"></i>Task Distribution by Status
+              </h3>
+              <p class="chart-description">Overall task breakdown across all statuses</p>
+              <canvas id="distributionChart" height="100"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Workload and Priority -->
+        <div class="row mb-5">
+          <!-- Team Workload Chart -->
+          <div class="col-lg-6 mb-4">
+            <div class="chart-card">
+              <h3 class="chart-title">
+                <i class="bi bi-person-check me-2"></i>Team Workload
+              </h3>
+              <p class="chart-description">Tasks and story points per team member</p>
+              <canvas id="workloadChart" height="100"></canvas>
+            </div>
+          </div>
+
+          <!-- Priority Distribution Chart -->
+          <div class="col-lg-6 mb-4">
+            <div class="chart-card">
+              <h3 class="chart-title">
+                <i class="bi bi-exclamation-circle me-2"></i>Priority Distribution
+              </h3>
+              <p class="chart-description">Task breakdown by priority levels</p>
+              <canvas id="priorityChart" height="100"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Progress -->
+        <div class="row mb-5">
+          <div class="col-12 mb-4">
+            <div class="chart-card">
+              <h3 class="chart-title">
+                <i class="bi bi-briefcase me-2"></i>Project Progress
+              </h3>
+              <p class="chart-description">Completion percentage for each project</p>
+              <canvas id="projectProgressChart" height="80"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Sprints Summary -->
+        <div class="row mb-5">
+          <div class="col-12">
+            <div class="chart-card">
+              <h3 class="chart-title">
+                <i class="bi bi-lightning me-2"></i>Active Sprints Summary
+              </h3>
+              <p class="chart-description">Current sprint performance and metrics</p>
+              <div id="activeSprints" class="active-sprints-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analytics_styles.css') }}">
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}
