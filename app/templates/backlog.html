@@ -11,6 +11,10 @@
 {# Topbar #}
 {% set topbar_title = 'Backlog' %}
 {% set topbar_search_placeholder = 'Search tasks...' %}
+{% set search_query = search_query|default('') %}
+{% set backlog_url = url_for('project_backlog', project_id=project.id) if project else url_for('backlog') %}
+{% set topbar_search_action = backlog_url %}
+{% set topbar_search_value = search_query %}
 {% include "components/topbar.html" %}
 
 {# task data from backend route #}
@@ -21,9 +25,8 @@
 {% set selected_assignee = backlog_options.get('assignee', 'all') %}
 {% set selected_sort = backlog_options.get('sort', 'newest') %}
 {% set has_active_options = selected_status != 'all' or selected_priority != 'all' or selected_assignee != 'all' or selected_sort != 'newest' %}
-{% set backlog_url = url_for('project_backlog', project_id=project.id) if project else url_for('backlog') %}
-{% set total_tasks = task_items|length %}
-{% set unassigned_count = task_items|selectattr("assignee", "none")|list|length %}
+{% set total_tasks = total_task_count|default(task_items|length) %}
+{% set unassigned_count = total_unassigned_count|default(task_items|selectattr("assignee", "none")|list|length) %}
 {% set project_name = project.name if project else 'No Project Selected' %}
 
 {# Header Card #}
@@ -74,6 +77,10 @@
     </div>
 
     <form method="GET" class="backlog-filter-form">
+      {% if search_query %}
+      <input type="hidden" name="search" value="{{ search_query }}">
+      {% endif %}
+
       <label class="backlog-filter-field">
         <span>Status</span>
         <select name="status" onchange="this.form.submit()">
@@ -114,9 +121,16 @@
         </select>
       </label>
 
-      {% if has_active_options %}
+      {% if search_query or has_active_options %}
       <a href="{{ backlog_url }}" class="backlog-reset-link">
-        <i class="bi bi-x-circle me-1"></i> Reset
+        <i class="bi bi-x-circle me-1"></i>
+        {% if search_query and has_active_options %}
+          Clear search and filters
+        {% elif search_query %}
+          Clear "{{ search_query }}"
+        {% else %}
+          Reset
+        {% endif %}
       </a>
       {% endif %}
     </form>
@@ -212,7 +226,15 @@
         <tr>
           <td colspan="5" class="text-center py-5 text-muted">
             <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-            No tasks in the backlog yet.
+            {% if search_query and has_active_options %}
+              No tasks matched "{{ search_query }}" with the selected filters.
+            {% elif search_query %}
+              No tasks matched "{{ search_query }}".
+            {% elif has_active_options %}
+              No tasks matched the selected filters.
+            {% else %}
+              No tasks in the backlog yet.
+            {% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -223,7 +245,11 @@
   {# Table footer: count + pagination #}
   <div class="backlog-table-footer">
     <span class="showing-label">
-      {% if has_active_options %}
+      {% if search_query and has_active_options %}
+        Showing {{ task_items | length }} matching filtered items
+      {% elif search_query %}
+        Showing {{ task_items | length }} matching items
+      {% elif has_active_options %}
         Showing {{ task_items | length }} filtered items
       {% else %}
         Showing {{ task_items | length }} of {{ total_tasks }} items

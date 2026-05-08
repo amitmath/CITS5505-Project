@@ -2,7 +2,7 @@ import re
 from datetime import date, datetime
 
 import os
-from sqlalchemy import case, func
+from sqlalchemy import case, func, or_
 from werkzeug.utils import secure_filename
 from flask import Flask, app, flash, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -565,6 +565,20 @@ def create_app():
         search_query=search_query
         )
     
+    def apply_backlog_search(task_query, search_query):
+        # Search the task text fields shown in the backlog task details area.
+        if not search_query:
+            return task_query
+
+        search_value = search_query.lower()
+        return task_query.filter(
+            or_(
+                func.lower(Task.title).contains(search_value, autoescape=True),
+                func.lower(func.coalesce(Task.task_code, "")).contains(search_value, autoescape=True),
+                func.lower(func.coalesce(Task.description, "")).contains(search_value, autoescape=True),
+            )
+        )
+
     def apply_backlog_options(task_query):
         """
         Apply backlog filters and sorting from the query string.
@@ -617,7 +631,11 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         project = Project.query.get_or_404(project_id)
-        task_query = Task.query.filter_by(project_id=project.id)
+        search_query = request.args.get("search", "").strip()
+        base_task_query = Task.query.filter_by(project_id=project.id)
+        total_task_count = base_task_query.count()
+        total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        task_query = apply_backlog_search(base_task_query, search_query)
         task_query, backlog_options = apply_backlog_options(task_query)
         tasks = task_query.all()
 
@@ -625,6 +643,9 @@ def create_app():
             "backlog.html",
             project=project,
             tasks=tasks,
+            search_query=search_query,
+            total_task_count=total_task_count,
+            total_unassigned_count=total_unassigned_count,
             backlog_options=backlog_options
         )
     
@@ -693,13 +714,21 @@ def create_app():
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
 
-        task_query, backlog_options = apply_backlog_options(Task.query)
+        search_query = request.args.get("search", "").strip()
+        base_task_query = Task.query
+        total_task_count = base_task_query.count()
+        total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        task_query = apply_backlog_search(base_task_query, search_query)
+        task_query, backlog_options = apply_backlog_options(task_query)
         tasks = task_query.all()
 
         return render_template(
           "backlog.html",
           project=None,
           tasks=tasks,
+          search_query=search_query,
+          total_task_count=total_task_count,
+          total_unassigned_count=total_unassigned_count,
           backlog_options=backlog_options
         )
     
@@ -764,25 +793,6 @@ def create_app():
                 flash('Settings saved successfully.', 'success')
                 return redirect(url_for('settings'))
 
-            elif action == 'change_password':
-                current_password = request.form.get('current_password', '')
-                new_password     = request.form.get('new_password', '')
-                confirm_password = request.form.get('confirm_password', '')
-
-                if not check_password_hash(g.user.password, current_password):
-                    flash('Current password is incorrect.', 'danger')
-                    return redirect(url_for('settings'))
-                if len(new_password) < 8:
-                    flash('New password must be at least 8 characters.', 'danger')
-                    return redirect(url_for('settings'))
-                if new_password != confirm_password:
-                    flash('Passwords do not match.', 'danger')
-                    return redirect(url_for('settings'))
-
-                g.user.password = generate_password_hash(new_password)
-                db.session.commit()
-                flash('Password updated successfully.', 'success')
-                return redirect(url_for('settings'))
 
         return render_template('settings.html')
 

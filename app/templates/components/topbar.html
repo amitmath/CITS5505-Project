@@ -4,6 +4,21 @@
     <h3 class="page-title mb-0">{{ topbar_title }}</h3>
     {% endif %}
 
+    {% if topbar_search_action %}
+    <form method="GET" action="{{ topbar_search_action }}" class="search-box {{ topbar_search_class | default('') }}">
+      <button type="submit" class="search-submit-btn" aria-label="Search">
+        <i class="bi bi-search"></i>
+      </button>
+      <input
+        type="text"
+        name="{{ topbar_search_name | default('search') }}"
+        value="{{ topbar_search_value | default('') }}"
+        class="form-control"
+        placeholder="{{ topbar_search_placeholder | default('Search...') }}"
+        title="Type to search and press Enter"
+      />
+    </form>
+    {% else %}
     <div class="search-box {{ topbar_search_class | default('') }}">
       <i class="bi bi-search"></i>
       <input
@@ -13,6 +28,7 @@
         title="Type to search and press Enter"
       />
     </div>
+    {% endif %}
   </div>
 
   <div class="topbar-right d-flex align-items-center gap-3">
