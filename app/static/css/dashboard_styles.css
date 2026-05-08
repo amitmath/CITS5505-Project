@@ -102,6 +102,24 @@ body {
   color: #94a3b8;
 }
 
+.search-submit-btn {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  padding: 0;
+  line-height: 1;
+  z-index: 2;
+}
+
+.search-submit-btn i {
+  position: static;
+  transform: none;
+}
+
 .search-box .form-control {
   padding-left: 40px;
   height: 46px;

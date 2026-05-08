@@ -11,12 +11,16 @@
 {# Topbar #}
 {% set topbar_title = 'Backlog' %}
 {% set topbar_search_placeholder = 'Search tasks...' %}
+{% set search_query = search_query|default('') %}
+{% set backlog_url = url_for('project_backlog', project_id=project.id) if project else url_for('backlog') %}
+{% set topbar_search_action = backlog_url %}
+{% set topbar_search_value = search_query %}
 {% include "components/topbar.html" %}
 
 {# task data from backend route #}
 {% set task_items = tasks %}
-{% set total_tasks = task_items|length %}
-{% set unassigned_count = task_items|selectattr("assignee", "none")|list|length %}
+{% set total_tasks = total_task_count|default(task_items|length) %}
+{% set unassigned_count = total_unassigned_count|default(task_items|selectattr("assignee", "none")|list|length) %}
 {% set project_name = project.name if project else 'No Project Selected' %}
 
 {# Header Card #}
@@ -72,6 +76,11 @@
     <a href="#" class="toolbar-action-btn">
       <i class="bi bi-sort-down me-1"></i> Sort
     </a>
+    {% if search_query %}
+    <a href="{{ backlog_url }}" class="toolbar-action-btn">
+      <i class="bi bi-x-circle me-1"></i> Clear "{{ search_query }}"
+    </a>
+    {% endif %}
   </div>
 </section>
 
@@ -164,7 +173,11 @@
         <tr>
           <td colspan="5" class="text-center py-5 text-muted">
             <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-            No tasks in the backlog yet.
+            {% if search_query %}
+              No tasks matched "{{ search_query }}".
+            {% else %}
+              No tasks in the backlog yet.
+            {% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -175,7 +188,11 @@
   {# Table footer: count + pagination #}
   <div class="backlog-table-footer">
     <span class="showing-label">
-      Showing {{ task_items | length }} of {{ total_tasks }} items
+      {% if search_query %}
+        Showing {{ task_items | length }} matching items
+      {% else %}
+        Showing {{ task_items | length }} of {{ total_tasks }} items
+      {% endif %}
     </span>
     <div class="pagination-btns">
       <a href="#" class="page-btn">Previous</a>
