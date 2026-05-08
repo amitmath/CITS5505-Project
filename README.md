@@ -55,6 +55,7 @@ The application follows:
 - Bootstrap 5.3.3 (UI framework)
 - Jinja2 (template engine)
 - JavaScript
+- Chart.js 3.9.1 (data visualization and charts)
 - Font Awesome 6.5.0 (icons)
 
 **Database:** SQLite
@@ -90,6 +91,7 @@ CITS5505-Project/
 │       ├── project.html         # Projects list page
 │       ├── project_detail.html  # Individual project view
 │       ├── sprints.html         # Sprints management page
+│       ├── analytics.html       # Analytics dashboard page
 │       ├── profile.html         # User profile page
 │       ├── backlog.html         # Project backlog page
 │       └── components/          # Reusable template components
@@ -181,7 +183,21 @@ http://127.0.0.1:5000
 - Create new sprints
 - Activate/complete sprints
 - View sprint health and velocity
-- Navigate from: Sidebar menu
+- Navigate from: Sidebar menu Sprints
+
+**Analytics (`/analytics`)**
+- Comprehensive dashboard with real-time performance metrics
+- **Key Metrics:** Total tasks, Completed tasks, Active sprints, Team members
+- **Sprint Velocity Chart:** Visualize completed vs planned story points across sprints
+- **Task Distribution Chart:** Breakdown of tasks by status (Done, In Progress, To Do, Backlog)
+- **Team Workload Chart:** Task and story point distribution across team members
+- **Priority Distribution Chart:** Visual breakdown of task priorities (Low, Medium, High)
+- **Project Progress Chart:** Completion percentage for each active project
+- **Active Sprints Summary:** Real-time metrics for current sprint performance
+- All data is generated from the database with no placeholder data
+- Charts update dynamically based on project activities
+- Responsive design optimized for all screen sizes
+- Navigate from: Sidebar menu Analytics
 
 **Profile (`/profile`)**
 - View and edit user profile information
