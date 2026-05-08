@@ -599,6 +599,10 @@ def create_app():
             task_query = task_query.filter(Task.assignee_id.isnot(None))
         elif assignee_filter == "unassigned":
             task_query = task_query.filter(Task.assignee_id.is_(None))
+        elif assignee_filter.startswith("user_"):
+            user_id = assignee_filter.replace("user_", "", 1)
+            if user_id.isdigit():
+                task_query = task_query.filter(Task.assignee_id == int(user_id))
 
         priority_order = case(
             (Task.priority == "high", 1),
@@ -635,6 +639,15 @@ def create_app():
         base_task_query = Task.query.filter_by(project_id=project.id)
         total_task_count = base_task_query.count()
         total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        # Only show users who already have tasks in this backlog.
+        assignee_options = (
+            User.query
+            .join(Task, Task.assignee_id == User.id)
+            .filter(Task.project_id == project.id)
+            .distinct()
+            .order_by(User.full_name.asc())
+            .all()
+        )
         task_query = apply_backlog_search(base_task_query, search_query)
         task_query, backlog_options = apply_backlog_options(task_query)
         tasks = task_query.all()
@@ -646,7 +659,8 @@ def create_app():
             search_query=search_query,
             total_task_count=total_task_count,
             total_unassigned_count=total_unassigned_count,
-            backlog_options=backlog_options
+            backlog_options=backlog_options,
+            assignee_options=assignee_options
         )
     
     @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
@@ -718,6 +732,14 @@ def create_app():
         base_task_query = Task.query
         total_task_count = base_task_query.count()
         total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        # Only show users who already have tasks in the backlog.
+        assignee_options = (
+            User.query
+            .join(Task, Task.assignee_id == User.id)
+            .distinct()
+            .order_by(User.full_name.asc())
+            .all()
+        )
         task_query = apply_backlog_search(base_task_query, search_query)
         task_query, backlog_options = apply_backlog_options(task_query)
         tasks = task_query.all()
@@ -729,7 +751,8 @@ def create_app():
           search_query=search_query,
           total_task_count=total_task_count,
           total_unassigned_count=total_unassigned_count,
-          backlog_options=backlog_options
+          backlog_options=backlog_options,
+          assignee_options=assignee_options
         )
     
     # Route for user profile page
