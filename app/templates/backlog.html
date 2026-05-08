@@ -26,33 +26,31 @@
       <a href="{{ url_for('project') }}">Projects</a>
       <span class="breadcrumb-sep">/</span>
       <span>{{ project_name }}</span>
-    </nav>
-    <h1 class="backlog-hero-title">Project Backlog</h1>
-    <p class="backlog-hero-text">
-      Manage and prioritize tasks for the upcoming development cycles.
-      Drag to reorder or use filters to focus on specific workstreams.
-    </p>
-  </div>
-
-  <div class="backlog-hero-right">
-   
-    <div class="backlog-stat">
-      <span class="backlog-stat-label">TOTAL<br>TASKS</span>
-      <span class="backlog-stat-number">{{ total_tasks }}</span>
-    </div>
-
-   
-    <div class="backlog-stat">
-      <span class="backlog-stat-label">UNASSIGNED</span>
-      <span class="backlog-stat-number">{{ unassigned_count }}</span>
-    </div>
-
-   
-    <a href="#" class="backlog-create-btn">
-      <i class="bi bi-plus-lg me-1"></i> Create<br>Task
-    </a>
-  </div>
-</section>
+      </nav>
+      <h1 class="backlog-hero-title">Project Backlog</h1>
+      <p class="backlog-hero-text">
+        Manage and prioritize tasks for the upcoming development cycles.
+        Drag to reorder or use filters to focus on specific workstreams.
+      </p>
+      </div>
+      
+      <div class="backlog-hero-right">
+      
+        <div class="backlog-stat">
+          <span class="backlog-stat-label">TOTAL<br>TASKS</span>
+          <span class="backlog-stat-number">{{ total_tasks }}</span>
+        </div>
+        <div class="backlog-stat">
+          <span class="backlog-stat-label">UNASSIGNED</span>
+          <span class="backlog-stat-number">{{ unassigned_count }}</span>
+        </div>
+      
+      
+        <button type="button" class="backlog-create-btn" id="openTaskModal">
+          <i class="bi bi-plus-lg me-1"></i> Create<br>Task
+        </button>
+      </div>
+      </section>
 
 {# Toolbar #}
 <section class="backlog-toolbar">
@@ -103,12 +101,14 @@
             {% set t_sprint = task.sprint.name if task.sprint else 'TBD' %}
         
             <tr class="backlog-row">
-        
-                <td class="task-details-cell">
-                    <a href="#" class="task-title-link">{{ t_title }}</a>
-                    <span class="task-meta">{{ t_id }} &bull; {{ t_created }}</span>
-                </td>
-          <td>
+              <td class="task-details-cell">
+                <button type="button" class="task-title-link border-0 bg-transparent p-0 text-start open-view-task-modal"
+                  data-task-id="{{ task.id }}">
+                  {{ t_title }}
+                </button>
+                <span class="task-meta">{{ t_id }} &bull; {{ t_created }}</span>
+              </td>
+              <td>
             {% if t_priority == 'high' %}
               <span class="priority-badge priority-high">
                 <i class="bi bi-circle-fill me-1"></i> HIGH
@@ -172,6 +172,79 @@
     </table>
   </div>
 
+    {# View Task Modals #}
+{% for task in task_items %}
+<div class="project-modal-backdrop" id="viewTaskModal{{ task.id }}">
+  <div class="project-modal-card">
+    <div class="project-modal-header">
+      <div>
+        <h2>{{ task.title }}</h2>
+        <p class="task-view-meta mb-0">
+          {{ task.task_code if task.task_code else 'Task #' ~ task.id }}
+          • Created {{ task.created_at.strftime('%b %d, %Y') }}
+        </p>
+      </div>
+
+      <button type="button" class="project-modal-close view-task-close" data-task-id="{{ task.id }}">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="task-view-description">
+      {{ task.description or 'No description added.' }}
+    </div>
+
+    <div class="task-view-grid">
+      <div class="task-view-item">
+        <span>Project</span>
+        <strong>{{ task.project.name if task.project else 'N/A' }}</strong>
+      </div>
+
+      <div class="task-view-item">
+        <span>Sprint</span>
+        <strong>{{ task.sprint.name if task.sprint else 'TBD' }}</strong>
+      </div>
+
+      <div class="task-view-item">
+        <span>Assignee</span>
+        <strong>{{ task.assignee.full_name if task.assignee else 'Unassigned' }}</strong>
+      </div>
+
+      <div class="task-view-item">
+        <span>Priority</span>
+        <strong>{{ task.priority|title }}</strong>
+      </div>
+
+      <div class="task-view-item">
+        <span>Status</span>
+        <strong>{{ task.status.replace('_', ' ')|title }}</strong>
+      </div>
+
+      <div class="task-view-item">
+        <span>Story Points</span>
+        <strong>{{ task.story_points }}</strong>
+      </div>
+
+      <div class="task-view-item">
+        <span>Due Date</span>
+        <strong>{{ task.due_date.strftime('%b %d, %Y') if task.due_date else 'No due date' }}</strong>
+      </div>
+
+      <div class="task-view-item">
+        <span>Created By</span>
+        <strong>{{ task.creator.full_name if task.creator else 'Unknown' }}</strong>
+      </div>
+    </div>
+
+    <div class="project-modal-actions">
+      <button type="button" class="project-cancel-btn view-task-close" data-task-id="{{ task.id }}">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
   {# Table footer: count + pagination #}
   <div class="backlog-table-footer">
     <span class="showing-label">
@@ -183,5 +256,178 @@
     </div>
   </div>
 </section>
+
+<div class="project-modal-backdrop" id="taskModal">
+  <div class="project-modal-card">
+    <div class="project-modal-header">
+      <h2>Create Task</h2>
+      <button type="button" class="project-modal-close" id="closeTaskModal">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <form method="POST" action="{{ url_for('create_task') }}">
+      {% if project %}
+        <input type="hidden" name="project_id" value="{{ project.id }}">
+      {% else %}
+        <div class="project-form-group">
+          <label for="taskProject">Project</label>
+          <select id="taskProject" name="project_id" required>
+            <option value="">Select project</option>
+            {% for project_item in projects %}
+              <option value="{{ project_item.id }}">{{ project_item.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+
+      <div class="project-form-group">
+        <label for="taskTitle">Task Title</label>
+        <input
+          type="text"
+          id="taskTitle"
+          name="title"
+          placeholder="e.g. Implement user authentication"
+          required
+        />
+      </div>
+
+      <div class="project-form-group">
+        <label for="taskDescription">Task Description</label>
+        <textarea
+          id="taskDescription"
+          name="description"
+          placeholder="Briefly describe the task..."
+        ></textarea>
+      </div>
+
+      <div class="project-form-row">
+        <div class="project-form-group">
+          <label for="taskPriority">Priority</label>
+          <select id="taskPriority" name="priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <div class="project-form-group">
+          <label for="taskStatus">Status</label>
+          <select id="taskStatus" name="status">
+            <option value="backlog" selected>Backlog</option>
+            <option value="todo">Todo</option>
+            <option value="in_progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="project-form-row">
+        <div class="project-form-group">
+          <label for="taskAssignee">Assignee</label>
+          <select id="taskAssignee" name="assignee_id">
+            <option value="">Unassigned</option>
+            {% for user in users %}
+              <option value="{{ user.id }}">{{ user.full_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="project-form-group">
+          <label for="taskSprint">Sprint</label>
+          <select id="taskSprint" name="sprint_id">
+            <option value="">No sprint</option>
+            {% for sprint in sprints %}
+              <option value="{{ sprint.id }}">{{ sprint.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="project-form-row">
+        <div class="project-form-group">
+          <label for="taskStoryPoints">Story Points</label>
+          <input
+            type="number"
+            id="taskStoryPoints"
+            name="story_points"
+            min="0"
+            value="0"
+          />
+        </div>
+
+        <div class="project-form-group">
+          <label for="taskDueDate">Due Date</label>
+          <input type="date" id="taskDueDate" name="due_date" />
+        </div>
+      </div>
+
+      <div class="project-modal-actions">
+        <button type="button" class="project-cancel-btn" id="cancelTaskModal">
+          Cancel
+        </button>
+        <button type="submit" class="project-submit-btn">Create Task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const taskModal = document.getElementById("taskModal");
+  const openTaskModal = document.getElementById("openTaskModal");
+  const closeTaskModal = document.getElementById("closeTaskModal");
+  const cancelTaskModal = document.getElementById("cancelTaskModal");
+
+  function openTaskModalPopup() {
+    taskModal.classList.add("show");
+  }
+
+  function closeTaskModalPopup() {
+    taskModal.classList.remove("show");
+  }
+
+  openTaskModal.addEventListener("click", openTaskModalPopup);
+  closeTaskModal.addEventListener("click", closeTaskModalPopup);
+  cancelTaskModal.addEventListener("click", closeTaskModalPopup);
+
+  taskModal.addEventListener("click", function (event) {
+    if (event.target === taskModal) {
+      closeTaskModalPopup();
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      closeTaskModalPopup();
+    }
+  });
+
+    const openViewTaskButtons = document.querySelectorAll(".open-view-task-modal");
+  const closeViewTaskButtons = document.querySelectorAll(".view-task-close");
+
+  openViewTaskButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      const taskId = button.getAttribute("data-task-id");
+      const modal = document.getElementById("viewTaskModal" + taskId);
+      modal.classList.add("show");
+    });
+  });
+
+  closeViewTaskButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      const taskId = button.getAttribute("data-task-id");
+      const modal = document.getElementById("viewTaskModal" + taskId);
+      modal.classList.remove("show");
+    });
+  });
+
+  document.querySelectorAll("[id^='viewTaskModal']").forEach(function (modal) {
+    modal.addEventListener("click", function (event) {
+      if (event.target === modal) {
+        modal.classList.remove("show");
+      }
+    });
+  });
+</script>
 
 {% endblock %}

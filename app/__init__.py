@@ -558,10 +558,20 @@ def create_app():
         project = Project.query.get_or_404(project_id)
         tasks = Task.query.filter_by(project_id=project.id).all()
 
+        users = User.query.filter_by(is_active=True)\
+            .order_by(User.full_name.asc())\
+            .all()
+
+        sprints = Sprint.query.filter_by(project_id=project.id)\
+            .order_by(Sprint.start_date.asc())\
+            .all()
+
         return render_template(
             "backlog.html",
             project=project,
-            tasks=tasks
+            tasks=tasks,
+            users=users,
+            sprints=sprints
         )
     
     @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
@@ -622,20 +632,75 @@ def create_app():
         flash("Project deleted successfully.", "success")
         return redirect(url_for("project"))
 
-    #Route for backlog page
-    
+    # Route for backlog page
     @app.route("/backlog")
     def backlog():
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
 
         tasks = Task.query.order_by(Task.created_at.desc()).all()
+        projects = Project.query.filter_by(status="active").order_by(Project.name.asc()).all()
+        users = User.query.filter_by(is_active=True).order_by(User.full_name.asc()).all()
+        sprints = Sprint.query.order_by(Sprint.start_date.asc()).all()
 
         return render_template(
-          "backlog.html",
-          project=None,
-          tasks=tasks
+            "backlog.html",
+            project=None,
+            tasks=tasks,
+            projects=projects,
+            users=users,
+            sprints=sprints
         )
+    
+    @app.route("/tasks/create", methods=["POST"])
+    def create_task():
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        project_id = request.form.get("project_id")
+        sprint_id = request.form.get("sprint_id")
+        assignee_id = request.form.get("assignee_id")
+        priority = request.form.get("priority", "medium")
+        status = request.form.get("status", "backlog")
+        story_points_raw = request.form.get("story_points", "0")
+        due_date_raw = request.form.get("due_date", "")
+
+        if not title or not project_id:
+            flash("Task title and project are required.", "error")
+            return redirect(request.referrer or url_for("backlog"))
+
+        try:
+            story_points = int(story_points_raw)
+        except ValueError:
+            story_points = 0
+
+        due_date = None
+        if due_date_raw:
+            try:
+                due_date = date.fromisoformat(due_date_raw)
+            except ValueError:
+                due_date = None
+
+        task = Task(
+            title=title,
+            description=description,
+            project_id=int(project_id),
+            sprint_id=int(sprint_id) if sprint_id else None,
+            assignee_id=int(assignee_id) if assignee_id else None,
+            created_by=g.user.id,
+            priority=priority,
+            status=status,
+            story_points=story_points,
+            due_date=due_date,
+        )
+
+        db.session.add(task)
+        db.session.commit()
+
+        flash("Task created successfully.", "success")
+        return redirect(request.referrer or url_for("backlog"))
     
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
