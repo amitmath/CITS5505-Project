@@ -170,6 +170,60 @@
   color: #0f4c5c;
 }
 
+.backlog-filter-form {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.backlog-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+}
+
+.backlog-filter-field span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.backlog-filter-field select {
+  min-width: 128px;
+  padding: 8px 32px 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.backlog-filter-field select:focus {
+  border-color: #1D9E75;
+  box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.12);
+  outline: none;
+}
+
+.backlog-reset-link {
+  padding: 9px 14px;
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+  color: #475569;
+  background-color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.backlog-reset-link:hover {
+  border-color: #1D9E75;
+  color: #1D9E75;
+}
+
 .backlog-member-stack {
   display: flex;
   align-items: center;
