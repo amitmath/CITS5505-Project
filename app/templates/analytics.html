@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% set topbar_title = 'Analytics' %}
+# removed search box from analytics page as it is not needed
+{% set topbar_search_class = 'd-none' %}
 {% include 'components/topbar.html' %}
 
       <div class="analytics-container">
