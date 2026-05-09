@@ -1,8 +1,20 @@
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, g
 from sqlalchemy import func
 from app.models import Project, User, Sprint, Task, SprintCheckIn
 
 api = Blueprint("api", __name__)
+
+def require_auth():
+    """Helper function to check authentication for API endpoints."""
+    if g.user is None:
+        return None
+    return g.user
+
+# Analytics API endpoints - all require authentication
+def check_auth():
+    """Check if user is authenticated, return 401 if not."""
+    if g.user is None:
+        return jsonify({"error": "Unauthorized"}), 401
 
 @api.route("/api/users", methods=["GET"])
 def get_users():
@@ -29,10 +41,13 @@ def get_user(user_id):
         "location": user.location
     })
 
-# Analytics API endpoints
+# Analytics API endpoints - all require authentication
 @api.route("/api/analytics/sprint-velocity", methods=["GET"])
 def get_sprint_velocity():
     """Get sprint velocity data for all completed sprints."""
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
     sprints = Sprint.query.filter(
         Sprint.status == "completed"
     ).order_by(Sprint.start_date).all()
@@ -47,6 +62,9 @@ def get_sprint_velocity():
 @api.route("/api/analytics/sprint-burndown/<int:sprint_id>", methods=["GET"])
 def get_sprint_burndown(sprint_id):
     """Get burndown data for a specific sprint."""
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
     sprint = Sprint.query.get_or_404(sprint_id)
     tasks = Task.query.filter_by(sprint_id=sprint_id).all()
     
@@ -69,6 +87,9 @@ def get_sprint_burndown(sprint_id):
 @api.route("/api/analytics/task-distribution", methods=["GET"])
 def get_task_distribution():
     """Get task distribution by status across all projects."""
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
     statuses = ["backlog", "todo", "in_progress", "done"]
     distribution = {}
     
@@ -81,6 +102,9 @@ def get_task_distribution():
 @api.route("/api/analytics/team-workload", methods=["GET"])
 def get_team_workload():
     """Get task workload distribution across team members."""
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
     users = User.query.all()
     workload = {}
     
@@ -99,6 +123,9 @@ def get_team_workload():
 @api.route("/api/analytics/sprint-health/<int:sprint_id>", methods=["GET"])
 def get_sprint_health(sprint_id):
     """Get sprint health metrics (team confidence and workload)."""
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
     sprint = Sprint.query.get_or_404(sprint_id)
     checkins = SprintCheckIn.query.filter_by(sprint_id=sprint_id).all()
     
@@ -128,6 +155,9 @@ def get_sprint_health(sprint_id):
 @api.route("/api/analytics/priority-distribution", methods=["GET"])
 def get_priority_distribution():
     """Get task distribution by priority."""
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
     priorities = ["low", "medium", "high"]
     distribution = {}
     
@@ -140,6 +170,9 @@ def get_priority_distribution():
 @api.route("/api/analytics/project-progress", methods=["GET"])
 def get_project_progress():
     """Get progress metrics for all projects."""
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
     projects = Project.query.all()
     progress_data = []
     
@@ -161,6 +194,9 @@ def get_project_progress():
 @api.route("/api/analytics/active-sprints-summary", methods=["GET"])
 def get_active_sprints_summary():
     """Get summary of all active sprints."""
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
     active_sprints = Sprint.query.filter_by(status="active").all()
     
     sprints_data = []
