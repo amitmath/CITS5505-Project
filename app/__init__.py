@@ -2,7 +2,7 @@ import re
 from datetime import date, datetime
 
 import os
-from sqlalchemy import func, or_
+from sqlalchemy import case, func, or_
 from werkzeug.utils import secure_filename
 from flask import Flask, app, flash, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -579,6 +579,56 @@ def create_app():
             )
         )
 
+    def apply_backlog_options(task_query):
+        """
+        Apply backlog filters and sorting from the query string.
+        Kept in one helper so the global and project backlog behave the same way.
+        """
+        status_filter = request.args.get("status", "all").strip()
+        priority_filter = request.args.get("priority", "all").strip()
+        assignee_filter = request.args.get("assignee", "all").strip()
+        sort_by = request.args.get("sort", "newest").strip()
+
+        if status_filter != "all":
+            task_query = task_query.filter(Task.status == status_filter)
+
+        if priority_filter != "all":
+            task_query = task_query.filter(Task.priority == priority_filter)
+
+        if assignee_filter == "assigned":
+            task_query = task_query.filter(Task.assignee_id.isnot(None))
+        elif assignee_filter == "unassigned":
+            task_query = task_query.filter(Task.assignee_id.is_(None))
+        elif assignee_filter.startswith("user_"):
+            user_id = assignee_filter.replace("user_", "", 1)
+            if user_id.isdigit():
+                task_query = task_query.filter(Task.assignee_id == int(user_id))
+
+        priority_order = case(
+            (Task.priority == "high", 1),
+            (Task.priority == "medium", 2),
+            (Task.priority == "low", 3),
+            else_=4
+        )
+
+        if sort_by == "due_date":
+            task_query = task_query.order_by(Task.due_date.is_(None), Task.due_date.asc())
+        elif sort_by == "priority":
+            task_query = task_query.order_by(priority_order.asc(), Task.created_at.desc())
+        elif sort_by == "title":
+            task_query = task_query.order_by(func.lower(Task.title).asc())
+        else:
+            task_query = task_query.order_by(Task.created_at.desc())
+
+        backlog_options = {
+            "status": status_filter,
+            "priority": priority_filter,
+            "assignee": assignee_filter,
+            "sort": sort_by
+        }
+
+        return task_query, backlog_options
+
     @app.route("/projects/<int:project_id>/backlog")
     def project_backlog(project_id):
         if g.user is None:
@@ -589,9 +639,18 @@ def create_app():
         base_task_query = Task.query.filter_by(project_id=project.id)
         total_task_count = base_task_query.count()
         total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        # Only show users who already have tasks in this backlog.
+        assignee_options = (
+            User.query
+            .join(Task, Task.assignee_id == User.id)
+            .filter(Task.project_id == project.id)
+            .distinct()
+            .order_by(User.full_name.asc())
+            .all()
+        )
         task_query = apply_backlog_search(base_task_query, search_query)
-
-        tasks = task_query.order_by(Task.created_at.desc()).all()
+        task_query, backlog_options = apply_backlog_options(task_query)
+        tasks = task_query.all()
 
         return render_template(
             "backlog.html",
@@ -599,7 +658,9 @@ def create_app():
             tasks=tasks,
             search_query=search_query,
             total_task_count=total_task_count,
-            total_unassigned_count=total_unassigned_count
+            total_unassigned_count=total_unassigned_count,
+            backlog_options=backlog_options,
+            assignee_options=assignee_options
         )
     
     @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
@@ -671,9 +732,17 @@ def create_app():
         base_task_query = Task.query
         total_task_count = base_task_query.count()
         total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        # Only show users who already have tasks in the backlog.
+        assignee_options = (
+            User.query
+            .join(Task, Task.assignee_id == User.id)
+            .distinct()
+            .order_by(User.full_name.asc())
+            .all()
+        )
         task_query = apply_backlog_search(base_task_query, search_query)
-
-        tasks = task_query.order_by(Task.created_at.desc()).all()
+        task_query, backlog_options = apply_backlog_options(task_query)
+        tasks = task_query.all()
 
         return render_template(
           "backlog.html",
@@ -681,7 +750,9 @@ def create_app():
           tasks=tasks,
           search_query=search_query,
           total_task_count=total_task_count,
-          total_unassigned_count=total_unassigned_count
+          total_unassigned_count=total_unassigned_count,
+          backlog_options=backlog_options,
+          assignee_options=assignee_options
         )
     
     # Route for user profile page
@@ -759,7 +830,6 @@ def create_app():
 
         return render_template('settings.html')
 
-    
     with app.app_context():
         db.create_all()
 
