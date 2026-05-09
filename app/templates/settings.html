@@ -1,0 +1,156 @@
+{% set topbar_title = 'Settings' %}
+{% extends "base.html" %}
+{% set topbar_title = 'Settings' %}
+{% set topbar_search_class = 'd-none' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include 'components/topbar.html' %}
+<div class="settings-wrapper">
+
+
+
+    <!-- ── Main body ── -->
+    <div class="settings-body">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-settings flash-{{ category }}">
+                        {% if category == 'success' %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <p class="settings-page-sub">Manage your account and core preferences.</p>
+
+        <form method="POST" action="{{ url_for('settings') }}"
+              enctype="multipart/form-data" id="settings-form">
+
+            <!-- ── Section 1: Account ── -->
+            <div class="settings-card">
+                <div class="settings-section-heading">
+                    <span class="settings-section-number">1</span>
+                    Account
+                </div>
+                <div class="account-display">
+                    {% if g.user.avatar_url %}
+                        <img src="{{ url_for('static', filename='uploads/' + g.user.avatar_url) }}"
+                             alt="Avatar" class="account-avatar" id="avatar-preview">
+                    {% else %}
+                        <div class="account-avatar-initials" id="avatar-initials">
+                            {{ g.user.full_name[0].upper() if g.user.full_name else 'U' }}
+                        </div>
+                    {% endif %}
+                    <div class="account-info">
+                        <div class="account-name">{{ g.user.full_name or g.user.username }}</div>
+                        <div class="account-role">{{ g.user.title or 'No title set' }}</div>
+                        <div class="account-meta">
+                            <span class="account-meta-item">
+                                <i class="bi bi-envelope"></i>
+                                {{ g.user.email }}
+                            </span>
+                            {% if g.user.location %}
+                            <span class="account-meta-item">
+                                <i class="bi bi-geo-alt"></i>
+                                {{ g.user.location }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <label class="btn-upload" for="avatar-upload">
+                        <i class="bi bi-upload"></i>
+                        Upload Photo
+                    </label>
+                    <input type="file" id="avatar-upload" name="avatar"
+                           accept="image/*" class="d-none">
+                </div>
+            </div>
+
+            <!-- ── Section 2: Account Information ── -->
+            <div class="settings-card">
+                <div class="settings-section-heading">
+                    <span class="settings-section-number">2</span>
+                    Account Information
+                </div>
+                <div class="info-grid">
+                    <div>
+                        <label class="form-label-settings">Full Name</label>
+                        <input type="text" name="full_name" class="form-input-settings"
+                               value="{{ g.user.full_name or '' }}" placeholder="Your full name">
+                    </div>
+                    <div>
+                        <label class="form-label-settings">Email</label>
+                        <input type="email" name="email" class="form-input-settings"
+                               value="{{ g.user.email or '' }}" placeholder="your@email.com">
+                    </div>
+                    <div>
+                        <label class="form-label-settings">Role</label>
+                        <input type="text" name="job_title" class="form-input-settings"
+                               value="{{ g.user.title or '' }}" placeholder="e.g. Developer">
+                    </div>
+                    <div>
+                        <label class="form-label-settings">Location</label>
+                        <input type="text" name="location" class="form-input-settings"
+                               value="{{ g.user.location or '' }}" placeholder="e.g. Perth">
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- ── Action Bar ── -->
+            <div class="settings-action-bar">
+                <button type="submit" name="action" value="save_profile" class="btn-save">
+                    Save Changes
+                </button>
+                <a href="{{ url_for('logout') }}" class="btn-logout-bar">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Log Out
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('avatar-upload').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+        var existing = document.getElementById('avatar-preview');
+        var initials = document.getElementById('avatar-initials');
+        if (existing) {
+            existing.src = ev.target.result;
+        } else if (initials) {
+            var img = document.createElement('img');
+            img.src = ev.target.result;
+            img.className = 'account-avatar';
+            img.id = 'avatar-preview';
+            initials.replaceWith(img);
+        }
+    };
+    reader.readAsDataURL(file);
+});
+
+
+</script>
+{% endblock %}

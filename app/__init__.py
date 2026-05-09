@@ -2,7 +2,7 @@ import re
 from datetime import date, datetime
 
 import os
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from werkzeug.utils import secure_filename
 from flask import Flask, app, flash, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -490,11 +490,24 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         projects = [] 
+        search_query = request.args.get("search", "").strip()
 
         try:
-            projects = Project.query.filter(
+            query = Project.query.filter(
                 func.lower(func.trim(Project.status)) == "active"
-            ).all()
+            )
+            
+            # Filter by search query if provided
+            if search_query:
+                query = query.filter(
+                    func.lower(Project.name).contains(func.lower(search_query))
+                )
+            
+            projects = query.all()
+            
+            # If exactly one project found and search was used, redirect to project detail with search query
+            if search_query and len(projects) == 1:
+                return redirect(url_for("project_detail", project_id=projects[0].id, search=search_query))
 
             print("COUNT:", len(projects))
             for p in projects:
@@ -503,7 +516,7 @@ def create_app():
         except Exception as e:
             print(f"Error fetching projects: {e}")
 
-        return render_template("project.html", projects=projects)
+        return render_template("project.html", projects=projects, search_query=search_query)
     
     @app.route("/projects/create", methods=["POST"])
     def create_project():
@@ -542,21 +555,43 @@ def create_app():
         project = Project.query.get_or_404(project_id)
         users = User.query.filter_by(is_active=True).all()
         tasks = Task.query.filter_by(project_id=project.id).all()
+        search_query = request.args.get("search", "").strip()
 
         return render_template(
         "project_detail.html",
         project=project,
         users=users,
-        tasks=tasks
+        tasks=tasks,
+        search_query=search_query
         )
     
+    def apply_backlog_search(task_query, search_query):
+        # Search the task text fields shown in the backlog task details area.
+        if not search_query:
+            return task_query
+
+        search_value = search_query.lower()
+        return task_query.filter(
+            or_(
+                func.lower(Task.title).contains(search_value, autoescape=True),
+                func.lower(func.coalesce(Task.task_code, "")).contains(search_value, autoescape=True),
+                func.lower(func.coalesce(Task.description, "")).contains(search_value, autoescape=True),
+            )
+        )
+
     @app.route("/projects/<int:project_id>/backlog")
     def project_backlog(project_id):
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
 
         project = Project.query.get_or_404(project_id)
-        tasks = Task.query.filter_by(project_id=project.id).all()
+        search_query = request.args.get("search", "").strip()
+        base_task_query = Task.query.filter_by(project_id=project.id)
+        total_task_count = base_task_query.count()
+        total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        task_query = apply_backlog_search(base_task_query, search_query)
+
+        tasks = task_query.order_by(Task.created_at.desc()).all()
 
         users = User.query.filter_by(is_active=True)\
             .order_by(User.full_name.asc())\
@@ -571,7 +606,10 @@ def create_app():
             project=project,
             tasks=tasks,
             users=users,
-            sprints=sprints
+            sprints=sprints,
+            search_query=search_query,
+            total_task_count=total_task_count,
+            total_unassigned_count=total_unassigned_count
         )
     
     @app.route("/projects/<int:project_id>/assign-users", methods=["POST"])
@@ -637,8 +675,13 @@ def create_app():
     def backlog():
         if g.user is None:
             return redirect(url_for("auth", mode="login"))
+        search_query = request.args.get("search", "").strip()
+        base_task_query = Task.query
+        total_task_count = base_task_query.count()
+        total_unassigned_count = base_task_query.filter(Task.assignee_id.is_(None)).count()
+        task_query = apply_backlog_search(base_task_query, search_query)
 
-        tasks = Task.query.order_by(Task.created_at.desc()).all()
+        tasks = task_query.order_by(Task.created_at.desc()).all()
         projects = Project.query.filter_by(status="active").order_by(Project.name.asc()).all()
         users = User.query.filter_by(is_active=True).order_by(User.full_name.asc()).all()
         sprints = Sprint.query.order_by(Sprint.start_date.asc()).all()
@@ -649,9 +692,12 @@ def create_app():
             tasks=tasks,
             projects=projects,
             users=users,
-            sprints=sprints
+            sprints=sprints,
+            search_query=search_query,
+            total_task_count=total_task_count,
+            total_unassigned_count=total_unassigned_count
         )
-    
+
     @app.route("/tasks/create", methods=["POST"])
     def create_task():
         if g.user is None:
@@ -729,7 +775,7 @@ def create_app():
             success = True
 
         return render_template("profile.html", user=user, tasks=tasks, success=success)
-
+    
     @app.route('/settings', methods=['GET', 'POST'])
     def settings():
         if g.user is None:
@@ -763,28 +809,10 @@ def create_app():
                 flash('Settings saved successfully.', 'success')
                 return redirect(url_for('settings'))
 
-            elif action == 'change_password':
-                current_password = request.form.get('current_password', '')
-                new_password     = request.form.get('new_password', '')
-                confirm_password = request.form.get('confirm_password', '')
-
-                if not check_password_hash(g.user.password, current_password):
-                    flash('Current password is incorrect.', 'danger')
-                    return redirect(url_for('settings'))
-                if len(new_password) < 8:
-                    flash('New password must be at least 8 characters.', 'danger')
-                    return redirect(url_for('settings'))
-                if new_password != confirm_password:
-                    flash('Passwords do not match.', 'danger')
-                    return redirect(url_for('settings'))
-
-                g.user.password = generate_password_hash(new_password)
-                db.session.commit()
-                flash('Password updated successfully.', 'success')
-                return redirect(url_for('settings'))
 
         return render_template('settings.html')
 
+    
     with app.app_context():
         db.create_all()
 

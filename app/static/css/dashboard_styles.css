@@ -91,7 +91,7 @@ body {
 
 .search-box {
   position: relative;
-  width: 280px;
+  width: 400px;
 }
 
 .search-box i {
@@ -100,6 +100,24 @@ body {
   left: 14px;
   transform: translateY(-50%);
   color: #94a3b8;
+}
+
+.search-submit-btn {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  padding: 0;
+  line-height: 1;
+  z-index: 2;
+}
+
+.search-submit-btn i {
+  position: static;
+  transform: none;
 }
 
 .search-box .form-control {
