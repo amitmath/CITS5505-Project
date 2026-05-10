@@ -749,7 +749,7 @@ def create_app():
             .all()
         )
         task_query = apply_backlog_search(base_task_query, search_query)
-                task_query, backlog_options = apply_backlog_options(task_query)
+        task_query, backlog_options = apply_backlog_options(task_query)
         tasks = task_query.all()
 
         projects = Project.query.filter_by(status="active").order_by(Project.name.asc()).all()
@@ -818,6 +818,54 @@ def create_app():
         db.session.commit()
 
         flash("Task created successfully.", "success")
+        return redirect(request.referrer or url_for("backlog"))
+
+    @app.route("/tasks/<int:task_id>/edit", methods=["POST"])
+    def edit_task(task_id):
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        task = Task.query.get_or_404(task_id)
+
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        project_id = request.form.get("project_id")
+        sprint_id = request.form.get("sprint_id")
+        assignee_id = request.form.get("assignee_id")
+        priority = request.form.get("priority", "medium")
+        status = request.form.get("status", "backlog")
+        story_points_raw = request.form.get("story_points", "0")
+        due_date_raw = request.form.get("due_date", "")
+
+        if not title or not project_id:
+            flash("Task title and project are required.", "error")
+            return redirect(request.referrer or url_for("backlog"))
+
+        try:
+            story_points = int(story_points_raw)
+        except ValueError:
+            story_points = 0
+
+        due_date = None
+        if due_date_raw:
+            try:
+                due_date = date.fromisoformat(due_date_raw)
+            except ValueError:
+                due_date = None
+
+        task.title = title
+        task.description = description
+        task.project_id = int(project_id)
+        task.sprint_id = int(sprint_id) if sprint_id else None
+        task.assignee_id = int(assignee_id) if assignee_id else None
+        task.priority = priority
+        task.status = status
+        task.story_points = story_points
+        task.due_date = due_date
+
+        db.session.commit()
+
+        flash("Task updated successfully.", "success")
         return redirect(request.referrer or url_for("backlog"))
     
     # Route for user profile page
