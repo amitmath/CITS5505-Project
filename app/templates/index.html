@@ -21,6 +21,10 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
 </head>
 <body>
+  {# Amit: Get Started is for new users, while Log In is separate for existing users. #}
+  {% set get_started_url = url_for('auth', mode='register') %}
+  {% set login_url = url_for('auth', mode='login') %}
+  {% set dashboard_url = url_for('dashboard') %}
 
   <!-- NAVBAR -->
   <nav class="navbar navbar-expand-md sticky-top py-0">
@@ -38,8 +42,12 @@
           <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
           <li class="nav-item"><a class="nav-link" href="#how-it-works">How it works</a></li>
         </ul>
-        <!-- Navigate to auth route using Flask url_for -->
-        <a href="{{ url_for('auth') }}" class="btn-get-started">Get Started</a>
+        {% if g.user %}
+        <a href="{{ dashboard_url }}" class="btn-get-started">Open Dashboard</a>
+        {% else %}
+        <a href="{{ login_url }}" class="landing-login-link">Log In</a>
+        <a href="{{ get_started_url }}" class="btn-get-started">Get Started</a>
+        {% endif %}
       </div>
     </div>
   </nav>
@@ -61,8 +69,12 @@
             and stay aligned throughout the sprint.
           </p>
           <div class="d-flex flex-wrap gap-3 mb-4">
-            <!-- Flask route for authentication page -->
-            <a href="{{ url_for('auth') }}" class="btn-primary-green">Get started — it's free</a>
+            <a href="{{ get_started_url if not g.user else dashboard_url }}" class="btn-primary-green">
+              {{ 'Open Dashboard' if g.user else "Get started — it's free" }}
+            </a>
+            {% if not g.user %}
+            <a href="{{ login_url }}" class="btn-outline-hero">Log in</a>
+            {% endif %}
           </div>
           <div class="d-flex flex-wrap gap-4">
             <span class="hero-check"><i class="fas fa-check-circle"></i> Sprint planning</span>
@@ -83,7 +95,9 @@
                 <span>Features</span>
                 <span>How it works</span>
               </div>
-              <a href="{{ url_for('auth') }}" class="mockup-top-btn">Get Started</a>
+              <a href="{{ get_started_url if not g.user else dashboard_url }}" class="mockup-top-btn">
+                {{ 'Dashboard' if g.user else 'Get Started' }}
+              </a>
             </div>
             <div class="mockup-content">
               <div class="mockup-sidebar">
@@ -246,7 +260,9 @@
     <div class="container">
       <h2 class="mb-3">Ready to run better sprints?</h2>
       <p class="mb-4">Join your team on Agile PM and start delivering value today.</p>
-      <a href="{{ url_for('auth') }}" class="btn-white">Get started — it's free</a>
+      <a href="{{ get_started_url if not g.user else dashboard_url }}" class="btn-white">
+        {{ 'Open Dashboard' if g.user else "Get started — it's free" }}
+      </a>
     </div>
   </section>
 
