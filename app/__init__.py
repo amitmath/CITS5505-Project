@@ -776,55 +776,110 @@ def create_app():
             assignee_options=assignee_options
         )
 
-    @app.route("/tasks/create", methods=["POST"])
-    def create_task():
-        if g.user is None:
-            return redirect(url_for("auth", mode="login"))
-
+    def get_task_form_data():
+        """
+        Amit: shared task form validation for create and edit.
+        The main check here is that the selected sprint belongs to the selected project.
+        """
+        errors = []
         title = request.form.get("title", "").strip()
         description = request.form.get("description", "").strip()
-        project_id = request.form.get("project_id")
-        sprint_id = request.form.get("sprint_id")
-        assignee_id = request.form.get("assignee_id")
+        project_id = request.form.get("project_id", "")
+        sprint_id = request.form.get("sprint_id", "")
+        assignee_id = request.form.get("assignee_id", "")
         priority = request.form.get("priority", "medium")
         status = request.form.get("status", "backlog")
         story_points_raw = request.form.get("story_points", "0")
         due_date_raw = request.form.get("due_date", "")
 
-        if not title or not project_id:
-            flash("Task title and project are required.", "error")
-            return redirect(request.referrer or url_for("backlog"))
+        project = db.session.get(Project, int(project_id)) if project_id.isdigit() else None
+        if not title:
+            errors.append("Task title is required.")
+        if not project:
+            errors.append("Please select a valid project.")
+
+        sprint = None
+        if sprint_id:
+            sprint = db.session.get(Sprint, int(sprint_id)) if sprint_id.isdigit() else None
+            if not sprint:
+                errors.append("Please select a valid sprint.")
+            elif project and sprint.project_id != project.id:
+                errors.append("Sprint must belong to the selected project.")
+
+        assignee = None
+        if assignee_id:
+            assignee = db.session.get(User, int(assignee_id)) if assignee_id.isdigit() else None
+            if not assignee:
+                errors.append("Please select a valid assignee.")
 
         try:
-            story_points = int(story_points_raw)
+            story_points = int(story_points_raw or 0)
         except ValueError:
             story_points = 0
+            errors.append("Story points must be a number.")
+
+        if story_points < 0:
+            errors.append("Story points cannot be negative.")
 
         due_date = None
         if due_date_raw:
             try:
                 due_date = date.fromisoformat(due_date_raw)
             except ValueError:
-                due_date = None
+                errors.append("Please enter a valid due date.")
+
+        if priority not in {"low", "medium", "high"}:
+            priority = "medium"
+
+        if status not in {"backlog", "todo", "in_progress", "blocker", "done"}:
+            status = "backlog"
+
+        task_data = {
+            "title": title,
+            "description": description,
+            "project": project,
+            "sprint": sprint,
+            "assignee": assignee,
+            "priority": priority,
+            "status": status,
+            "story_points": story_points,
+            "due_date": due_date,
+        }
+
+        return task_data, errors
+
+    def task_form_redirect():
+        return redirect(request.referrer or url_for("backlog"))
+
+    @app.route("/tasks/create", methods=["POST"])
+    def create_task():
+        if g.user is None:
+            return redirect(url_for("auth", mode="login"))
+
+        task_data, errors = get_task_form_data()
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            return task_form_redirect()
 
         task = Task(
-            title=title,
-            description=description,
-            project_id=int(project_id),
-            sprint_id=int(sprint_id) if sprint_id else None,
-            assignee_id=int(assignee_id) if assignee_id else None,
+            title=task_data["title"],
+            description=task_data["description"],
+            project_id=task_data["project"].id,
+            sprint_id=task_data["sprint"].id if task_data["sprint"] else None,
+            assignee_id=task_data["assignee"].id if task_data["assignee"] else None,
             created_by=g.user.id,
-            priority=priority,
-            status=status,
-            story_points=story_points,
-            due_date=due_date,
+            priority=task_data["priority"],
+            status=task_data["status"],
+            story_points=task_data["story_points"],
+            due_date=task_data["due_date"],
         )
 
         db.session.add(task)
         db.session.commit()
 
         flash("Task created successfully.", "success")
-        return redirect(request.referrer or url_for("backlog"))
+        return task_form_redirect()
 
     @app.route("/tasks/<int:task_id>/edit", methods=["POST"])
     def edit_task(task_id):
@@ -832,47 +887,26 @@ def create_app():
             return redirect(url_for("auth", mode="login"))
 
         task = Task.query.get_or_404(task_id)
+        task_data, errors = get_task_form_data()
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            return task_form_redirect()
 
-        title = request.form.get("title", "").strip()
-        description = request.form.get("description", "").strip()
-        project_id = request.form.get("project_id")
-        sprint_id = request.form.get("sprint_id")
-        assignee_id = request.form.get("assignee_id")
-        priority = request.form.get("priority", "medium")
-        status = request.form.get("status", "backlog")
-        story_points_raw = request.form.get("story_points", "0")
-        due_date_raw = request.form.get("due_date", "")
-
-        if not title or not project_id:
-            flash("Task title and project are required.", "error")
-            return redirect(request.referrer or url_for("backlog"))
-
-        try:
-            story_points = int(story_points_raw)
-        except ValueError:
-            story_points = 0
-
-        due_date = None
-        if due_date_raw:
-            try:
-                due_date = date.fromisoformat(due_date_raw)
-            except ValueError:
-                due_date = None
-
-        task.title = title
-        task.description = description
-        task.project_id = int(project_id)
-        task.sprint_id = int(sprint_id) if sprint_id else None
-        task.assignee_id = int(assignee_id) if assignee_id else None
-        task.priority = priority
-        task.status = status
-        task.story_points = story_points
-        task.due_date = due_date
+        task.title = task_data["title"]
+        task.description = task_data["description"]
+        task.project_id = task_data["project"].id
+        task.sprint_id = task_data["sprint"].id if task_data["sprint"] else None
+        task.assignee_id = task_data["assignee"].id if task_data["assignee"] else None
+        task.priority = task_data["priority"]
+        task.status = task_data["status"]
+        task.story_points = task_data["story_points"]
+        task.due_date = task_data["due_date"]
 
         db.session.commit()
 
         flash("Task updated successfully.", "success")
-        return redirect(request.referrer or url_for("backlog"))
+        return task_form_redirect()
     
     # Route for user profile page
     @app.route("/profile", methods=["GET", "POST"])
