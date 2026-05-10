@@ -90,7 +90,7 @@ def get_task_distribution():
     auth_check = check_auth()
     if auth_check:
         return auth_check
-    statuses = ["backlog", "todo", "in_progress", "done"]
+    statuses = ["backlog", "todo", "in_progress", "blocker", "done"]
     distribution = {}
     
     for status in statuses:
