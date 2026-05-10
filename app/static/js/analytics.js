@@ -329,7 +329,7 @@ function initProjectProgressChart(data) {
   });
 }
 
-// Render Active Sprints Summary - Using safe DOM methods instead of innerHTML
+// Render Active Sprints Summary
 function renderActiveSprints(sprints) {
   const container = document.getElementById('activeSprints');
   container.replaceChildren(); // Clear existing content
