@@ -140,10 +140,11 @@ function initSprintVelocityChart(data) {
 // Task Distribution Chart - Pie chart showing status breakdown
 function initTaskDistributionChart(data) {
   const ctx = document.getElementById('distributionChart').getContext('2d');
-  const labels = ['Done', 'In Progress', 'To Do', 'Backlog'];
+  const labels = ['Done', 'In Progress', 'Blocked', 'To Do', 'Backlog'];
   const values = [
     data.done || 0,
     data.in_progress || 0,
+    data.blocked || 0,
     data.todo || 0,
     data.backlog || 0
   ];
@@ -157,6 +158,7 @@ function initTaskDistributionChart(data) {
         backgroundColor: [
           chartColors.success,
           chartColors.warning,
+          chartColors.danger,
           chartColors.info,
           chartColors.light
         ],
@@ -327,47 +329,102 @@ function initProjectProgressChart(data) {
   });
 }
 
-// Render Active Sprints Summary
+// Render Active Sprints Summary - Using safe DOM methods instead of innerHTML
 function renderActiveSprints(sprints) {
   const container = document.getElementById('activeSprints');
+  container.replaceChildren(); // Clear existing content
 
   if (!sprints || sprints.length === 0) {
-    container.innerHTML = '<p class="text-muted text-center py-4">No active sprints at the moment</p>';
+    const emptyMsg = document.createElement('p');
+    emptyMsg.className = 'text-muted text-center py-4';
+    emptyMsg.textContent = 'No active sprints at the moment';
+    container.appendChild(emptyMsg);
     return;
   }
 
-  const html = sprints.map(sprint => `
-    <div class="sprint-summary-card">
-      <div class="sprint-header">
-        <h4>${sprint.name}</h4>
-        <span class="sprint-progress-badge">${sprint.completion_percent}%</span>
-      </div>
-      <div class="sprint-metrics">
-        <div class="metric">
-          <div class="metric-label">Tasks Completed</div>
-          <div class="metric-value">${sprint.completed_tasks} / ${sprint.task_count}</div>
-          <div class="progress" style="height: 6px;">
-            <div class="progress-bar bg-success" role="progressbar" 
-                 style="width: ${sprint.completion_percent}%;" 
-                 aria-valuenow="${sprint.completion_percent}" aria-valuemin="0" aria-valuemax="100"></div>
-          </div>
-        </div>
-        <div class="metric">
-          <div class="metric-label">Story Points</div>
-          <div class="metric-value">${sprint.completed_points} / ${sprint.total_points} pts</div>
-        </div>
-      </div>
-    </div>
-  `).join('');
-
-  container.innerHTML = html;
+  sprints.forEach(sprint => {
+    const card = document.createElement('div');
+    card.className = 'sprint-summary-card';
+    
+    const header = document.createElement('div');
+    header.className = 'sprint-header';
+    
+    const title = document.createElement('h4');
+    title.textContent = sprint.name;
+    
+    const badge = document.createElement('span');
+    badge.className = 'sprint-progress-badge';
+    badge.textContent = sprint.completion_percent + '%';
+    
+    header.appendChild(title);
+    header.appendChild(badge);
+    
+    const metrics = document.createElement('div');
+    metrics.className = 'sprint-metrics';
+    
+    // Tasks Completed metric
+    const tasksMetric = document.createElement('div');
+    tasksMetric.className = 'metric';
+    
+    const tasksLabel = document.createElement('div');
+    tasksLabel.className = 'metric-label';
+    tasksLabel.textContent = 'Tasks Completed';
+    
+    const tasksValue = document.createElement('div');
+    tasksValue.className = 'metric-value';
+    tasksValue.textContent = sprint.completed_tasks + ' / ' + sprint.task_count;
+    
+    const progress = document.createElement('div');
+    progress.className = 'progress';
+    progress.style.height = '6px';
+    
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar bg-success';
+    progressBar.setAttribute('role', 'progressbar');
+    progressBar.style.width = sprint.completion_percent + '%';
+    progressBar.setAttribute('aria-valuenow', sprint.completion_percent);
+    progressBar.setAttribute('aria-valuemin', '0');
+    progressBar.setAttribute('aria-valuemax', '100');
+    
+    progress.appendChild(progressBar);
+    tasksMetric.appendChild(tasksLabel);
+    tasksMetric.appendChild(tasksValue);
+    tasksMetric.appendChild(progress);
+    
+    // Story Points metric
+    const pointsMetric = document.createElement('div');
+    pointsMetric.className = 'metric';
+    
+    const pointsLabel = document.createElement('div');
+    pointsLabel.className = 'metric-label';
+    pointsLabel.textContent = 'Story Points';
+    
+    const pointsValue = document.createElement('div');
+    pointsValue.className = 'metric-value';
+    pointsValue.textContent = sprint.completed_points + ' / ' + sprint.total_points + ' pts';
+    
+    pointsMetric.appendChild(pointsLabel);
+    pointsMetric.appendChild(pointsValue);
+    
+    metrics.appendChild(tasksMetric);
+    metrics.appendChild(pointsMetric);
+    
+    card.appendChild(header);
+    card.appendChild(metrics);
+    container.appendChild(card);
+  });
 }
 
 // Helper function to show "no data" message
 function showNoDataMessage(elementId, message) {
   const element = document.getElementById(elementId);
   const parent = element.parentElement;
-  parent.innerHTML = `<p class="text-muted text-center py-5">${message}</p>`;
+
+  const emptyMsg = document.createElement('p');
+  emptyMsg.className = 'text-muted text-center py-5';
+  emptyMsg.textContent = message;
+
+  parent.replaceChildren(emptyMsg);
 }
 
 // Initialize on page load

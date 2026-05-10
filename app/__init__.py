@@ -163,7 +163,7 @@ def create_app():
             total_tasks = len(sprint_tasks)
             completed_count = sum(1 for task in sprint_tasks if task.status == "done")
             in_progress_count = sum(1 for task in sprint_tasks if task.status == "in_progress")
-            blocker_count = sum(1 for task in sprint_tasks if task.status == "blocker")
+            blocker_count = sum(1 for task in sprint_tasks if task.status == "blocked")
 
             if active_sprint.total_story_points:
                 velocity_percent = round(
