@@ -54,7 +54,7 @@ with app.app_context():
     user4 = User(
         full_name="testUser",
         email="test@gmail.com",
-        password_hash=generate_password_hash("123456"),
+        password_hash=generate_password_hash("password123"),
         title="Software Engineer",
         location="Perth, Australia",
         timezone="Perth/Melbourne",

@@ -140,11 +140,11 @@ function initSprintVelocityChart(data) {
 // Task Distribution Chart - Pie chart showing status breakdown
 function initTaskDistributionChart(data) {
   const ctx = document.getElementById('distributionChart').getContext('2d');
-  const labels = ['Done', 'In Progress', 'Blocked', 'To Do', 'Backlog'];
+  const labels = ['Done', 'In Progress', 'Blocker', 'To Do', 'Backlog'];
   const values = [
     data.done || 0,
     data.in_progress || 0,
-    data.blocked || 0,
+    data.blocker || 0,
     data.todo || 0,
     data.backlog || 0
   ];
