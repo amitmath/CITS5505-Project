@@ -1,14 +1,11 @@
-{% extends "base.html" %}
-
-{% block title %}Agile PM Dashboard{% endblock %}
-
-{% block content %}
-{% set topbar_title = 'Dashboard' %}
-{% set topbar_search_class = 'd-none' %}
-{% include "components/topbar.html" %}
+{% extends "base.html" %} {% block title %}Agile PM Dashboard{% endblock %} {%
+block content %} {% set topbar_title = 'Dashboard' %} {% set topbar_search_class
+= 'd-none' %} {% include "components/topbar.html" %}
 
 <section class="welcome-section">
-  <h1 class="welcome-title">Welcome back, {{ user.full_name if user else 'User' }}</h1>
+  <h1 class="welcome-title">
+    Welcome back, {{ user.full_name if user else 'User' }}
+  </h1>
   <p class="welcome-text">
     Here's the latest overview for your workspace today.
   </p>
@@ -20,7 +17,10 @@
       <p class="card-label">NUMBER OF ACTIVE PROJECTS</p>
       <h2 class="summary-number">
         {{ active_project_count }}
-        <span>Active {{ 'Project' if active_project_count == 1 else 'Projects' }}</span>
+        <span
+          >Active {{ 'Project' if active_project_count == 1 else 'Projects'
+          }}</span
+        >
       </h2>
     </div>
   </div>
@@ -35,9 +35,13 @@
 </section>
 
 <section class="mb-4">
-  <div class="section-heading d-flex justify-content-between align-items-center mb-3">
+  <div
+    class="section-heading d-flex justify-content-between align-items-center mb-3"
+  >
     <h2 class="section-title mb-0">Recent Active Projects</h2>
-    <a href="{{ url_for('project') }}" class="section-link">View all projects</a>
+    <a href="{{ url_for('project') }}" class="section-link"
+      >View all projects</a
+    >
   </div>
 
   <div class="row g-4">
@@ -47,7 +51,9 @@
         <div class="project-icon"><i class="bi bi-laptop"></i></div>
         <h5>{{ project.name }}</h5>
         <p>{{ project.description or 'No description.' }}</p>
-        <span class="status-pill {{ 'healthy' if project.health_status == 'healthy' else 'risk' }}">
+        <span
+          class="status-pill {{ 'healthy' if project.health_status == 'healthy' else 'risk' }}"
+        >
           {{ project.health_status | capitalize }}
         </span>
       </div>
@@ -58,7 +64,9 @@
 
 <section class="row g-4">
   <div class="col-lg-8">
-    <div class="section-heading d-flex justify-content-between align-items-center mb-3">
+    <div
+      class="section-heading d-flex justify-content-between align-items-center mb-3"
+    >
       <h2 class="section-title mb-0">
         My Assigned Tasks
         <span class="text-muted fs-6">({{ assigned_task_count }})</span>
@@ -82,16 +90,23 @@
             <tr>
               <td>{{ task.title }}</td>
               <td>{{ task.project.name }}</td>
-              <td>{{ task.due_date.strftime('%b %d') if task.due_date else 'N/A' }}</td>
               <td>
-                <span class="status-badge {{ task.status | replace('_', '-') }}">
+                {{ task.due_date.strftime('%b %d') if task.due_date else 'N/A'
+                }}
+              </td>
+              <td>
+                <span
+                  class="status-badge {{ task.status | replace('_', '-') }}"
+                >
                   {{ task.status | replace('_', ' ') | title }}
                 </span>
               </td>
             </tr>
             {% else %}
             <tr>
-              <td colspan="4" class="text-center text-muted">No tasks assigned.</td>
+              <td colspan="4" class="text-center text-muted">
+                No tasks assigned.
+              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -110,20 +125,39 @@
 
       <!-- Dashboard sprint health is calculated in the Flask route from live sprint tasks. -->
       <div class="progress sprint-progress mb-4">
-        <div class="progress-bar completed-bar" style="width: {{ sprint_summary.completed_percent }}%"></div>
-        <div class="progress-bar progress-bar-middle" style="width: {{ sprint_summary.in_progress_percent }}%"></div>
-        <div class="progress-bar blocker-bar" style="width: {{ sprint_summary.blocker_percent }}%"></div>
+        <div
+          class="progress-bar completed-bar"
+          style="width: {{ sprint_summary.completed_percent }}%"
+        ></div>
+        <div
+          class="progress-bar progress-bar-middle"
+          style="width: {{ sprint_summary.in_progress_percent }}%"
+        ></div>
+        <div
+          class="progress-bar blocker-bar"
+          style="width: {{ sprint_summary.blocker_percent }}%"
+        ></div>
       </div>
 
       <ul class="health-list list-unstyled mb-4">
-        <li><span>Completed</span><strong>{{ sprint_summary.completed }}</strong></li>
-        <li><span>In Progress</span><strong>{{ sprint_summary.in_progress }}</strong></li>
-        <li><span>Blockers</span><strong>{{ sprint_summary.blockers }}</strong></li>
+        <li>
+          <span>Completed</span><strong>{{ sprint_summary.completed }}</strong>
+        </li>
+        <li>
+          <span>In Progress</span
+          ><strong>{{ sprint_summary.in_progress }}</strong>
+        </li>
+        <li>
+          <span>Blockers</span><strong>{{ sprint_summary.blockers }}</strong>
+        </li>
       </ul>
 
-      <button class="btn btn-outline-secondary w-100">
+      <a
+        href="{{ url_for('analytics') }}"
+        class="btn btn-outline-secondary w-100"
+      >
         View Detailed Analytics
-      </button>
+      </a>
     </div>
   </div>
 </section>
