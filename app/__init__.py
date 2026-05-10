@@ -142,6 +142,9 @@ def create_app():
         # Show the user's assigned tasks in due-date order on the dashboard.
         tasks = sorted(tasks, key=lambda task: (task.due_date is None, task.due_date or date.max))
         assigned_task_count = len(tasks)
+        task_projects = Project.query.filter_by(status="active").order_by(Project.name.asc()).all()
+        task_users = User.query.filter_by(is_active=True).order_by(User.full_name.asc()).all()
+        task_sprints = Sprint.query.order_by(Sprint.start_date.asc()).all()
 
         # Default values keep the dashboard working even when no sprint exists yet.
         sprint_summary = {
@@ -203,6 +206,9 @@ def create_app():
             sprint_summary=sprint_summary,
             assigned_task_count=assigned_task_count,
             tasks=tasks,
+            task_projects=task_projects,
+            task_users=task_users,
+            task_sprints=task_sprints,
         )
 
     # Route for sprints page
