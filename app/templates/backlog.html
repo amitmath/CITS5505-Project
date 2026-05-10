@@ -19,6 +19,12 @@
 
 {# task data from backend route #}
 {% set task_items = tasks %}
+{% set backlog_options = backlog_options|default({}) %}
+{% set selected_status = backlog_options.get('status', 'all') %}
+{% set selected_priority = backlog_options.get('priority', 'all') %}
+{% set selected_assignee = backlog_options.get('assignee', 'all') %}
+{% set selected_sort = backlog_options.get('sort', 'newest') %}
+{% set has_active_options = selected_status != 'all' or selected_priority != 'all' or selected_assignee != 'all' or selected_sort != 'newest' %}
 {% set total_tasks = total_task_count|default(task_items|length) %}
 {% set unassigned_count = total_unassigned_count|default(task_items|selectattr("assignee", "none")|list|length) %}
 {% set project_name = project.name if project else 'No Project Selected' %}
@@ -68,17 +74,69 @@
       </a>
     </div>
 
-    <a href="#" class="toolbar-action-btn">
-      <i class="bi bi-funnel me-1"></i> Filters
-    </a>
-    <a href="#" class="toolbar-action-btn">
-      <i class="bi bi-sort-down me-1"></i> Sort
-    </a>
-    {% if search_query %}
-    <a href="{{ backlog_url }}" class="toolbar-action-btn">
-      <i class="bi bi-x-circle me-1"></i> Clear "{{ search_query }}"
-    </a>
-    {% endif %}
+    <form method="GET" class="backlog-filter-form">
+      {% if search_query %}
+      <input type="hidden" name="search" value="{{ search_query }}">
+      {% endif %}
+
+      <label class="backlog-filter-field">
+        <span>Status</span>
+        <select name="status" onchange="this.form.submit()">
+          <option value="all" {% if selected_status == 'all' %}selected{% endif %}>All</option>
+          <option value="todo" {% if selected_status == 'todo' %}selected{% endif %}>To Do</option>
+          <option value="in_progress" {% if selected_status == 'in_progress' %}selected{% endif %}>In Progress</option>
+          <option value="blocker" {% if selected_status == 'blocker' %}selected{% endif %}>Blocker</option>
+          <option value="done" {% if selected_status == 'done' %}selected{% endif %}>Done</option>
+        </select>
+      </label>
+
+      <label class="backlog-filter-field">
+        <span>Priority</span>
+        <select name="priority" onchange="this.form.submit()">
+          <option value="all" {% if selected_priority == 'all' %}selected{% endif %}>All</option>
+          <option value="high" {% if selected_priority == 'high' %}selected{% endif %}>High</option>
+          <option value="medium" {% if selected_priority == 'medium' %}selected{% endif %}>Medium</option>
+          <option value="low" {% if selected_priority == 'low' %}selected{% endif %}>Low</option>
+        </select>
+      </label>
+
+      <label class="backlog-filter-field">
+        <span>Assignee</span>
+        <select name="assignee" onchange="this.form.submit()">
+          <option value="all" {% if selected_assignee == 'all' %}selected{% endif %}>All</option>
+          <option value="assigned" {% if selected_assignee == 'assigned' %}selected{% endif %}>Assigned</option>
+          <option value="unassigned" {% if selected_assignee == 'unassigned' %}selected{% endif %}>Unassigned</option>
+          {% for assignee in assignee_options|default([]) %}
+          <option value="user_{{ assignee.id }}" {% if selected_assignee == 'user_' ~ assignee.id|string %}selected{% endif %}>
+            {{ assignee.full_name }}
+          </option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="backlog-filter-field">
+        <span>Sort</span>
+        <select name="sort" onchange="this.form.submit()">
+          <option value="newest" {% if selected_sort == 'newest' %}selected{% endif %}>Newest</option>
+          <option value="due_date" {% if selected_sort == 'due_date' %}selected{% endif %}>Due Date</option>
+          <option value="priority" {% if selected_sort == 'priority' %}selected{% endif %}>Priority</option>
+          <option value="title" {% if selected_sort == 'title' %}selected{% endif %}>Title</option>
+        </select>
+      </label>
+
+      {% if search_query or has_active_options %}
+      <a href="{{ backlog_url }}" class="backlog-reset-link">
+        <i class="bi bi-x-circle me-1"></i>
+        {% if search_query and has_active_options %}
+          Clear search and filters
+        {% elif search_query %}
+          Clear "{{ search_query }}"
+        {% else %}
+          Reset
+        {% endif %}
+      </a>
+      {% endif %}
+    </form>
   </div>
 </section>
 
@@ -173,8 +231,12 @@
         <tr>
           <td colspan="5" class="text-center py-5 text-muted">
             <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-            {% if search_query %}
+            {% if search_query and has_active_options %}
+              No tasks matched "{{ search_query }}" with the selected filters.
+            {% elif search_query %}
               No tasks matched "{{ search_query }}".
+            {% elif has_active_options %}
+              No tasks matched the selected filters.
             {% else %}
               No tasks in the backlog yet.
             {% endif %}
@@ -261,8 +323,12 @@
   {# Table footer: count + pagination #}
   <div class="backlog-table-footer">
     <span class="showing-label">
-      {% if search_query %}
+      {% if search_query and has_active_options %}
+        Showing {{ task_items | length }} matching filtered items
+      {% elif search_query %}
         Showing {{ task_items | length }} matching items
+      {% elif has_active_options %}
+        Showing {{ task_items | length }} filtered items
       {% else %}
         Showing {{ task_items | length }} of {{ total_tasks }} items
       {% endif %}
