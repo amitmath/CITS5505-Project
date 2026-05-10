@@ -290,10 +290,23 @@ with app.app_context():
         title="Frontend Integration",
         priority="medium",
         status="in_progress",
+        sprint_id=sprint2.id,
         due_date=date(2026, 10, 28),
         created_at=datetime(2026, 5, 4, 10, 3, 20),
         updated_at=datetime(2026, 5, 4, 10, 3, 20),
     ),
+    Task(
+        id=10,
+        project_id=3,
+        assignee_id=1,
+        title="Add unit tests",
+        priority="medium",
+        status="blocker",
+        sprint_id=sprint1.id,
+        due_date=date(2026, 10, 28),
+        created_at=datetime(2026, 5, 4, 10, 3, 20),
+        updated_at=datetime(2026, 5, 4, 10, 3, 20),
+    )
     ]
 
     db.session.add_all(tasks)
