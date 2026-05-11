@@ -361,8 +361,10 @@
       {% endif %}
     </span>
     <div class="pagination-btns">
-      <a href="#" class="page-btn">Previous</a>
-      <a href="#" class="page-btn page-btn-active">Next</a>
+      {% if pagination and pagination.pages > 1 %}
+      <a href="?page={{ pagination.prev_num }}" class="page-btn {% if not pagination.has_prev %}disabled{% endif %}">Previous</a>
+      <a href="?page={{ pagination.next_num }}" class="page-btn page-btn-active {% if not pagination.has_next %}disabled{% endif %}">Next</a>
+      {% endif %}
     </div>
   </div>
 </section>
