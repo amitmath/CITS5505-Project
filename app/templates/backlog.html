@@ -247,6 +247,29 @@
     </table>
   </div>
 
+  {# Pagination #}
+  {% if pagination and pagination.pages > 1 %}
+  <div class="d-flex justify-content-center mt-4 mb-2">
+    <nav aria-label="Backlog pagination">
+      <ul class="pagination">
+        <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+          <a class="page-link" href="?page={{ pagination.prev_num }}">Previous</a>
+        </li>
+        {% for p in pagination.iter_pages() %}
+          {% if p %}
+          <li class="page-item {% if p == pagination.page %}active{% endif %}">
+            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+        <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+          <a class="page-link" href="?page={{ pagination.next_num }}">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+
   {# View Task Modals #}
   {% for task in task_items %}
   <div class="project-modal-backdrop" id="viewTaskModal{{ task.id }}">
