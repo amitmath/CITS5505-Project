@@ -47,16 +47,21 @@ block content %} {% set topbar_title = 'Dashboard' %} {% set topbar_search_class
   <div class="row g-4">
     {% for project in projects %}
     <div class="col-md-6 col-xl-3">
-      <div class="project-card">
-        <div class="project-icon"><i class="bi bi-laptop"></i></div>
-        <h5>{{ project.name }}</h5>
-        <p>{{ project.description or 'No description.' }}</p>
-        <span
-          class="status-pill {{ 'healthy' if project.health_status == 'healthy' else 'risk' }}"
-        >
-          {{ project.health_status | capitalize }}
-        </span>
-      </div>
+      <a
+        href="{{ url_for('project_detail', project_id=project.id) }}"
+        class="project-card-link"
+      >
+        <div class="project-card">
+          <div class="project-icon"><i class="bi bi-laptop"></i></div>
+          <h5>{{ project.name }}</h5>
+          <p>{{ project.description or 'No description.' }}</p>
+          <span
+            class="status-pill {{ 'healthy' if project.health_status == 'healthy' else 'risk' }}"
+          >
+            {{ project.health_status | capitalize }}
+          </span>
+        </div>
+      </a>
     </div>
     {% endfor %}
   </div>

@@ -513,3 +513,18 @@ body {
     transform: translateY(0);
   }
 }
+
+.project-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.project-card {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+}

@@ -73,7 +73,8 @@ def get_sprint_burndown(sprint_id):
         "backlog": sum(t.story_points for t in tasks if t.status == "backlog"),
         "todo": sum(t.story_points for t in tasks if t.status == "todo"),
         "in_progress": sum(t.story_points for t in tasks if t.status == "in_progress"),
-        "done": sum(t.story_points for t in tasks if t.status == "done")
+        "done": sum(t.story_points for t in tasks if t.status == "done"),
+        "blocker": sum(t.story_points for t in tasks if t.status == "blocker")
     }
     
     return jsonify({

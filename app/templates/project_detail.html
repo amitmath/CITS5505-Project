@@ -260,14 +260,8 @@ topbar_search_placeholder = 'Search projects...' %} {% include
             </option>
 
             <option
-              value="risk"
-              {%
-              if
-              project.health_status
-              !="healthy"
-              %}selected{%
-              endif
-              %}
+              value="at-risk"
+              {% if project.health_status == "at-risk" %}selected{% endif %}
             >
               At-Risk
             </option>
