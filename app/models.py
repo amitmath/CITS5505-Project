@@ -236,7 +236,7 @@ class Task(db.Model):
     task_code = db.Column(db.String(30), unique=True, nullable=True)
 
     priority = db.Column(db.String(20), default="medium")   # low, medium, high
-    status = db.Column(db.String(30), default="backlog")    # backlog, todo, in_progress, done
+    status = db.Column(db.String(30), default="backlog")    # backlog, todo, in_progress, done, blocker
     story_points = db.Column(db.Integer, default=0)
 
     due_date = db.Column(db.Date, nullable=True)
