@@ -991,7 +991,4 @@ def create_app(test_config=None):
 
         return render_template('settings.html')
 
-    with app.app_context():
-        db.create_all()
-
     return app

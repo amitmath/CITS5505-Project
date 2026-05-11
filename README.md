@@ -112,31 +112,42 @@ git clone https://github.com/amitmath/CITS5505-Project.git
 cd CITS5505-Project
 ```
 
-2. Install Dependencies
+2. Set up environment variables
+
+```bash
+cp .env.example .env
+```
+
+Then open `.env` and set a secret key (generate one with):
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Set up the database
+4. Set up the database
 
 ```bash
 flask --app run.py db upgrade
 ```
 
-4. Seed sample data (optional)
+5. Seed sample data (optional)
 
 ```bash
 python seed_db.py
 ```
 
-5. Run the Application
+6. Run the Application
 
 ```bash
 python run.py
 ```
 
-6. Then open your browser and navigate to:
+7. Then open your browser and navigate to:
 
 ```
 http://127.0.0.1:5000

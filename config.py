@@ -1,7 +1,12 @@
 import os
+# load_dotenv reads the .env file and injects its values into os.environ
+from dotenv import load_dotenv
 
 # absolute path to the project root directory
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+# load environment variables from .env before Config reads them
+load_dotenv(os.path.join(basedir, ".env"))
 
 
 class Config:
