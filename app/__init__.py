@@ -15,7 +15,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 
-def create_app():
+def create_app(test_config=None):
     """
     Application factory function.
     Creates and configures the Flask app instance.
@@ -24,6 +24,8 @@ def create_app():
 
     # Load application settings from config.py
     app.config.from_object(Config)
+    if test_config is not None:
+        app.config.update(test_config)
 
     # Initialize extensions
     db.init_app(app)
