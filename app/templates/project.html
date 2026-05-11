@@ -117,6 +117,7 @@ block extra_css %}
     </div>
 
     <form method="POST" action="{{ url_for('create_project') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="project-form-row">
         <div class="project-form-group project-name-field">
           <label for="projectName">Project Name</label>

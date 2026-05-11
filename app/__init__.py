@@ -7,12 +7,14 @@ from werkzeug.utils import secure_filename
 from flask import Flask, app, flash, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import check_password_hash, generate_password_hash
 from config import Config
 
 # Create extension objects globally
 db = SQLAlchemy()
 migrate = Migrate()
+csrf = CSRFProtect()
 
 
 def create_app(test_config=None):
@@ -30,6 +32,7 @@ def create_app(test_config=None):
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
+    csrf.init_app(app)
 
     # Import models so SQLAlchemy and migrations can detect them
     from app import models
