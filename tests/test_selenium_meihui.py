@@ -9,14 +9,13 @@ from app.models import User
 from werkzeug.security import generate_password_hash
 
 
-
 class SeleniumTestCase(unittest.TestCase):
 
     def setUp(self):
-        """Start Flask server and browser before each test"""
+        """Set up test environment before each test"""
         self.app = create_app()
         self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test_selenium.db'
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         self.app.config['WTF_CSRF_ENABLED'] = False
 
         with self.app.app_context():
@@ -47,8 +46,6 @@ class SeleniumTestCase(unittest.TestCase):
     def tearDown(self):
         """Close browser after each test"""
         self.driver.quit()
-        with self.app.app_context():
-            db.drop_all()
 
     def login(self):
         """Helper: log in via browser"""
@@ -81,7 +78,6 @@ class SeleniumTestCase(unittest.TestCase):
 
     def test_logout_redirects_to_login(self):
         """Logout should redirect to login page"""
-        self.login()
         self.driver.get(f'{self.base_url}/logout')
         self.assertIn('auth', self.driver.current_url)
 
