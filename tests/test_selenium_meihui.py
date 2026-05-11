@@ -13,10 +13,11 @@ class SeleniumTestCase(unittest.TestCase):
 
     def setUp(self):
         """Set up test environment before each test"""
-        self.app = create_app()
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        self.app.config['WTF_CSRF_ENABLED'] = False
+        self.app = create_app({
+            'TESTING': True,
+            'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
+            'WTF_CSRF_ENABLED': False
+        })
 
         with self.app.app_context():
             db.drop_all()
