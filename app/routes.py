@@ -18,6 +18,10 @@ def check_auth():
 
 @api.route("/api/users", methods=["GET"])
 def get_users():
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
+
     users = User.query.all()
     return jsonify([
         {
@@ -32,6 +36,10 @@ def get_users():
 
 @api.route("/api/users/<int:user_id>", methods=["GET"])
 def get_user(user_id):
+    auth_check = check_auth()
+    if auth_check:
+        return auth_check
+
     user = User.query.get_or_404(user_id)
     return jsonify({
         "id": user.id,
@@ -73,7 +81,8 @@ def get_sprint_burndown(sprint_id):
         "backlog": sum(t.story_points for t in tasks if t.status == "backlog"),
         "todo": sum(t.story_points for t in tasks if t.status == "todo"),
         "in_progress": sum(t.story_points for t in tasks if t.status == "in_progress"),
-        "done": sum(t.story_points for t in tasks if t.status == "done")
+        "done": sum(t.story_points for t in tasks if t.status == "done"),
+        "blocker": sum(t.story_points for t in tasks if t.status == "blocker")
     }
     
     return jsonify({

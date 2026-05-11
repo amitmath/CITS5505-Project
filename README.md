@@ -18,7 +18,7 @@ The system allows users to:
 - Create and manage projects
 - Assign users to projects
 - Manage Sprints
-- Track tasks and their status (todo, in progress, done)
+- Track tasks and their status (todo, in progress, done, blocker)
 - View project progress calculated dynamically based on tasks
 - Manage user profiles
 - Navigate through project backlog and detailed views
