@@ -76,7 +76,14 @@ block content %} {% set topbar_title = 'Dashboard' %} {% set topbar_search_class
         My Assigned Tasks
         <span class="text-muted fs-6">({{ assigned_task_count }})</span>
       </h2>
-      <button class="btn new-task-btn">+ New Task</button>
+      <button
+        class="btn new-task-btn"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#dashboardTaskModal"
+      >
+        + New Task
+      </button>
     </div>
 
     <div class="table-card">
@@ -166,4 +173,151 @@ block content %} {% set topbar_title = 'Dashboard' %} {% set topbar_search_class
     </div>
   </div>
 </section>
+
+{# Amit: quick task modal from the dashboard, using the same backend as backlog. #}
+<div class="modal fade" id="dashboardTaskModal" tabindex="-1" aria-labelledby="dashboardTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content dashboard-task-modal">
+      <form method="POST" action="{{ url_for('create_task') }}">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="dashboardTaskModalLabel">Create New Task</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="dashboardTaskProject">Project</label>
+              <select class="form-select" id="dashboardTaskProject" name="project_id" required>
+                <option value="">Select project</option>
+                {% for project in task_projects %}
+                <option value="{{ project.id }}">{{ project.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="dashboardTaskTitle">Task Title</label>
+              <input
+                type="text"
+                class="form-control"
+                id="dashboardTaskTitle"
+                name="title"
+                placeholder="e.g. Update sprint notes"
+                required
+              />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold" for="dashboardTaskDescription">Description</label>
+              <textarea
+                class="form-control"
+                id="dashboardTaskDescription"
+                name="description"
+                rows="3"
+                placeholder="Add a short task description"
+              ></textarea>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold" for="dashboardTaskPriority">Priority</label>
+              <select class="form-select" id="dashboardTaskPriority" name="priority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold" for="dashboardTaskStatus">Status</label>
+              <select class="form-select" id="dashboardTaskStatus" name="status">
+                <option value="backlog" selected>Backlog</option>
+                <option value="todo">To Do</option>
+                <option value="in_progress">In Progress</option>
+                <option value="blocker">Blocker</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold" for="dashboardTaskStoryPoints">Story Points</label>
+              <input
+                type="number"
+                class="form-control"
+                id="dashboardTaskStoryPoints"
+                name="story_points"
+                min="0"
+                value="0"
+              />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="dashboardTaskAssignee">Assignee</label>
+              <select class="form-select" id="dashboardTaskAssignee" name="assignee_id">
+                <option value="">Unassigned</option>
+                {% for user_item in task_users %}
+                <option value="{{ user_item.id }}">{{ user_item.full_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="dashboardTaskSprint">Sprint</label>
+              <select class="form-select" id="dashboardTaskSprint" name="sprint_id">
+                <option value="">No sprint</option>
+                {% for sprint in task_sprints %}
+                <option value="{{ sprint.id }}" data-project-id="{{ sprint.project_id }}">
+                  {{ sprint.name }} - {{ sprint.project.name }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="dashboardTaskDueDate">Due Date</label>
+              <input type="date" class="form-control" id="dashboardTaskDueDate" name="due_date" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn new-task-btn">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Amit: only show sprints that belong to the selected project.
+  const dashboardProjectSelect = document.getElementById("dashboardTaskProject");
+  const dashboardSprintSelect = document.getElementById("dashboardTaskSprint");
+
+  if (dashboardProjectSelect && dashboardSprintSelect) {
+    function filterDashboardSprints() {
+      const selectedProjectId = dashboardProjectSelect.value;
+
+      Array.from(dashboardSprintSelect.options).forEach(function (option) {
+        if (!option.value) {
+          option.hidden = false;
+          option.disabled = false;
+          return;
+        }
+
+        const matchesProject = option.dataset.projectId === selectedProjectId;
+        option.hidden = !selectedProjectId || !matchesProject;
+        option.disabled = !selectedProjectId || !matchesProject;
+      });
+
+      const selectedOption = dashboardSprintSelect.selectedOptions[0];
+      if (selectedOption && selectedOption.disabled) {
+        dashboardSprintSelect.value = "";
+      }
+    }
+
+    dashboardProjectSelect.addEventListener("change", filterDashboardSprints);
+    filterDashboardSprints();
+  }
+</script>
 {% endblock %}

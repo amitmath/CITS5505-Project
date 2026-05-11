@@ -15,9 +15,6 @@
 {% set topbar_title = 'Sprints' %}
 {% set topbar_search_placeholder = 'Search tasks or sprints...' %}
 {% set topbar_search_class = 'd-none' %}
-{% set topbar_action_label = '+ New Sprint' %}
-{% set topbar_action_class = 'primary-action-btn' %}
-{% set topbar_action_modal_id = 'newSprintModal' %}
 {% include "components/topbar.html" %}
 
 <section class="welcome-section sprint-page-heading">
@@ -46,7 +43,7 @@
     </div>
     <div class="heading-actions">
       <button
-        class="btn outline-action-btn"
+        class="btn primary-action-btn"
         type="button"
         data-bs-toggle="modal"
         data-bs-target="#newSprintModal"
@@ -55,7 +52,7 @@
       </button>
       {% if current_sprint.id %}
       <form method="POST" action="{{ url_for('complete_sprint', sprint_id=current_sprint.id) }}">
-        <button type="submit" class="btn primary-action-btn">Complete Sprint</button>
+        <button type="submit" class="btn outline-action-btn">Complete Sprint</button>
       </form>
       {% endif %}
     </div>

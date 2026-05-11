@@ -314,6 +314,29 @@ body {
   color: #ffffff;
 }
 
+.dashboard-task-modal {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
+}
+
+.dashboard-task-modal .modal-header,
+.dashboard-task-modal .modal-footer {
+  border-color: #eef2f7;
+}
+
+.dashboard-task-modal .form-label {
+  color: #475569;
+  font-size: 0.82rem;
+}
+
+.dashboard-task-modal .form-control,
+.dashboard-task-modal .form-select {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  min-height: 44px;
+}
+
 .table-card {
   overflow: hidden;
 }

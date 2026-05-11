@@ -403,6 +403,7 @@
             <option value="backlog" selected>Backlog</option>
             <option value="todo">Todo</option>
             <option value="in_progress">In Progress</option>
+            <option value="blocker">Blocker</option>
             <option value="done">Done</option>
             <option value="blocker">Blocker</option>
           </select>
@@ -499,6 +500,7 @@
             <option value="backlog" {% if task.status=='backlog' %}selected{% endif %}>Backlog</option>
             <option value="todo" {% if task.status=='todo' %}selected{% endif %}>Todo</option>
             <option value="in_progress" {% if task.status=='in_progress' %}selected{% endif %}>In Progress</option>
+            <option value="blocker" {% if task.status=='blocker' %}selected{% endif %}>Blocker</option>
             <option value="done" {% if task.status=='done' %}selected{% endif %}>Done</option>
             <option value="blocker" {% if task.status=='blocker' %}selected{% endif %}>Blocker</option>
           </select>
