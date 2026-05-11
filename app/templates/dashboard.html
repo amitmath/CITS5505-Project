@@ -179,6 +179,7 @@ block content %} {% set topbar_title = 'Dashboard' %} {% set topbar_search_class
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content dashboard-task-modal">
       <form method="POST" action="{{ url_for('create_task') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="modal-header">
           <h5 class="modal-title fw-bold" id="dashboardTaskModalLabel">Create New Task</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

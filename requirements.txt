@@ -7,3 +7,4 @@ Alembic==1.13.0
 pytest==9.0.3
 selenium==4.43.0
 python-dotenv==1.0.1
+Flask-WTF==1.2.1

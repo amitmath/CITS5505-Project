@@ -52,6 +52,7 @@
       </button>
       {% if current_sprint.id %}
       <form method="POST" action="{{ url_for('complete_sprint', sprint_id=current_sprint.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="btn outline-action-btn">Complete Sprint</button>
       </form>
       {% endif %}
@@ -138,6 +139,7 @@
     </div>
 
     <form method="POST" action="{{ url_for('submit_sprint_checkin', sprint_id=current_sprint.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="sprint-checkin-grid">
         <div>
           <label class="form-label fw-semibold" for="confidence_level">Confidence</label>
@@ -243,6 +245,7 @@
             <td><span class="status-badge todo">{{ sprint.status }}</span></td>
             <td>
               <form method="POST" action="{{ url_for('activate_sprint', sprint_id=sprint.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-sm primary-action-btn">Activate</button>
               </form>
             </td>
@@ -307,6 +310,7 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <form method="POST" action="{{ url_for('sprints') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="modal-header">
           <h5 class="modal-title fw-bold" id="newSprintModalLabel">Create New Sprint</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

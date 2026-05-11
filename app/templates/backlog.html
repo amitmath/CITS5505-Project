@@ -356,6 +356,7 @@
     </div>
 
     <form method="POST" action="{{ url_for('create_task') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       {% if project %}
       <input type="hidden" name="project_id" value="{{ project.id }}">
       {% else %}
@@ -474,6 +475,7 @@
     </div>
 
     <form method="POST" action="{{ url_for('edit_task', task_id=task.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="project_id" value="{{ task.project_id }}">
 
       <div class="project-form-group">
