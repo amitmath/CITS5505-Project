@@ -90,6 +90,7 @@
   <div class="modal-dialog modal-dialog-centered" style="max-width:480px;">
     <div class="modal-content" style="border-radius:16px;border:none;box-shadow:0 8px 32px rgba(0,0,0,0.15);">
       <form method="POST" action="{{ url_for('profile') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="modal-header" style="border-bottom:none;padding:16px 20px 0;">
           <h5 class="modal-title" style="font-size:1rem;font-weight:600;">Edit Profile</h5>
           <button type="button" class="btn-close" style="font-size:0.75rem;" data-bs-dismiss="modal"></button>
