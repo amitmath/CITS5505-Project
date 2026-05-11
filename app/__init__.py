@@ -28,7 +28,6 @@ def create_app(test_config=None):
     app.config.from_object(Config)
     if test_config is not None:
         app.config.update(test_config)
-    app.config.setdefault("WTF_CSRF_CHECK_DEFAULT", False)
 
     # Initialize extensions
     db.init_app(app)
