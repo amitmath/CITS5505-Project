@@ -15,7 +15,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 
-def create_app():
+def create_app(test_config=None):
     """
     Application factory function.
     Creates and configures the Flask app instance.
@@ -24,6 +24,8 @@ def create_app():
 
     # Load application settings from config.py
     app.config.from_object(Config)
+    if test_config is not None:
+        app.config.update(test_config)
 
     # Initialize extensions
     db.init_app(app)
@@ -756,7 +758,10 @@ def create_app():
         )
         task_query = apply_backlog_search(base_task_query, search_query)
         task_query, backlog_options = apply_backlog_options(task_query)
-        tasks = task_query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        pagination = task_query.paginate(page=page, per_page=per_page, error_out=False)
+        tasks = pagination.items
 
         projects = Project.query.filter_by(status="active").order_by(Project.name.asc()).all()
         users = User.query.filter_by(is_active=True).order_by(User.full_name.asc()).all()
@@ -772,7 +777,7 @@ def create_app():
             search_query=search_query,
             total_task_count=total_task_count,
             total_unassigned_count=total_unassigned_count,
-            backlog_options=backlog_options,
+            backlog_options=backlog_options,pagination=pagination,
             assignee_options=assignee_options
         )
 
