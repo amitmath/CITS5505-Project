@@ -61,5 +61,44 @@ class ProjectRoutesTestCase(unittest.TestCase):
         })
 
 
+    # ------------------------------------------------------------------ #
+    # Project list  /project
+    # ------------------------------------------------------------------ #
+
+    def test_project_list_redirects_when_logged_out(self):
+        """Unauthenticated GET /project should redirect to the login page."""
+        response = self.client.get("/project")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/auth", response.headers["Location"])
+
+    def test_project_list_loads_for_logged_in_user(self):
+        """GET /project should render the active project for a logged-in user."""
+        self.login()
+        response = self.client.get("/project")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Alpha Project", response.data)
+
+    def test_project_list_excludes_non_active_projects(self):
+        """GET /project should not show projects whose status is not 'active'."""
+        self.login()
+        response = self.client.get("/project")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b"Archived Project", response.data)
+
+    def test_project_search_redirects_to_detail_on_single_match(self):
+        """A search that matches exactly one project should redirect to its detail page."""
+        self.login()
+        response = self.client.get("/project?search=Alpha")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(f"/projects/{self.project_id}", response.headers["Location"])
+
+    def test_project_search_returns_200_when_no_match(self):
+        """A search with no matching projects should return the list page with no results."""
+        self.login()
+        response = self.client.get("/project?search=Nonexistent")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b"Alpha Project", response.data)
+
+
 if __name__ == "__main__":
     unittest.main()
