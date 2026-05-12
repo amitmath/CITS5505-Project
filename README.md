@@ -96,6 +96,12 @@ CITS5505-Project/
 │       ├── backlog.html         # Project backlog page
 │       └── components/          # Reusable template components
 ├── migrations/                  # Database migration files (Alembic)
+├── tests/                       # Automated test suite
+│   ├── test_core_routes_sprint_health.py  # Unit tests: auth, dashboard, sprint health
+│   ├── test_project_routes.py             # Unit tests: project list, detail, and CRUD
+│   ├── test_profile_settings.py           # Unit tests: profile and settings routes
+│   ├── test_selenium_core_flows.py        # Selenium tests: login, dashboard, check-in
+│   └── test_selenium_profile_settings.py  # Selenium tests: profile and settings pages
 ├── config.py                    # Application configuration
 ├── run.py                       # Entry point to run the application
 ├── seed_db.py                   # Script to populate sample data
@@ -152,6 +158,52 @@ python run.py
 ```
 http://127.0.0.1:5000
 ```
+
+### Testing
+
+The test suite is split into **unit tests** (using Flask's test client, no browser required) and **Selenium tests** (requiring a running Chrome browser via ChromeDriver).
+
+#### Prerequisites for Selenium tests
+
+Install ChromeDriver that matches your installed version of Google Chrome:
+
+- [ChromeDriver downloads](https://developer.chrome.com/docs/chromedriver/downloads)
+
+#### Run all tests
+
+```bash
+python -m pytest tests/
+```
+
+#### Run only unit tests
+
+```bash
+python -m pytest tests/test_core_routes_sprint_health.py tests/test_project_routes.py tests/test_profile_settings.py
+```
+
+#### Run only Selenium tests
+
+```bash
+python -m pytest tests/test_selenium_core_flows.py tests/test_selenium_profile_settings.py
+```
+
+#### Run a single test file
+
+```bash
+python -m pytest tests/test_project_routes.py -v
+```
+
+#### Test file overview
+
+| File | Type | What it covers |
+|------|------|----------------|
+| `test_core_routes_sprint_health.py` | Unit | Protected route redirects, dashboard load, sprint health check-in save and same-day update |
+| `test_project_routes.py` | Unit | Project list (auth, active filter, search), create, detail view, edit, delete (with task cascade), and user assignment |
+| `test_profile_settings.py` | Unit | Profile and settings route access |
+| `test_selenium_core_flows.py` | Selenium | Login flow, dashboard data, sprints page, sprint health check-in via browser |
+| `test_selenium_profile_settings.py` | Selenium | Landing page, auth page, protected redirect for profile and settings |
+
+Each unit test class uses a fresh **in-memory SQLite database** per test so tests are fully isolated and require no setup beyond `pip install -r requirements.txt`.
 
 ### App Navigation Guide
 
