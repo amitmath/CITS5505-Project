@@ -168,7 +168,6 @@ The test suite is split into **unit tests** (using Flask's test client, no brows
 Install ChromeDriver that matches your installed version of Google Chrome:
 
 - [ChromeDriver downloads](https://developer.chrome.com/docs/chromedriver/downloads)
-- Ensure `chromedriver` is available on your system `PATH`
 
 #### Run all tests
 
