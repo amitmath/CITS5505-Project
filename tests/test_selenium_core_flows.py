@@ -105,11 +105,34 @@ class SeleniumCoreFlowTestCase(unittest.TestCase):
             db.session.remove()
             db.drop_all()
 
+    def login(self):
+        self.driver.get(f"{self.base_url}/auth?mode=login")
+        login_form = self.wait.until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, "form[data-auth-form='login']"))
+        )
+        login_form.find_element(By.NAME, "email").send_keys("selenium-core@test.com")
+        login_form.find_element(By.NAME, "password").send_keys("password123")
+        login_form.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+        self.wait.until(EC.url_contains("/dashboard"))
+
     def test_protected_dashboard_redirects_to_login(self):
         self.driver.get(f"{self.base_url}/dashboard")
 
         self.wait.until(EC.url_contains("/auth"))
         self.assertIn("mode=login", self.driver.current_url)
+
+    def test_login_opens_dashboard(self):
+        self.login()
+
+        self.assertIn("/dashboard", self.driver.current_url)
+        self.assertIn("Welcome back, Selenium Core User", self.driver.page_source)
+
+    def test_dashboard_shows_live_project_and_task_data(self):
+        self.login()
+
+        self.assertIn("Selenium Demo Project", self.driver.page_source)
+        self.assertIn("Selenium assigned task", self.driver.page_source)
+        self.assertIn("Selenium Active Sprint", self.driver.page_source)
 
 
 if __name__ == "__main__":
