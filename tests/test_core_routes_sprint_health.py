@@ -8,7 +8,10 @@ from app.models import Project, Sprint, SprintCheckIn, User
 
 
 class CoreRoutesSprintHealthTestCase(unittest.TestCase):
+    """Backend route tests for protected pages and sprint health check-ins."""
+
     def setUp(self):
+        """Create a fresh Flask app, database, user, project, and active sprint."""
         self.app = create_app({
             "TESTING": True,
             "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
@@ -52,11 +55,13 @@ class CoreRoutesSprintHealthTestCase(unittest.TestCase):
             self.sprint_id = sprint.id
 
     def tearDown(self):
+        """Clear the database session and remove test tables after each test."""
         with self.app.app_context():
             db.session.remove()
             db.drop_all()
 
     def login(self):
+        """Log in the seeded user through the Flask test client."""
         return self.client.post("/auth", data={
             "form_type": "login",
             "email": "route@test.com",
@@ -64,6 +69,7 @@ class CoreRoutesSprintHealthTestCase(unittest.TestCase):
         })
 
     def test_protected_pages_redirect_when_logged_out(self):
+        """Protected pages should redirect unauthenticated users to login."""
         protected_paths = [
             "/dashboard",
             "/sprints",
@@ -79,6 +85,7 @@ class CoreRoutesSprintHealthTestCase(unittest.TestCase):
                 self.assertIn("/auth", response.headers["Location"])
 
     def test_dashboard_loads_for_logged_in_user(self):
+        """The dashboard should load successfully for an authenticated user."""
         self.login()
         response = self.client.get("/dashboard")
 
@@ -86,6 +93,7 @@ class CoreRoutesSprintHealthTestCase(unittest.TestCase):
         self.assertIn(b"Welcome back", response.data)
 
     def test_sprints_page_loads_for_logged_in_user(self):
+        """The sprints page should show the active sprint to a logged-in user."""
         self.login()
         response = self.client.get("/sprints")
 
@@ -93,6 +101,7 @@ class CoreRoutesSprintHealthTestCase(unittest.TestCase):
         self.assertIn(b"Route Test Sprint", response.data)
 
     def test_sprint_health_checkin_can_be_saved(self):
+        """Posting the sprint health form should create a check-in row."""
         self.login()
         response = self.client.post(f"/sprints/{self.sprint_id}/check-in", data={
             "confidence_level": "4",
@@ -113,6 +122,7 @@ class CoreRoutesSprintHealthTestCase(unittest.TestCase):
             self.assertTrue(checkin.needs_help)
 
     def test_same_day_sprint_health_checkin_updates_existing_row(self):
+        """A second same-day check-in should update the existing row."""
         self.login()
         first_payload = {
             "confidence_level": "2",
