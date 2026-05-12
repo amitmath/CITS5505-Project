@@ -6,13 +6,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select, WebDriverWait
 from sqlalchemy.pool import StaticPool
 from werkzeug.security import generate_password_hash
 from werkzeug.serving import make_server
 
 from app import create_app, db
-from app.models import Project, Sprint, Task, User
+from app.models import Project, Sprint, SprintCheckIn, Task, User
 
 
 class SeleniumCoreFlowTestCase(unittest.TestCase):
@@ -133,6 +133,42 @@ class SeleniumCoreFlowTestCase(unittest.TestCase):
         self.assertIn("Selenium Demo Project", self.driver.page_source)
         self.assertIn("Selenium assigned task", self.driver.page_source)
         self.assertIn("Selenium Active Sprint", self.driver.page_source)
+
+    def test_sprints_page_shows_active_sprint_and_checkin_form(self):
+        self.login()
+        self.driver.get(f"{self.base_url}/sprints")
+
+        self.wait.until(EC.text_to_be_present_in_element((By.TAG_NAME, "h1"), "Selenium Active Sprint"))
+        self.assertIn("Daily Check-in", self.driver.page_source)
+        self.assertTrue(self.driver.find_element(By.ID, "confidence_level").is_displayed())
+        self.assertTrue(self.driver.find_element(By.ID, "workload_level").is_displayed())
+
+    def test_sprint_health_checkin_can_be_submitted_from_browser(self):
+        self.login()
+        self.driver.get(f"{self.base_url}/sprints")
+
+        Select(self.wait.until(EC.element_to_be_clickable((By.ID, "confidence_level")))).select_by_value("4")
+        Select(self.driver.find_element(By.ID, "workload_level")).select_by_value("2")
+        self.driver.find_element(By.ID, "blockers").send_keys("Browser blocker")
+        needs_help = self.driver.find_element(By.NAME, "needs_help")
+        self.driver.execute_script("arguments[0].click();", needs_help)
+        save_button = self.driver.find_element(By.XPATH, "//button[contains(., 'Save Check-in')]")
+        self.driver.execute_script("arguments[0].click();", save_button)
+
+        self.wait.until(EC.text_to_be_present_in_element((By.ID, "health"), "1 check-in"))
+        self.assertIn("Confidence 4/5", self.driver.page_source)
+        self.assertIn("Workload 2/5", self.driver.page_source)
+        self.assertIn("Browser blocker", self.driver.page_source)
+        self.assertIn("Needs help", self.driver.page_source)
+
+        with self.app.app_context():
+            checkin = SprintCheckIn.query.one()
+            self.assertEqual(checkin.sprint_id, self.sprint_id)
+            self.assertEqual(checkin.user_id, self.user_id)
+            self.assertEqual(checkin.confidence_level, 4)
+            self.assertEqual(checkin.workload_level, 2)
+            self.assertEqual(checkin.blockers, "Browser blocker")
+            self.assertTrue(checkin.needs_help)
 
 
 if __name__ == "__main__":
