@@ -673,7 +673,15 @@ def create_app(test_config=None):
         )
         task_query = apply_backlog_search(base_task_query, search_query)
         task_query, backlog_options = apply_backlog_options(task_query)
-        tasks = task_query.all()
+        page = request.args.get("page", 1, type=int)
+        per_page = 10
+        pagination = task_query.paginate(page=page, per_page=per_page, error_out=False)
+        pagination_links = build_backlog_pagination_links(
+            pagination,
+            "project_backlog",
+            project_id=project.id
+        )
+        tasks = pagination.items
 
         users = User.query.filter_by(is_active=True)\
             .order_by(User.full_name.asc())\
@@ -693,6 +701,8 @@ def create_app(test_config=None):
             total_task_count=total_task_count,
             total_unassigned_count=total_unassigned_count,
             backlog_options=backlog_options,
+            pagination=pagination,
+            pagination_links=pagination_links,
             assignee_options=assignee_options
         )
     
