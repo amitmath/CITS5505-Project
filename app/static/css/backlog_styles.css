@@ -481,6 +481,18 @@
   color: #ffffff;
 }
 
+.page-btn-disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  background-color: #f9fafb;
+}
+
+.page-btn-current {
+  color: #0f4c5c;
+  background-color: #eef6f5;
+  border-color: #d7ebe8;
+}
+
 /* Page footer */
 .backlog-footer {
   display: flex;
