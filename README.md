@@ -101,7 +101,8 @@ CITS5505-Project/
 │   ├── test_project_routes.py             # Unit tests: project list, detail, and CRUD
 │   ├── test_profile_settings.py           # Unit tests: profile and settings routes
 │   ├── test_selenium_core_flows.py        # Selenium tests: login, dashboard, check-in
-│   └── test_selenium_profile_settings.py  # Selenium tests: profile and settings pages
+│   ├── test_selenium_profile_settings.py  # Selenium tests: profile and settings pages
+│   └── test_selenium_project_flows.py     # Selenium tests: project list and detail flows
 ├── config.py                    # Application configuration
 ├── run.py                       # Entry point to run the application
 ├── seed_db.py                   # Script to populate sample data
