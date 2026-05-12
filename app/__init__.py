@@ -640,6 +640,18 @@ def create_app(test_config=None):
 
         return task_query, backlog_options
 
+    def build_backlog_pagination_links(pagination, endpoint, **view_args):
+        """Build Previous/Next links while preserving current backlog query options."""
+        def page_url(page_number):
+            query_args = request.args.to_dict(flat=True)
+            query_args["page"] = page_number
+            return url_for(endpoint, **view_args, **query_args)
+
+        return {
+            "prev": page_url(pagination.prev_num) if pagination.has_prev else None,
+            "next": page_url(pagination.next_num) if pagination.has_next else None,
+        }
+
     @app.route("/projects/<int:project_id>/backlog")
     def project_backlog(project_id):
         if g.user is None:
@@ -661,7 +673,15 @@ def create_app(test_config=None):
         )
         task_query = apply_backlog_search(base_task_query, search_query)
         task_query, backlog_options = apply_backlog_options(task_query)
-        tasks = task_query.all()
+        page = request.args.get("page", 1, type=int)
+        per_page = 10
+        pagination = task_query.paginate(page=page, per_page=per_page, error_out=False)
+        pagination_links = build_backlog_pagination_links(
+            pagination,
+            "project_backlog",
+            project_id=project.id
+        )
+        tasks = pagination.items
 
         users = User.query.filter_by(is_active=True)\
             .order_by(User.full_name.asc())\
@@ -681,6 +701,8 @@ def create_app(test_config=None):
             total_task_count=total_task_count,
             total_unassigned_count=total_unassigned_count,
             backlog_options=backlog_options,
+            pagination=pagination,
+            pagination_links=pagination_links,
             assignee_options=assignee_options
         )
     
@@ -764,6 +786,7 @@ def create_app(test_config=None):
         page = request.args.get('page', 1, type=int)
         per_page = 10
         pagination = task_query.paginate(page=page, per_page=per_page, error_out=False)
+        pagination_links = build_backlog_pagination_links(pagination, "backlog")
         tasks = pagination.items
 
         projects = Project.query.filter_by(status="active").order_by(Project.name.asc()).all()
@@ -780,7 +803,9 @@ def create_app(test_config=None):
             search_query=search_query,
             total_task_count=total_task_count,
             total_unassigned_count=total_unassigned_count,
-            backlog_options=backlog_options,pagination=pagination,
+            backlog_options=backlog_options,
+            pagination=pagination,
+            pagination_links=pagination_links,
             assignee_options=assignee_options
         )
 
