@@ -16,8 +16,11 @@ from app.models import Project, Sprint, SprintCheckIn, Task, User
 
 
 class SeleniumCoreFlowTestCase(unittest.TestCase):
+    """Selenium coverage for the main authenticated dashboard and sprint flows."""
+
     @classmethod
     def setUpClass(cls):
+        """Start a live Flask server backed by a shared in-memory test database."""
         cls.app = create_app({
             "TESTING": True,
             "SQLALCHEMY_DATABASE_URI": "sqlite://",
@@ -36,6 +39,7 @@ class SeleniumCoreFlowTestCase(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        """Stop the live server and release database connections after the suite."""
         cls.server.shutdown()
         cls.server_thread.join(timeout=5)
         with cls.app.app_context():
@@ -43,6 +47,7 @@ class SeleniumCoreFlowTestCase(unittest.TestCase):
             db.engine.dispose()
 
     def setUp(self):
+        """Create fresh browser, user, project, sprint, and task fixtures per test."""
         with self.app.app_context():
             db.drop_all()
             db.create_all()
@@ -100,12 +105,14 @@ class SeleniumCoreFlowTestCase(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
     def tearDown(self):
+        """Close the browser and reset database state after each test."""
         self.driver.quit()
         with self.app.app_context():
             db.session.remove()
             db.drop_all()
 
     def login(self):
+        """Log the seeded Selenium user in through the browser UI."""
         self.driver.get(f"{self.base_url}/auth?mode=login")
         login_form = self.wait.until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, "form[data-auth-form='login']"))
@@ -116,18 +123,21 @@ class SeleniumCoreFlowTestCase(unittest.TestCase):
         self.wait.until(EC.url_contains("/dashboard"))
 
     def test_protected_dashboard_redirects_to_login(self):
+        """Logged-out users should be redirected from the dashboard to login."""
         self.driver.get(f"{self.base_url}/dashboard")
 
         self.wait.until(EC.url_contains("/auth"))
         self.assertIn("mode=login", self.driver.current_url)
 
     def test_login_opens_dashboard(self):
+        """A valid login should land the user on the dashboard."""
         self.login()
 
         self.assertIn("/dashboard", self.driver.current_url)
         self.assertIn("Welcome back, Selenium Core User", self.driver.page_source)
 
     def test_dashboard_shows_live_project_and_task_data(self):
+        """The dashboard should render seeded project, task, and sprint data."""
         self.login()
 
         self.assertIn("Selenium Demo Project", self.driver.page_source)
@@ -135,6 +145,7 @@ class SeleniumCoreFlowTestCase(unittest.TestCase):
         self.assertIn("Selenium Active Sprint", self.driver.page_source)
 
     def test_sprints_page_shows_active_sprint_and_checkin_form(self):
+        """The sprints page should show the active sprint and daily check-in form."""
         self.login()
         self.driver.get(f"{self.base_url}/sprints")
 
@@ -144,6 +155,7 @@ class SeleniumCoreFlowTestCase(unittest.TestCase):
         self.assertTrue(self.driver.find_element(By.ID, "workload_level").is_displayed())
 
     def test_sprint_health_checkin_can_be_submitted_from_browser(self):
+        """Submitting the sprint health form should save and display the check-in."""
         self.login()
         self.driver.get(f"{self.base_url}/sprints")
 
