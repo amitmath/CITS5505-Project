@@ -252,6 +252,15 @@
     box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.12);
 }
 
+.password-grid {
+    align-items: end;
+}
+
+.password-action-cell {
+    display: flex;
+    justify-content: flex-end;
+}
+
 /* ── Sections 3 & 4 side by side ── */
 .security-notification-grid {
     display: grid;
@@ -458,4 +467,47 @@
 
 #settings-form .settings-action-bar {
     margin-top: 20px;   
+}
+
+@media (max-width: 992px) {
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .password-action-cell {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 640px) {
+    .settings-body {
+        padding: 18px 16px;
+    }
+
+    .settings-card {
+        padding: 18px;
+    }
+
+    .account-display {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .btn-upload {
+        margin-left: 0;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-action-bar {
+        flex-direction: column;
+    }
+
+    .btn-save,
+    .btn-logout-bar {
+        justify-content: center;
+        width: 100%;
+    }
 }

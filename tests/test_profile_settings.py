@@ -1,7 +1,7 @@
 import unittest
 from app import create_app, db
 from app.models import User
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class MeihuiTestCase(unittest.TestCase):
@@ -82,6 +82,57 @@ class MeihuiTestCase(unittest.TestCase):
             'email': 'test@test.com',
         }, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
+
+    def test_settings_change_password_success(self):
+        """Settings should update password when current password is correct"""
+        self.login()
+        response = self.client.post('/settings', data={
+            'action': 'change_password',
+            'current_password': 'password123',
+            'new_password': 'newpassword123',
+            'confirm_password': 'newpassword123'
+        }, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Password updated successfully', response.data)
+
+        with self.app.app_context():
+            user = User.query.filter_by(email='test@test.com').first()
+            self.assertTrue(check_password_hash(user.password_hash, 'newpassword123'))
+
+    def test_settings_change_password_wrong_current_rejected(self):
+        """Settings should reject password changes with wrong current password"""
+        self.login()
+        response = self.client.post('/settings', data={
+            'action': 'change_password',
+            'current_password': 'wrong-password',
+            'new_password': 'newpassword123',
+            'confirm_password': 'newpassword123'
+        }, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Current password is incorrect', response.data)
+
+        with self.app.app_context():
+            user = User.query.filter_by(email='test@test.com').first()
+            self.assertTrue(check_password_hash(user.password_hash, 'password123'))
+
+    def test_settings_change_password_mismatch_rejected(self):
+        """Settings should reject password confirmation mismatches"""
+        self.login()
+        response = self.client.post('/settings', data={
+            'action': 'change_password',
+            'current_password': 'password123',
+            'new_password': 'newpassword123',
+            'confirm_password': 'different123'
+        }, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'New passwords do not match', response.data)
+
+        with self.app.app_context():
+            user = User.query.filter_by(email='test@test.com').first()
+            self.assertTrue(check_password_hash(user.password_hash, 'password123'))
 
 
 if __name__ == '__main__':

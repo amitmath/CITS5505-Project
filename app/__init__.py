@@ -2,7 +2,7 @@ import re
 from datetime import date, datetime
 
 import os
-from sqlalchemy import case, func, or_
+from sqlalchemy import case, event, func, or_
 from werkzeug.utils import secure_filename
 from flask import Flask, app, flash, g, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -31,6 +31,15 @@ def create_app(test_config=None):
 
     # Initialize extensions
     db.init_app(app)
+
+    if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
+        with app.app_context():
+            @event.listens_for(db.engine, "connect")
+            def set_sqlite_journal_mode(dbapi_connection, connection_record):
+                cursor = dbapi_connection.cursor()
+                cursor.execute("PRAGMA journal_mode=PERSIST")
+                cursor.close()
+
     migrate.init_app(app, db)
     csrf.init_app(app)
 
@@ -1011,6 +1020,32 @@ def create_app(test_config=None):
                 g.user.location  = location
                 db.session.commit()
                 flash('Settings saved successfully.', 'success')
+                return redirect(url_for('settings'))
+
+            if action == 'change_password':
+                current_password = request.form.get('current_password', '')
+                new_password = request.form.get('new_password', '')
+                confirm_password = request.form.get('confirm_password', '')
+
+                if not check_password_hash(g.user.password_hash, current_password):
+                    flash('Current password is incorrect.', 'danger')
+                    return redirect(url_for('settings'))
+
+                if len(new_password) < 6:
+                    flash('New password must be at least 6 characters.', 'danger')
+                    return redirect(url_for('settings'))
+
+                if new_password != confirm_password:
+                    flash('New passwords do not match.', 'danger')
+                    return redirect(url_for('settings'))
+
+                if check_password_hash(g.user.password_hash, new_password):
+                    flash('New password must be different from your current password.', 'danger')
+                    return redirect(url_for('settings'))
+
+                g.user.password_hash = generate_password_hash(new_password)
+                db.session.commit()
+                flash('Password updated successfully.', 'success')
                 return redirect(url_for('settings'))
 
 

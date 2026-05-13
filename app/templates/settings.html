@@ -123,6 +123,42 @@
             </div>
 
         </form>
+
+        <form method="POST" action="{{ url_for('settings') }}" id="password-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="change_password">
+
+            <div class="settings-card">
+                <div class="settings-section-heading">
+                    <span class="settings-section-number">3</span>
+                    Security
+                </div>
+                <div class="info-grid password-grid">
+                    <div>
+                        <label class="form-label-settings" for="current-password">Current Password</label>
+                        <input type="password" id="current-password" name="current_password"
+                               class="form-input-settings" autocomplete="current-password" required>
+                    </div>
+                    <div>
+                        <label class="form-label-settings" for="new-password">New Password</label>
+                        <input type="password" id="new-password" name="new_password"
+                               class="form-input-settings" autocomplete="new-password"
+                               minlength="6" required>
+                    </div>
+                    <div>
+                        <label class="form-label-settings" for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirm_password"
+                               class="form-input-settings" autocomplete="new-password"
+                               minlength="6" required>
+                    </div>
+                    <div class="password-action-cell">
+                        <button type="submit" class="btn-save">
+                            Change Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
