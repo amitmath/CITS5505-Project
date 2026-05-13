@@ -101,7 +101,8 @@ CITS5505-Project/
 │   ├── test_project_routes.py             # Unit tests: project list, detail, and CRUD
 │   ├── test_profile_settings.py           # Unit tests: profile and settings routes
 │   ├── test_selenium_core_flows.py        # Selenium tests: login, dashboard, check-in
-│   └── test_selenium_profile_settings.py  # Selenium tests: profile and settings pages
+│   ├── test_selenium_profile_settings.py  # Selenium tests: profile and settings pages
+│   └── test_selenium_project_flows.py     # Selenium tests: project list and detail flows
 ├── config.py                    # Application configuration
 ├── run.py                       # Entry point to run the application
 ├── seed_db.py                   # Script to populate sample data
@@ -184,7 +185,7 @@ python -m pytest tests/test_core_routes_sprint_health.py tests/test_project_rout
 #### Run only Selenium tests
 
 ```bash
-python -m pytest tests/test_selenium_core_flows.py tests/test_selenium_profile_settings.py
+python -m pytest tests/test_selenium_core_flows.py tests/test_selenium_profile_settings.py tests/test_selenium_project_flows.py
 ```
 
 #### Run a single test file
@@ -202,6 +203,7 @@ python -m pytest tests/test_project_routes.py -v
 | `test_profile_settings.py` | Unit | Profile and settings route access |
 | `test_selenium_core_flows.py` | Selenium | Login flow, dashboard data, sprints page, sprint health check-in via browser |
 | `test_selenium_profile_settings.py` | Selenium | Landing page, auth page, protected redirect for profile and settings |
+| `test_selenium_project_flows.py` | Selenium | Project list (redirect, active/archived display, create via modal, card navigation), project detail (load, task display, edit modal, assign-users modal, delete modal) |
 
 Each unit test class uses a fresh **in-memory SQLite database** per test so tests are fully isolated and require no setup beyond `pip install -r requirements.txt`.
 
