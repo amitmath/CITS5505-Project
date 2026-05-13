@@ -57,6 +57,7 @@ The application follows:
 - JavaScript
 - Chart.js 3.9.1 (data visualization and charts)
 - Font Awesome 6.5.0 (icons)
+- Bootstrap Icons 1.11.3 (icons)
 
 **Database:** SQLite
 
@@ -81,7 +82,6 @@ CITS5505-Project/
 │   ├── routes.py                # API endpoints
 │   ├── static/                  # Static files
 │   │   ├── css/                 # Stylesheets
-│   │   ├── images/              # Image assets
 │   │   ├── js/                  # JavaScript files
 │   │   └── uploads/             # User uploads (avatars)
 │   └── templates/               # HTML templates
@@ -93,6 +93,7 @@ CITS5505-Project/
 │       ├── sprints.html         # Sprints management page
 │       ├── analytics.html       # Analytics dashboard page
 │       ├── profile.html         # User profile page
+│       ├── settings.html        # Account settings page
 │       ├── backlog.html         # Project backlog page
 │       └── components/          # Reusable template components
 ├── migrations/                  # Database migration files (Alembic)
@@ -200,7 +201,7 @@ python -m pytest tests/test_project_routes.py -v
 |------|------|----------------|
 | `test_core_routes_sprint_health.py` | Unit | Protected route redirects, dashboard load, sprint health check-in save and same-day update |
 | `test_project_routes.py` | Unit | Project list (auth, active filter, search), create, detail view, edit, delete (with task cascade), and user assignment |
-| `test_profile_settings.py` | Unit | Profile and settings route access |
+| `test_profile_settings.py` | Unit | Profile and settings route access, profile updates, and password change validation |
 | `test_selenium_core_flows.py` | Selenium | Login flow, dashboard data, sprints page, sprint health check-in via browser |
 | `test_selenium_profile_settings.py` | Selenium | Landing page, auth page, protected redirect for profile and settings |
 | `test_selenium_project_flows.py` | Selenium | Project list (redirect, active/archived display, create via modal, card navigation), project detail (load, task display, edit modal, assign-users modal, delete modal) |
@@ -267,6 +268,12 @@ Each unit test class uses a fresh **in-memory SQLite database** per test so test
 **Profile (`/profile`)**
 - View and edit user profile information
 - Update personal details (title, bio, location, timezone, avatar)
+- Navigate from: Sidebar menu
+
+**Settings (`/settings`)**
+- Update account information
+- Upload a profile photo
+- Change password after confirming the current password
 - Navigate from: Sidebar menu
 
 **Logout**
